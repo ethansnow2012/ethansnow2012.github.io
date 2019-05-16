@@ -1,9 +1,9 @@
-<html>
-  <head>
+<html><head>
   </head>
   <body>
     <style>
       .panel {
+		  margin: 0 auto;
 		  width:1000px;
           height:1000px;
           display: grid;
@@ -13,16 +13,23 @@
   
     <div style="">
       <div class="panel">
-        <div class="theGrid">One</div>
-        <div class="theGrid">Two</div>
-        <div class="theGrid">Three</div>
-        <div class="theGrid">Four</div>
-        <div class="theGrid">Five</div>
-        <div class="theGrid">Six</div>
-        <div class="theGrid">Seven</div>
-        <div class="theGrid">Five</div>
-        <div class="theGrid">Eight</div>
+        <div class="theGrid" style="background: rgb(64, 191, 128);">One</div>
+        <div class="theGrid" style="background: rgb(64, 191, 128);">Two</div>
+        <div class="theGrid" style="background: rgb(64, 191, 128);">Three</div>
+        <div class="theGrid" style="background: rgb(64, 191, 128);">Four</div>
+        <div class="theGrid" style="background: rgb(64, 191, 128);">Five</div>
+        <div class="theGrid" style="background: rgb(64, 191, 128);">Six</div>
+        <div class="theGrid" style="background: rgb(64, 191, 128);">Seven</div>
+        <div class="theGrid" style="background: rgb(64, 191, 128);">Five</div>
+        <div class="theGrid" style="background: rgb(64, 191, 128);">Eight</div>
       </div>
     </div>
-  </body>
-</html>
+   <script>document.querySelectorAll(".theGrid").forEach((el)=>{
+	let h = 150 //Math.random()*360
+	let s = "50%"
+    let l = "50%"
+	el.style.background=`hsl(${h},${s},${l})`
+})
+   </script>  
+
+</body></html>
