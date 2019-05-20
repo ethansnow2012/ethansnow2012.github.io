@@ -1,35 +1,78 @@
-<html><head>
-  </head>
-  <body>
+<html>
+<head>
+</head>
+<body>
+    <template id="theGridTemplate">
+      <div class="theGrid" style="background: rgb(64, 191, 128);"><h1 class="GridTitle" style="transform: translateX(-0.2em);">One</h1><div class="GridContent"></div></div>
+    </template>
     <style>
-      .panel {
-		  margin: 0 auto;
-		  width:1000px;
-          height:1000px;
-          display: grid;
-          grid-template-columns: 1fr 1fr 1fr;
+        .panel {
+            margin: 0 auto;
+            width: 1000px;
+            height: 1000px;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+        }
+        .theGrid{
+          display:flex;
+          flex-direction: column;
+        }
+        .theGrid .GridTitle{
+          flex:none;
+          color: hsl(0, 0%, 90%);
+        }
+        .theGrid .GridTitle h1{
+          /*color: white;*/
+        }
+        .theGrid .GridContent{
+          flex:1;
         }
     </style>
-  
-    <div style="">
-      <div class="panel">
-        <div class="theGrid" style="background: rgb(64, 191, 128);">One</div>
-        <div class="theGrid" style="background: rgb(64, 191, 128);">Two</div>
-        <div class="theGrid" style="background: rgb(64, 191, 128);">Three</div>
-        <div class="theGrid" style="background: rgb(64, 191, 128);">Four</div>
-        <div class="theGrid" style="background: rgb(64, 191, 128);">Five</div>
-        <div class="theGrid" style="background: rgb(64, 191, 128);">Six</div>
-        <div class="theGrid" style="background: rgb(64, 191, 128);">Seven</div>
-        <div class="theGrid" style="background: rgb(64, 191, 128);">Five</div>
-        <div class="theGrid" style="background: rgb(64, 191, 128);">Eight</div>
-      </div>
-    </div>
-   <script>document.querySelectorAll(".theGrid").forEach((el)=>{
-	let h = 150 //Math.random()*360
-	let s = "50%"
-    let l = "50%"
-	el.style.background=`hsl(${h},${s},${l})`
-})
-   </script>  
 
-</body></html>
+    <div style="">
+        <div id="IdPanel" class="panel">
+
+        </div>
+    </div>
+
+    <script>
+      {  // utils
+        function createElementFromHTML(htmlString) {
+          var div = document.createElement('div');
+          div.innerHTML = htmlString.trim();
+          return div.firstChild;
+        }
+      }
+      {  // rendering
+        var initPanel = function(count){
+          var colors=[]
+          let h = Math.random() * 360
+          let s = "50%"
+          let l = "50%"
+          for(var ii=0;ii<count;ii++){
+            colors.push(`hsl(${h},${s},${l})`)
+          }
+          for(var ii=0;ii<count;ii++){
+            var theGrid = createElementFromHTML(theGridTemplate.innerHTML)
+            theGrid.dataset.id = ii
+            theGrid.style.background = colors[ii]
+            IdPanel.append(theGrid)
+          }
+        }
+        initPanel(9)
+      }
+
+    </script>
+    <script>
+    /*
+        document.querySelectorAll(".theGrid").forEach((el) => {
+            let h = Math.random() * 360
+            let s = "50%"
+            let l = "50%"
+            el.style.background = `hsl(${h},${s},${l})`
+        })
+        */
+    </script>
+
+</body>
+</html>
