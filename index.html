@@ -72,34 +72,24 @@
      https://firebase.google.com/docs/web/setup#config-web-app -->
 
 <script>
-  // Your web app's Firebase configuration
-  var firebaseConfig = {
-    apiKey: "AIzaSyBGFBCfDcLkB6wA1srUWOVZX2hEzUc_cTI",
-    authDomain: "fireone-fd422.firebaseapp.com",
-    databaseURL: "https://fireone-fd422.firebaseio.com",
-    projectId: "fireone-fd422",
-    storageBucket: "fireone-fd422.appspot.com",
-    messagingSenderId: "284946202344",
-    appId: "1:284946202344:web:30415eecf53f3e2a"
-  };
-  // Initialize Firebase
-  var aa= firebase.initializeApp(firebaseConfig);
-</script>
-    <script>
-        //firebase text
-        var dbRef = firebase.database().ref().child("text")
-        dbRef.on("value", snap => firebaseRoot.innerHtml = snap.val())
-    </script>
-    <script>
     /*
-        document.querySelectorAll(".theGrid").forEach((el) => {
-            let h = Math.random() * 360
-            let s = "50%"
-            let l = "50%"
-            el.style.background = `hsl(${h},${s},${l})`
-        })
-        */
-    </script>
+          // Your web app's Firebase configuration
+          var firebaseConfig = {
+            apiKey: "AIzaSyBGFBCfDcLkB6wA1srUWOVZX2hEzUc_cTI",
+            authDomain: "fireone-fd422.firebaseapp.com",
+            databaseURL: "https://fireone-fd422.firebaseio.com",
+            projectId: "fireone-fd422",
+            storageBucket: "fireone-fd422.appspot.com",
+            messagingSenderId: "284946202344",
+            appId: "1:284946202344:web:30415eecf53f3e2a"
+          };
+          // Initialize Firebase
+          var aa= firebase.initializeApp(firebaseConfig);
 
+          //firebase test
+          var dbRef = firebase.database().ref().child("text")
+          dbRef.on("value", snap => firebaseRoot.innerHtml = snap.val())
+          */
+    </script>
 </body>
 </html>
