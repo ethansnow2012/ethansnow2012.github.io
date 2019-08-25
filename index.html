@@ -34,7 +34,7 @@
 
         </div>
     </div>
-
+    <div id="firebaseRoot"></div>
     <script>
       {  // utils
         function createElementFromHTML(htmlString) {
@@ -83,6 +83,11 @@
   // Initialize Firebase
   firebase.initializeApp(firebaseConfig);
 </script>
+    <script>
+        //firebase text
+        var dbRef = firebase.database().ref().child("text")
+        dbRef.on("value", snap => firebaseRoot.innerHtml = snap.val())
+    </script>
     <script>
     /*
         document.querySelectorAll(".theGrid").forEach((el) => {
