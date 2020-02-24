@@ -72,24 +72,25 @@
      https://firebase.google.com/docs/web/setup#config-web-app -->
 
 <script>
-    /*
-          // Your web app's Firebase configuration
-          var firebaseConfig = {
-            apiKey: "AIzaSyBGFBCfDcLkB6wA1srUWOVZX2hEzUc_cTI",
-            authDomain: "fireone-fd422.firebaseapp.com",
-            databaseURL: "https://fireone-fd422.firebaseio.com",
-            projectId: "fireone-fd422",
-            storageBucket: "fireone-fd422.appspot.com",
-            messagingSenderId: "284946202344",
-            appId: "1:284946202344:web:30415eecf53f3e2a"
-          };
-          // Initialize Firebase
-          var aa= firebase.initializeApp(firebaseConfig);
+  window.fbAsyncInit = function() {
+    FB.init({
+      appId      : '565005824079142',
+      cookie     : true,
+      xfbml      : true,
+      version    : '6.0'
+    });
+      
+    FB.AppEvents.logPageView();   
+      
+  };
 
-          //firebase test
-          var dbRef = firebase.database().ref().child("text")
-          dbRef.on("value", snap => firebaseRoot.innerHtml = snap.val())
-          */
-    </script>
+  (function(d, s, id){
+     var js, fjs = d.getElementsByTagName(s)[0];
+     if (d.getElementById(id)) {return;}
+     js = d.createElement(s); js.id = id;
+     js.src = "https://connect.facebook.net/en_US/sdk.js";
+     fjs.parentNode.insertBefore(js, fjs);
+   }(document, 'script', 'facebook-jssdk'));
+</script>
 </body>
 </html>
