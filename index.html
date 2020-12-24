@@ -1,227 +1,196 @@
 <html>
-<head>
-<script>
-/*!
- * swiped-events.js - v@version@
- * Pure JavaScript swipe events
- * https://github.com/john-doherty/swiped-events
- * @inspiration https://stackoverflow.com/questions/16348031/disable-scrolling-when-touch-moving-certain-element
- * @author John Doherty <www.johndoherty.info>
- * @license MIT
- */
-(function (window, document) {
-
-    'use strict';
-
-    // patch CustomEvent to allow constructor creation (IE/Chrome)
-    if (typeof window.CustomEvent !== 'function') {
-
-        window.CustomEvent = function (event, params) {
-
-            params = params || { bubbles: false, cancelable: false, detail: undefined };
-
-            var evt = document.createEvent('CustomEvent');
-            evt.initCustomEvent(event, params.bubbles, params.cancelable, params.detail);
-            return evt;
-        };
-
-        window.CustomEvent.prototype = window.Event.prototype;
-    }
-
-    document.addEventListener('touchstart', handleTouchStart, false);
-    document.addEventListener('touchmove', handleTouchMove, false);
-    document.addEventListener('touchend', handleTouchEnd, false);
-
-    var xDown = null;
-    var yDown = null;
-    var xDiff = null;
-    var yDiff = null;
-    var timeDown = null;
-    var startEl = null;
-
-    function handleTouchEnd(e) {
-
-        // if the user released on a different target, cancel!
-        if (startEl !== e.target) return;
-
-        var swipeThreshold = parseInt(startEl.getAttribute('data-swipe-threshold') || '20', 10);    // default 10px
-        var swipeTimeout = parseInt(startEl.getAttribute('data-swipe-timeout') || '500', 10);      // default 1000ms
-        var timeDiff = Date.now() - timeDown;
-        var eventType = '';
-
-        if (Math.abs(xDiff) > Math.abs(yDiff)) { // most significant
-            if (Math.abs(xDiff) > swipeThreshold && timeDiff < swipeTimeout) {
-                if (xDiff > 0) {
-                    eventType = 'swiped-left';
-                }
-                else {
-                    eventType = 'swiped-right';
-                }
-            }
-        }
-        else {
-            if (Math.abs(yDiff) > swipeThreshold && timeDiff < swipeTimeout) {
-                if (yDiff > 0) {
-                    eventType = 'swiped-up';
-                }
-                else {
-                    eventType = 'swiped-down';
-                }
-            }
-        }
-
-        if (eventType !== '') {
-
-            // fire event on the element that started the swipe
-            startEl.dispatchEvent(new CustomEvent(eventType, { bubbles: true, cancelable: true }));
-
-            // if (console && console.log) console.log(eventType + ' fired on ' + startEl.tagName);
-        }
-
-        // reset values
-        xDown = null;
-        yDown = null;
-        timeDown = null;
-    }
-
-    function handleTouchStart(e) {
-
-        // if the element has data-swipe-ignore="true" we stop listening for swipe events
-        if (e.target.getAttribute('data-swipe-ignore') === 'true') return;
-
-        startEl = e.target;
-
-        timeDown = Date.now();
-        xDown = e.touches[0].clientX;
-        yDown = e.touches[0].clientY;
-        xDiff = 0;
-        yDiff = 0;
-    }
-
-    function handleTouchMove(e) {
-
-        if (!xDown || !yDown) return;
-
-        var xUp = e.touches[0].clientX;
-        var yUp = e.touches[0].clientY;
-
-        xDiff = xDown - xUp;
-        yDiff = yDown - yUp;
-    }
-
-}(window, document));
-</script>
-</head>
-<body>
-    <template id="theGridTemplate">
-      <div class="theGrid" style="background: rgb(64, 191, 128);"><h1 class="GridTitle" style="transform: translateX(-0.2em);">One</h1><div class="GridContent"></div></div>
-    </template>
+  <head>
     <style>
-        .panel {
-            margin: 0 auto;
-            width: 1000px;
-            height: 1000px;
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-        }
-        .theGrid{
-          display:flex;
-          flex-direction: column;
-        }
-        .theGrid .GridTitle{
-          flex:none;
-          color: hsl(0, 0%, 90%);
-        }
-        .theGrid .GridTitle h1{
-          /*color: white;*/
-        }
-        .theGrid .GridContent{
-          flex:1;
-        }
+      *{
+        /* box-sizing: content-box; */
+        box-sizing: border-box;
+      }
+      body{
+        margin: 0;
+      }
+      .sideBar{
+        padding: 4vh 10px;
+        padding: 55px 10px;
+        width: 300px;
+        height: 100vh;
+        position: fixed;
+        top: 0;
+        left: 0;
+        background: black;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+      }
+      .sideBar-i{
+
+        /* padding: 10%; */
+        margin-bottom: 30px;
+        color: white;
+      }
+      .sideBar-i a:hover{
+        color: red;
+      }
+      .sideBar-i-head{
+
+      }
+      .sideBar-i + .sideBar-i{
+        margin-top: 20px;
+      }
+      /* ---- */
+      .wrapper{
+        padding:  20px 10vw;
+      }
+      .card{
+        border: 1px solid;padding: 10px 20px;
+      }
+      .card + .card{
+        margin-top: 20px;
+      }
+      .card-i {
+
+      }
+      .card-i + .card-i{
+        margin-top: 7px;
+      }
+      .card-title{
+        color: yellow;
+      }
+      .card-text-1{
+        color:burlywood;
+      }
+      .card-text-2{
+        color:violet;
+      }
+      .card-labelwrapper{
+        display: flex;
+      }
+      .card-labelwrapper-i{
+        background: grey;
+        color: white;
+        border: 5px;
+      }
+      .card-labelwrapper-i + .card-labelwrapper-i{
+        margin-left: 10px;
+      }
     </style>
+  </head>
 
-    <div style="">
-        <div id="IdPanel" class="panel">
+  <body>
+    <div style="background: black;width: 30%;height: 100vh;position: fixed;">
 
-        </div>
     </div>
-    <div id="firebaseRoot"></div>
-    <script>
-      {  // utils
-        function createElementFromHTML(htmlString) {
-          var div = document.createElement('div');
-          div.innerHTML = htmlString.trim();
-          return div.firstChild;
-        }
-      }
-      {  // rendering
-        var initPanel = function(count){
-          var colors=[]
-          let h = Math.random() * 360
-          let s = "50%"
-          let l = "50%"
-          for(var ii=0;ii<count;ii++){
-            colors.push(`hsl(${h},${s},${l})`)
-          }
-          for(var ii=0;ii<count;ii++){
-            var theGrid = createElementFromHTML(theGridTemplate.innerHTML)
-            theGrid.dataset.id = ii
-            theGrid.style.background = colors[ii]
-            IdPanel.append(theGrid)
-          }
-        }
-        initPanel(9)
-      }
-
-    </script>
-    <!-- The core Firebase JS SDK is always required and must be listed first -->
-<script src="https://www.gstatic.com/firebasejs/6.4.2/firebase-app.js"></script>
-<!-- Add Firebase products that you want to use -->
-  <script src="https://www.gstatic.com/firebasejs/6.4.1/firebase-auth.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/6.4.1/firebase-firestore.js"></script>
-<!-- TODO: Add SDKs for Firebase products that you want to use
-     https://firebase.google.com/docs/web/setup#config-web-app -->
-    
-<script>
-  window.fbAsyncInit = function() {
-    FB.init({
-      appId      : '764162507417024',
-      cookie     : true,
-      xfbml      : true,
-      version    : 'v6.0'
-    });
-      
-    FB.AppEvents.logPageView();   
-  };
-
-</script>
-<script async defer src="https://connect.facebook.net/en_US/sdk.js"></script>
-<script>
-    document.querySelectorAll(".GridContent").forEach((el)=>{
-        el.addEventListener("swiped-right",function(){console.log("aaa")})
-    })
-</script>
-<script>
-
-  (function(d, s, id){
-     var js, fjs = d.getElementsByTagName(s)[0];
-     if (d.getElementById(id)) {return;}
-     js = d.createElement(s); js.id = id;
-     js.src = "https://connect.facebook.net/en_US/sdk.js";
-     fjs.parentNode.insertBefore(js, fjs);
-   }(document, 'script', 'facebook-jssdk'));
-    function statusChangeCallback(){
-    
-    }
-    function checkLoginState() {
-      FB.getLoginStatus(function(response) {
-        statusChangeCallback(response);
-      });
-    }
-</script>
-<fb:login-button 
-  scope="instagram_basic,pages_show_list"
-  onlogin="checkLoginState();">
-</fb:login-button>
-</body>
+    <div class="wrapper" style="width: calc(100% - 30%);margin-left: 30%;">
+      <div class="card">
+        <div class="card-i card-title">
+          titletitletitletitle
+        </div>
+        <div class="card-i card-text-1">
+          text-1text-1text-1text-1
+        </div>
+        <div class="card-i card-text-2">
+          text-2text-2text-2text-2text-2
+        </div>
+        <div class="card-i card-labelwrapper">
+          <div class="card-labelwrapper-i">gsfdgs</div>
+          <div class="card-labelwrapper-i">ssss</div>
+          <div class="card-labelwrapper-i">aaaasda</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-i card-title">
+          titletitletitletitle
+        </div>
+        <div class="card-i card-text-1">
+          text-1text-1text-1text-1
+        </div>
+        <div class="card-i card-text-2">
+          text-2text-2text-2text-2text-2
+        </div>
+        <div class="card-i card-labelwrapper">
+          <div class="card-labelwrapper-i">gsfdgs</div>
+          <div class="card-labelwrapper-i">ssss</div>
+          <div class="card-labelwrapper-i">aaaasda</div>
+        </div>
+      </div><div class="card">
+        <div class="card-i card-title">
+          titletitletitletitle
+        </div>
+        <div class="card-i card-text-1">
+          text-1text-1text-1text-1
+        </div>
+        <div class="card-i card-text-2">
+          text-2text-2text-2text-2text-2
+        </div>
+        <div class="card-i card-labelwrapper">
+          <div class="card-labelwrapper-i">gsfdgs</div>
+          <div class="card-labelwrapper-i">ssss</div>
+          <div class="card-labelwrapper-i">aaaasda</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-i card-title">
+          titletitletitletitle
+        </div>
+        <div class="card-i card-text-1">
+          text-1text-1text-1text-1
+        </div>
+        <div class="card-i card-text-2">
+          text-2text-2text-2text-2text-2
+        </div>
+        <div class="card-i card-labelwrapper">
+          <div class="card-labelwrapper-i">gsfdgs</div>
+          <div class="card-labelwrapper-i">ssss</div>
+          <div class="card-labelwrapper-i">aaaasda</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-i card-title">
+          titletitletitletitle
+        </div>
+        <div class="card-i card-text-1">
+          text-1text-1text-1text-1
+        </div>
+        <div class="card-i card-text-2">
+          text-2text-2text-2text-2text-2
+        </div>
+        <div class="card-i card-labelwrapper">
+          <div class="card-labelwrapper-i">gsfdgs</div>
+          <div class="card-labelwrapper-i">ssss</div>
+          <div class="card-labelwrapper-i">aaaasda</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-i card-title">
+          titletitletitletitle
+        </div>
+        <div class="card-i card-text-1">
+          text-1text-1text-1text-1
+        </div>
+        <div class="card-i card-text-2">
+          text-2text-2text-2text-2text-2
+        </div>
+        <div class="card-i card-labelwrapper">
+          <div class="card-labelwrapper-i">gsfdgs</div>
+          <div class="card-labelwrapper-i">ssss</div>
+          <div class="card-labelwrapper-i">aaaasda</div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-i card-title">
+          titletitletitletitle
+        </div>
+        <div class="card-i card-text-1">
+          text-1text-1text-1text-1
+        </div>
+        <div class="card-i card-text-2">
+          text-2text-2text-2text-2text-2
+        </div>
+        <div class="card-i card-labelwrapper">
+          <div class="card-labelwrapper-i">gsfdgs</div>
+          <div class="card-labelwrapper-i">ssss</div>
+          <div class="card-labelwrapper-i">aaaasda</div>
+        </div>
+      </div>
+    </div>
+  </body>
 </html>
