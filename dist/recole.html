@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script>
+        (function (global, factory) {
+            typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
+                typeof define === 'function' && define.amd ? define(factory) :
+                    (global = typeof globalThis !== 'undefined' ? globalThis : global || self, global.recole = factory());
+        }(this, (function () {
+            'use strict';
+
+            var recole = function () {
+                this.symbol_reactive = Symbol();
+                this._beforeMap = new WeakMap();
+                //this.effMap = new WeakMap();
+                this.proxyMap = new WeakMap();
+                this.targetMap = new WeakMap(); // storing objects of type "object" not "proxy"
+                this.currentEffect = null;
+                console.log("init");
+            };
+            recole.prototype.addBefore = function (target, before) {
+                let set = this._beforeMap.get(target);// return object of type "Set"
+                if (!set) {
+                    this._beforeMap.set(target, (set = new Set()));
+                }
+                set.add(before);
+            };
+            recole.prototype.track = function (target, key, options = {}) {
+                if(this.escape_effect_flag){ return }
+                target = this._2targetObj(target);
+                
+                if (this.currentEffect) {
+                    let depsMap = this.targetMap.get(target); // Get the current depsMap for this target
+                    if (!depsMap) {
+                        // There is no map.
+                        this.targetMap.set(target, (depsMap = new Map())); // Crecolee one
+                    }
+                    let dep = depsMap.get(key); // Get the current dependencies (effects) that need to be run when this is set
+                    if (!dep) {
+                        // There is no dependencies (effects)
+                        depsMap.set(key, (dep = new Set())); // Crecolee a new Set
+                    }
+                    if (options.before) {
+                        this.addBefore(target, options.before);
+                    }
+                    //this.effMap.set(this.currentEffect, this.currentEffect)
+                    dep.add(this.currentEffect);
+                }
+            };
+            recole.prototype.cancel = function (target) {
+                target = this._2targetObj(target);
+                this._beforeMap.delete(target);
+                this.targetMap.delete(target);
+
+            };
+
+            recole.prototype.trigger_before = function (target, key) {
+                target = this._2targetObj(target);
+                //==
+                let beforeSet = this._beforeMap.get(target);
+                if (beforeSet) {
+                    beforeSet.forEach((eff) => {
+                        eff();
+                    });
+                }
+            };
+            recole.prototype.trigger = function (target, key) {
+                if(this.escape_effect_flag){ return }
+                target = this._2targetObj(target);
+                //==
+                const depsMap = this.targetMap.get(target); // Does this object have any properties that have dependencies (effects)
+                if (!depsMap) {
+                    return
+                }
+                let dep = depsMap.get(key); // If there are dependencies (effects) associated with this
+                if (dep) {
+                    dep.forEach((eff) => {
+                        // run them all
+                        eff();
+                    });
+                }
+            };
+
+            recole.prototype.createReactive = function (target, _relation_obj=null,_cache_obj=null) {
+                let _this = this;
+                let relation_obj = _relation_obj
+                let cache_obj = _cache_obj
+                const handler = {
+
+                    get(target, key, receiver) {
+                        let result = Reflect.get(target, key, receiver);
+                        _this.track(target, key); // If this reactive property (target) is GET inside then track the effect to rerun on SET
+                        return result
+                    },
+                    set(target, key, value, receiver) {
+                        let oldValue = target[key];
+                        if ((oldValue != value)) {
+                            _this.trigger_before(target, key);
+                        }
+                        let result = Reflect.set(target, key, value, receiver);
+                        if (result && (oldValue != value)) {
+                            _this.trigger(target, key); // If this reactive property (target) has effects to rerun on SET, trigger them.
+                        }
+                        return result
+                    }
+                };
+                let _proxy = new Proxy(target, handler);
+                let keys = Reflect.ownKeys(target);
+                keys.forEach((_key) => {
+                    let el = target[_key];
+                    if (el
+                        && typeof el == "object"
+                        && !Array.isArray(el)
+                    ) {
+                        _this.effect(() => {
+                            _proxy[_key] = el.ref[el.key];//this.targetMap.get(el.ref)[el.key]
+                        });
+                    }
+                });
+                Object.setPrototypeOf(_proxy, {
+                    set_relation_obj: (new_relation_obj)=>{
+                        relation_obj = new_relation_obj
+                    },
+                    set_cache_obj: (new_cache_obj)=>{
+                        cache_obj = new_cache_obj
+                    },
+                    relation_obj: ()=>{
+                        return relation_obj
+                    },
+                    cache_obj:()=>{
+                        return cache_obj
+                    }
+                });
+                
+                this.proxyMap.set(_proxy, target);
+                return _proxy
+            };
+            recole.prototype.effect = function (eff) {
+                this.currentEffect = eff; // must be a function
+                this.currentEffect();
+                this.currentEffect = null;
+                return eff
+            };
+            recole.prototype.escape_effect = function (aa) {
+                let rtn
+                this.escape_effect_flag = true;
+                if(typeof aa == "function"){
+                    rtn = aa()
+                }else{
+                    rtn = aa
+                }
+                this.escape_effect_flag = null;
+                return rtn
+            }
+            recole.prototype.ref = function (init_value = 0, _relation_obj=null,_cache_obj=null) {
+                let _this = this;
+                let raw = init_value;
+                let raw_old = init_value;
+                let relation_obj = _relation_obj
+                let cache_obj = _cache_obj
+                const r = {
+                    get value() {
+                        _this.track(r, 'value');
+                        return raw
+                    },
+                    set value(newVal) {
+                        if (raw == newVal) {
+                            //raw_old = raw
+                            return;
+                        }
+                        //raw_old = raw
+                        raw = newVal;
+                        _this.trigger(r, 'value');
+                    },
+                    // failed design 
+                    getOld: () => {
+                        return raw_old
+                    },
+                    setOld: () => {
+                        raw_old = raw;
+                        return raw_old
+                    }
+                    // failed design end
+                };
+                Object.setPrototypeOf(r, {
+                    set_relation_obj: (new_relation_obj)=>{
+                        relation_obj = new_relation_obj
+                    },
+                    set_cache_obj: (new_cache_obj)=>{
+                        cache_obj = new_cache_obj
+                    },
+                    relation_obj: ()=>{
+                        return relation_obj
+                    },
+                    cache_obj:()=>{
+                        return cache_obj
+                    }
+                });
+                return r
+            };
+            recole.prototype.computed = function (getter) {
+                let result = this.ref();
+                this.effect(() => (result.value = getter()));
+                return result
+            };
+            recole.prototype.watch = function (target, eff, before, options = {}) {
+                //let _this = this
+
+                this.currentEffect = eff;
+                if (options["first_effect"] == true) {
+                    eff();
+                }
+                let trackOptions = before ? { before: before } : {};
+                let keys = Reflect.ownKeys(target);
+                keys.forEach((_key) => {
+                    this.track(target, _key, trackOptions);
+                });
+
+                this.currentEffect = null;
+            };
+            recole.prototype._2targetObj = function (target) {
+                return this.proxyMap.get(target) ? this.proxyMap.get(target) : target
+            };
+
+            return recole;
+
+        })));
+
+    </script>
+    <script>
+        let debugMode = false
+        //debugMode = true
+        let recole1 = new recole()
+    </script>
+</head>
+
+<body>
+    <style>
+        table.calculator {
+            background-color: #FFFFFF;
+            margin: 0 auto;
+            margin-top: 20px;
+            margin-right: 10px;
+            margin-left: 10px;
+            margin-bottom: 40px;
+            border-radius: 10px;
+            background: #ececec;
+            padding: 20px 10px 23px 10px;
+
+        }
+
+        .calculator td {
+            width: 110px;
+            height: 60px;
+            text-align: center;
+            font-size: xx-large;
+
+        }
+
+        .calculator #screen {
+            text-align: right;
+            padding: 0 13%;
+        }
+
+        .calculator .orange {
+            color: #ff3300;
+        }
+
+        .calculator td:active {
+            background-color: #e0e0d1;
+            border-radius: 20px;
+        }
+    </style>
+    <table class="calculator">
+        <tbody>
+            <tr>
+                <td id="screen" colspan='3'>
+
+                </td>
+            </tr>
+            <tr class="orange">
+                <td class="reset">C</td>
+                <td class="operator" data-value="%">%</td>
+                <td class="operator" data-value="/">/</td>
+            </tr>
+            <tr class="orange">
+                <td class="operator" data-value="+">+</td>
+                <td class="operator" data-value="-">-</td>
+                <td class="operator" data-value="x">x</td>
+            </tr>
+            <tr>
+                <td class="number" data-value="7">7</td>
+                <td class="number" data-value="8">8</td>
+                <td class="number" data-value="9">9</td>
+            </tr>
+            <tr>
+                <td class="number" data-value="4">4</td>
+                <td class="number" data-value="5">5</td>
+                <td class="number" data-value="6">6</td>
+            </tr>
+            <tr>
+                <td class="number" data-value="1">1</td>
+                <td class="number" data-value="2">2</td>
+                <td class="number" data-value="3">3</td>
+            </tr>
+            <tr>
+                <td class="dot">.</td>
+                <td class="number" data-value="3">0</td>
+                <td class="equal">=</td>
+            </tr>
+        </tbody>
+    </table>
+    <style>
+        .SnakeGame td {
+            width: 10px;
+            height: 10px;
+            background: #202124;
+        }
+
+        .SnakeGame td.active {
+            background: green;
+        }
+
+        .SnakeGame td.activeRed {
+            background: red;
+        }
+
+        .SnakeGame td.active2 {
+            background: blue;
+        }
+
+        .SnakeGame-control tr {
+            color: #202124;
+            width: 22px;
+            height: 22px;
+        }
+
+        .SnakeGame-control td {
+            width: 30px;
+            height: 30px;
+        }
+
+        .SnakeGame-control #up,
+        .SnakeGame-control #right,
+        .SnakeGame-control #down,
+        .SnakeGame-control #left {
+            cursor: pointer;
+        }
+
+        .SnakeGame-control #up:hover,
+        .SnakeGame-control #right:hover,
+        .SnakeGame-control #down:hover,
+        .SnakeGame-control #left:hover {
+            font-size: 1.2em;
+        }
+    </style>
+    <div>
+        <div class="SnakeGame-scorelabel">Score: </div>
+        <div class="SnakeGame-score">0</div>
+    </div>
+    <table class="SnakeGame">
+        <tbody>
+            <tr data-cord="0">
+                <td data-cord="0">
+
+                </td>
+                <td data-cord="1">
+
+                </td>
+                <td data-cord="2">
+
+                </td>
+                <td data-cord="3">
+
+                </td>
+                <td data-cord="4">
+
+                </td>
+                <td data-cord="5">
+
+                </td>
+                <td data-cord="6">
+
+                </td>
+            </tr>
+            <tr data-cord="1">
+                <td data-cord="0">
+
+                </td>
+                <td data-cord="1">
+
+                </td>
+                <td data-cord="2">
+
+                </td>
+                <td data-cord="3">
+
+                </td>
+                <td data-cord="4">
+
+                </td>
+                <td data-cord="5">
+
+                </td>
+                <td data-cord="6">
+
+                </td>
+            </tr>
+            <tr data-cord="2">
+                <td data-cord="0">
+
+                </td>
+                <td data-cord="1">
+
+                </td>
+                <td data-cord="2">
+
+                </td>
+                <td data-cord="3">
+
+                </td>
+                <td data-cord="4">
+
+                </td>
+                <td data-cord="5">
+
+                </td>
+                <td data-cord="6">
+
+                </td>
+            </tr>
+            <tr data-cord="3">
+                <td data-cord="0">
+
+                </td>
+                <td data-cord="1">
+
+                </td>
+                <td data-cord="2">
+
+                </td>
+                <td data-cord="3">
+
+                </td>
+                <td data-cord="4">
+
+                </td>
+                <td data-cord="5">
+
+                </td>
+                <td data-cord="6">
+
+                </td>
+            </tr>
+            <tr data-cord="4">
+                <td data-cord="0">
+
+                </td>
+                <td data-cord="1">
+
+                </td>
+                <td data-cord="2">
+
+                </td>
+                <td data-cord="3">
+
+                </td>
+                <td data-cord="4">
+
+                </td>
+                <td data-cord="5">
+
+                </td>
+                <td data-cord="6">
+
+                </td>
+            </tr>
+            <tr data-cord="5">
+                <td data-cord="0">
+
+                </td>
+                <td data-cord="1">
+
+                </td>
+                <td data-cord="2">
+
+                </td>
+                <td data-cord="3">
+
+                </td>
+                <td data-cord="4">
+
+                </td>
+                <td data-cord="5">
+
+                </td>
+                <td data-cord="6">
+
+                </td>
+            </tr>
+            <tr data-cord="6">
+                <td data-cord="0">
+
+                </td>
+                <td data-cord="1">
+
+                </td>
+                <td data-cord="2">
+
+                </td>
+                <td data-cord="3">
+
+                </td>
+                <td data-cord="4">
+
+                </td>
+                <td data-cord="5">
+
+                </td>
+                <td data-cord="6">
+
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <div class="SnakeGame-panel">
+        <table class="SnakeGame-control">
+            <tbody>
+                <tr>
+                    <td></td>
+                    <td id="up">↑</td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td id="left">←</td>
+                    <td id="down">↓</td>
+                    <td id="right">→</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    
+    <script>
+        
+
+        //demo test case 1:  calculator demo 
+        let calculatorState = recole1.createReactive({
+            operandA: 0,
+            operandB: 0,
+            operator: null,
+            procedureState: 0
+        })
+        let screenStr = recole1.computed(() => {
+            console.log(calculatorState.procedureState)
+            let rtn = ""
+            if (calculatorState.procedureState == 0) {// expecting operandA
+                rtn = calculatorState.operandA
+            } else if (calculatorState.procedureState == 1) { // expecting operandA floating number
+                rtn = calculatorState.operandA
+            } else if (calculatorState.procedureState == 2) { // expecting operandB
+                rtn = calculatorState.operandA
+            } else if (calculatorState.procedureState == 3) { // expecting operandA floating number
+                rtn = calculatorState.operandA
+            } else if (calculatorState.procedureState == 4) {
+                rtn = calculatorState.operandB
+            } else if (calculatorState.procedureState == 5) {
+                switch (calculatorState.operator) {
+                    case "+":
+                        rtn = (+calculatorState.operandA) + (+calculatorState.operandB)
+                        recole1.escape_effect(()=>{
+                            calculatorState.operandA = rtn
+                            calculatorState.operandB = 0
+                            calculatorState.procedureState = 2
+                        })
+                        break;
+                    case "-":
+                        rtn = (+calculatorState.operandA) - (+calculatorState.operandB)
+                        recole1.escape_effect(()=>{
+                            calculatorState.operandA = rtn
+                            calculatorState.operandB = 0
+                            calculatorState.procedureState = 2
+                        })
+                        break;
+                    case "x":
+                        rtn = (+calculatorState.operandA) * (+calculatorState.operandB)
+                        recole1.escape_effect(()=>{
+                            calculatorState.operandA = rtn
+                            calculatorState.operandB = 0
+                            calculatorState.procedureState = 2
+                        })
+                        break;
+                    case "/":
+                        rtn = (+calculatorState.operandA) / (+calculatorState.operandB)
+                        recole1.escape_effect(()=>{
+                            calculatorState.operandA = rtn
+                            calculatorState.operandB = 0
+                            calculatorState.procedureState = 2
+                        })
+                        break;
+                    case "%":
+                        rtn = (+calculatorState.operandA) % (+calculatorState.operandB)
+                        recole1.escape_effect(()=>{
+                            calculatorState.operandA = rtn
+                            calculatorState.operandB = 0
+                            calculatorState.procedureState = 2
+                        })
+                        break;
+                }
+            }
+            return rtn
+        })
+        recole1.watch(screenStr, () => {
+            document.querySelector("#screen").innerHTML = screenStr.value
+        })
+        document.querySelectorAll(".calculator .number").forEach((el) => {
+            el.addEventListener("click", () => {
+                if (calculatorState.procedureState == 0) {
+                    calculatorState.operandA = +(recole1.escape_effect(calculatorState.operandA) + el.dataset.value)
+                } else if (calculatorState.procedureState == 1) {
+                    calculatorState.operandA = calculatorState.operandA.toString() + el.dataset.value
+                } else if (calculatorState.procedureState == 2) {
+                    calculatorState.operandB = +(recole1.escape_effect(calculatorState.operandB) + el.dataset.value)
+                    calculatorState.procedureState = 4
+                } else if (calculatorState.procedureState == 3) {
+                    calculatorState.operandB = calculatorState.operandB.toString() + el.dataset.value
+                }
+            })
+        })
+        document.querySelectorAll(".calculator .operator").forEach((el) => {
+            el.addEventListener("click", () => {
+                if (calculatorState.procedureState == 0 || calculatorState.procedureState == 1) {
+                    calculatorState.procedureState = 2
+                    calculatorState.operator = el.dataset.value
+                } else if (calculatorState.procedureState == 2) {
+                    calculatorState.operator = el.dataset.value
+                }
+            })
+        })
+        document.querySelector(".calculator .equal").addEventListener("click", (el) => {
+            calculatorState.procedureState = 5
+        })
+        document.querySelector(".calculator .dot").addEventListener("click", (el) => {
+            if (calculatorState.procedureState == 0) {
+                calculatorState.operandA = calculatorState.operandA.toString() + "."
+                calculatorState.procedureState += 1
+            } else if (calculatorState.procedureState == 2) {
+                calculatorState.operandB = calculatorState.operandB.toString() + "."
+                calculatorState.procedureState += 1
+            }
+        })
+        document.querySelector(".calculator .reset").addEventListener("click", (el) => {
+            calculatorState.operandA = 0
+            calculatorState.operandB = 0
+            calculatorState.procedureState = 0
+        })
+
+
+
+
+        //demo test case 2:  Snake demo 
+        console.log("demo test case 2")
+
+        let direction = recole1.ref("right")
+
+        let apple = recole1.createReactive({ x: 5, y: 4 })
+        let score = recole1.ref(0)
+        
+        
+        let block5 = recole1.createReactive({ x: 0, y: 1 })
+        let block4 = recole1.createReactive({ x: 0, y: 2 }, block5)
+        let block3 = recole1.createReactive({ x: 0, y: 3 }, block4)
+        let block2 = recole1.createReactive({ x: 0, y: 4 }, block3)
+        let block1 = recole1.createReactive({ x: 1, y: 4 }, block2)//head
+        
+        let blockArray = [block1, block2, block3, block4, block5]
+
+        let blockSet = new Set();//body
+
+        let removeCurrent = function (block) {
+            document
+                .querySelector(`.SnakeGame tr[data-cord='${block.y}']`)
+                .querySelector(`td[data-cord='${block.x}']`)
+                .classList.remove("active")
+        }
+        function getRandomInt(min, max) {
+            min = Math.ceil(min);
+            max = Math.floor(max);
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+        let reStartSnake = ()=>{
+            document.querySelectorAll(".SnakeGame td.active").forEach((el)=>{
+                el.classList.remove("active")
+            })
+            
+            blockArray.forEach((el)=>{
+                recole1.cancel(el)
+            })
+
+            block5 = recole1.createReactive({ x: 0, y: 1 })
+            block4 = recole1.createReactive({ x: 0, y: 2 }, block5)
+            block3 = recole1.createReactive({ x: 0, y: 3 }, block4)
+            block2 = recole1.createReactive({ x: 0, y: 4 }, block3)
+            block1 = recole1.createReactive({ x: 1, y: 4 }, block2)//head
+
+            blockArray = [block1, block2, block3, block4, block5]
+
+            blockSet = new Set();//body
+
+            blockArray.forEach((block, ii) => {
+                let dueBlock = block
+                initSnakeBlock(dueBlock, ii==0?true:false, ii)
+            })
+            score.value = 0
+        }
+        let getRandomPos=()=>{
+            return { x: getRandomInt(0, 6), y: getRandomInt(0, 6) }
+        }
+        let initApple = () => {
+            if (apple) {
+                document
+                    .querySelector(`.SnakeGame tr[data-cord='${apple.y}']`)
+                    .querySelector(`td[data-cord='${apple.x}']`)
+                    .classList.remove("activeRed")
+                recole1.cancel(apple)
+            }
+            
+            let notAvailables = Array.from(blockArray).map(x => JSON.stringify(x))
+            //notAvailables.push(JSON.stringify({ x: block1.x, y: block1.y }))
+            let newPos = getRandomPos()
+            while(
+                notAvailables.indexOf(JSON.stringify(newPos)) != -1
+            ){
+                newPos = getRandomPos()
+            }
+            apple = recole1.createReactive(newPos)
+            recole1.watch(apple, () => {
+                console.log("apple watch")
+                document
+                    .querySelector(`.SnakeGame tr[data-cord='${apple.y}']`)
+                    .querySelector(`td[data-cord='${apple.x}']`)
+                    .classList.add("activeRed")
+            },
+            () => { },
+            { first_effect: true })
+        }
+        let initSnakeBlock = (dueBlock, head=false, str) => {
+            document
+                .querySelector(`.SnakeGame tr[data-cord='${dueBlock.y}']`)
+                .querySelector(`td[data-cord='${dueBlock.x}']`)
+                .classList.add("active")
+            recole1.watch(
+                dueBlock,
+                () => {
+                    let nextBlock = dueBlock.relation_obj()
+                    document
+                        .querySelector(`.SnakeGame tr[data-cord='${dueBlock.y}']`)
+                        .querySelector(`td[data-cord='${dueBlock.x}']`)
+                        .classList.add("active")
+                    if (head) { //snake head
+                        if (JSON.stringify(Object.assign({}, block1)) == JSON.stringify(Object.assign({}, apple))) {
+                            console.log("score!!")
+                            score.value += 1
+                            initApple()
+                            // insert a new block in the reactivity chain
+                            let cache_obj = dueBlock.cache_obj()
+                            let newBlock = recole1.createReactive({ x: cache_obj.x, y: cache_obj.y })
+                            dueBlock.set_relation_obj(newBlock)
+                            newBlock.set_relation_obj(nextBlock)
+                            initSnakeBlock(newBlock, false, "new") 
+                        }
+                        if (Array.from(blockSet).map(x => JSON.stringify(x)).indexOf(JSON.stringify({ x: dueBlock.x, y: dueBlock.y })) != -1) { //check dead
+                            console.log("dead")
+                            reStartSnake()
+                        }else{
+                            blockSet.clear()
+                        }
+                        
+                    }
+                },
+                () => {
+                    let nextBlock = dueBlock.relation_obj()
+                    dueBlock.set_cache_obj({x:dueBlock.x, y:dueBlock.y})
+                    if(str=="new"){
+                        console.log(str)
+                    }
+                    
+                    
+                    if (head) { //snake head
+                        // console.log("move start")
+                    } else {
+                        blockSet.add({ x: dueBlock.x, y: dueBlock.y })
+                    }
+                    if( !nextBlock || (nextBlock.x != dueBlock.x || nextBlock.y != dueBlock.y) ){
+                        removeCurrent(dueBlock)
+                    }
+                    if (nextBlock) {
+                        
+                        nextBlock.x = dueBlock.x
+                        nextBlock.y = dueBlock.y
+                    }
+                }
+            )
+            
+        }
+        initApple()
+
+        blockArray.forEach((block, ii) => {
+            let dueBlock = block
+            initSnakeBlock(dueBlock, ii==0?true:false, ii)
+        })
+
+
+        block1.x = block1.x + 1
+        recole1.watch(score, () => {
+            document.querySelector(".SnakeGame-score").innerHTML = score.value
+            score.set_cache_obj({value: score.value})
+        })
+        
+        let vv
+        document.querySelector(".SnakeGame-control #up").addEventListener("click", () => {
+            if (direction.value == "down") return
+            if(debugMode){
+                vv = (block1.y - 1) % 7
+                if (vv < 0) vv += 7
+                block1.y = vv
+            }
+            direction.value = "up"
+        })
+        document.querySelector(".SnakeGame-control #right").addEventListener("click", () => {
+            if (direction.value == "left") return
+            if(debugMode){
+                vv = (block1.x + 1) % 7
+                if (vv < 0) vv += 7
+                block1.x = vv
+            }
+            direction.value = "right"
+        })
+        document.querySelector(".SnakeGame-control #down").addEventListener("click", () => {
+            if (direction.value == "up") return
+            if(debugMode){
+                vv = (block1.y + 1) % 7
+                if (vv < 0) vv += 7
+                block1.y = vv
+            }
+            
+            direction.value = "down"
+        })
+        document.querySelector(".SnakeGame-control #left").addEventListener("click", () => {
+            if (direction.value == "right") return
+            if(debugMode){
+                vv = (block1.x - 1) % 7
+                if (vv < 0) vv += 7
+                block1.x = vv
+            }
+            
+            direction.value = "left"
+        })
+        if(debugMode){
+
+        }else{
+            setInterval(() => {
+                let vv
+                switch (direction.value) {
+                    case "up":
+                        vv = (block1.y - 1) % 7
+                        if (vv < 0) vv += 7
+                        block1.y = vv
+                        break;
+                    case "right":
+                        vv = (block1.x + 1) % 7
+                        if (vv < 0) vv += 7
+                        block1.x = vv
+                        break;
+                    case "down":
+                        vv = (block1.y + 1) % 7
+                        if (vv < 0) vv += 7
+                        block1.y = vv
+                        break;
+                    case "left":
+                        vv = (block1.x - 1) % 7
+                        if (vv < 0) vv += 7
+                        block1.x = vv
+                        break;
+                
+                    default:
+                        break;
+                }
+            }, 300);
+        }
+        document.addEventListener('keydown', function(el) {
+            switch (el.keyCode) {
+                case 38:
+                    if (direction.value == "down") return
+                    direction.value = "up"
+                    break;
+                case 39:
+                    if (direction.value == "left") return
+                    direction.value = "right"
+                    break;
+                case 40:
+                    if (direction.value == "up") return
+                    direction.value = "down"
+                    break;
+                case 37:
+                    if (direction.value == "right") return
+                    direction.value = "left"
+                    break;
+            }
+        });
+
+        
+
+
+    </script>
+</body>
+
+</html>
