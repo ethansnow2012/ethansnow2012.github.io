@@ -8,7 +8,14 @@
     <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js"></script>
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/default.min.css">
     <script>hljs.initHighlightingOnLoad()</script>
-
+    <script>
+        window.addEventListener("keydown", function(e) {
+            // space and arrow keys
+            if([32, 37, 38, 39, 40].indexOf(e.keyCode) > -1) {
+                e.preventDefault();
+            }
+        }, false);
+    </script>
     <style>
         h1{
             font-size: 34px;
@@ -500,8 +507,8 @@
     <div>
         <h1 >SnakeGame</h1>
         <div>
-            <div class="SnakeGame-scorelabel">Score: </div>
-            <div class="SnakeGame-score">0</div>
+            <div class="SnakeGame-scorelabel" style="font-size: 1.5em;">Score: </div>
+            <div class="SnakeGame-score" style="font-size: 1.5em;">0</div>
         </div>
         <table class="SnakeGame">
             <tbody>
