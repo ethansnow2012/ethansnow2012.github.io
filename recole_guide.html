@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js"></script>
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/default.min.css">
+    <script>hljs.initHighlightingOnLoad()</script>
+</head>
+<body>
+    <style>
+        .mainContent{
+            
+        }
+        .g-h2{
+
+        }
+        .p-complement{
+            padding-left: 20px;
+            position: relative;
+        }
+        .p-complement::before{
+            content: "";
+            position: absolute;
+            height: 100%;
+            width: 4px;
+            left: 0;
+            top: 0;
+            background: #d2d2d2;
+        }
+        .g2-content > *{
+            margin-top: 0;
+            margin-bottom: 0;
+        }
+        .g2-content > p + p{
+            margin-top: 10px;
+        }
+    </style>
+    <div class="mainContent">
+        <h2 class="g-h2">
+            Getting Started
+        </h2>
+        <h3 class="g-h3">
+            Introduction
+        </h3>
+        <div class="g2-content">
+            <p>
+                In reactivity programming paradigm, we mainly focus on two things, "reactive state" && "effect", to minimize unnecessary states(i.e flag) and accomplish complex system with a concise codebase. We do programming in a hoping-the-effect-happen-by-itself manner. After delared the states and effects, which is the relationships between states, we interact with the program just by reassigning the state and let effect to take place by itself.
+            </p>
+        </div>
+        
+        <h3 class="g-h3">
+            Initialize a Instance 
+        </h3>
+        <div class="g2-content">
+            <p>
+                <pre>
+                    <code class="javascript">
+let recole1 = new recole()
+                    </code>
+                </pre>
+            </p>
+        </div>
+        
+        <h3 class="g-h3">
+            Reactive Object
+        </h3>
+        <div class="g2-content">
+            <p>
+                The method "createReactive" return a reactive object that invokes corresponding effects when properties being assigned.
+            </p>
+            <p>
+                <pre>
+                    <code class="html">
+&lt;div class="counter" id="counter1"&gt;
+    &lt;div class="counter-label"&gt;
+
+    &lt;/div&gt;
+    &lt;div class="counter-value"&gt;
+        0
+    &lt;/div&gt;
+&lt;/div&gt;
+&lt;script&gt;
+    let counter = recole1.createReactive({ counter_value: 5, label: "Value of Counter no.1" })
+    recole1.effect(()=&gt;{
+        document.querySelector("#counter1 .counter-label").innerHTML = counter.label
+    })
+    recole1.effect(()=&gt;{
+        document.querySelector("#counter1 .counter-value").innerHTML = counter.counter_value
+    })
+    counter.label = "Value of Counter no.2" // invoke effect by assigning
+    counter.counter_value = 10  // invoke effect by assigning
+&lt;/script&gt;
+                    </code>
+                </pre>
+            </p>
+        </div>
+        
+        <h3 class="g-h3">
+            Ref
+        </h3>
+        <div class="g2-content">
+            <p>
+                Sometimes you just need a value instead of object. Use ref. And access it by "xx.value".
+                <pre>
+                    <code class="javascript">
+let name = recole1.ref("")
+recole1.effect(()=>{ 
+    console.log(name.value)
+})
+name.value = "My name is John." // invoke the above effect.
+                    </code>
+                </pre>
+            </p>
+        </div>
+        
+        <h3 class="g-h3">
+            Chaining Effects
+        </h3>
+        <div class="g2-content">
+            <p>
+                Effects are implictly chainable by assigning and being assigned. Using effects to descript the relations between states, we can start to imagine how states and effects alone can compose a system.
+            </p>
+            <p>
+                <pre>
+                    <code class="html">
+&lt;div id="full_name">&lt;/div&gt;
+&lt;script&gt;
+let first_name = recole1.ref("John")
+let last_name = recole1.ref("Snow")
+let full_name = recole1.ref("")
+recole1.effect(()=>{ 
+    full_name.value = `My name is ${first_name.value} ${last_name.value}.`
+})
+recole1.effect(()=>{ 
+    document.querySelector("#full_name").innerHTML = full_name.value
+})
+first_name.value = "Jon" // change John to Jon
+
+&lt;/script&gt;
+                    </code>
+                </pre>
+            </p>
+        </div>
+        
+        <h3 class="g-h3">
+            Computed
+        </h3>
+        <div class="g2-content">
+            <p>
+                A short cut to declare ref with effect at once.
+            </p>
+            <p>
+            <pre>
+                <code class="javascript">
+&lt;script&gt;
+let somePrice = recole1.ref(100)
+let discountPrice = recole1.computed(()=>{
+    return somePrice.value - 10
+})
+console.log(discountPrice.value)// 100 - 10 equal 90
+somePrice.value = 50
+console.log(discountPrice.value)// 50 - 10 equal 40
+&lt;/script&gt;
+                </code>
+            </pre>            
+            </p>
+        </div>
+        
+        <h3 class="g-h3">
+            Reactivity in Declaration
+        </h3>
+        <div class="g2-content">
+            <p>
+                It would be convenient to directly declare reactivity in the creation of the reactive object.
+            </p>
+            <p class="p-complement">
+                To reference other object's property, refer it by an object with "ref" and "key". 
+            </p>
+            <p>
+                <pre>
+                    <code class="javascript">
+let product1 =  recole1.createReactive({ price: 10, quantity: 1 })
+let product2 = recole1.createReactive({ price: {ref: product1, key: "price"}, quantity: 1 }) // declare object that is reactive with other reactive object
+console.log(product2.price) // 10
+product1.price = 11 // change the price of product1
+console.log(product2.price) // 10
+product1.price = product1.price * 2 
+console.log(product2.price) // 22
+                    </code>
+                </pre>  
+            </p>
+            <p class="p-complement">
+                If the refered object is of the type of "ref", use "value" as the key.
+            </p>
+        </div>
+        
+        <h3 class="g-h3">
+            Watch
+        </h3>
+        <div class="g2-content">
+            <p>
+                To invoke functions, whenever there is some change happened to reactive object, use "watch" method.
+            </p>
+            <p>
+                <pre>
+                    <code class="javascript">
+let product = recole1.createReactive({price:10, quantity:16})
+recole1.watch(product, ()=>{
+    console.log("Product quantity changed!!")
+})
+product.quantity -= 1
+product.quantity += 1
+                    </code>
+                </pre>
+            </p>
+            <p>
+                Sometimes, you would want to invoke functions before the value being assigned. Pass in a function in the third parameter.
+            </p>
+            <p>
+                <pre>
+                    <code class="javascript">
+let product = recole1.createReactive({price:10, quantity:16})
+recole1.watch(
+    product, 
+    ()=>{
+        console.log(`Product quantity changed!! Quantity: ${product.quantity}`)
+    },
+    ()=>{
+        console.log(`Product quantity not yet changed!! Quantity: ${product.quantity}`)
+    }
+)
+product.quantity -= 1
+
+                    </code>
+                </pre>
+            </p>
+            <p>
+                And sometimes, you would like to pass share data between the two functions passed in. Use set_cache_obj and cache_obj methods.
+            </p>
+            <pre>
+                <code class="javascript">
+let product = recole1.createReactive({price:10, quantity:16})
+recole1.watch(
+    product, 
+    ()=>{
+      if(product.cache_obj().cached_value > product.quantity){
+        console.log("Product increased")
+      }else{
+        console.log("Product decreased")
+      }
+    },
+    ()=>{
+        product.set_cache_obj({cached_value: product.quantity})
+        
+    }
+)
+product.quantity -= 1
+product.quantity += 1
+                </code>
+            </pre>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,1 +1,25 @@
 Greetings.
+<script src="https://cdn.jsdelivr.net/npm/recole"></script>
+<script>
+  let recole1 = new recole()
+</script>
+
+<script>
+let product = recole1.createReactive({price:10, quantity:16})
+recole1.watch(
+    product, 
+    ()=>{
+      if(product.cache_obj().cached_value > product.quantity){
+        console.log("Product increased")
+      }else{
+        console.log("Product decreased")
+      }
+    },
+    ()=>{
+        product.set_cache_obj({cached_value: product.quantity})
+        
+    }
+)
+product.quantity -= 1
+product.quantity += 1
+</script>
