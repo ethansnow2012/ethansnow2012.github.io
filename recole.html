@@ -8,6 +8,12 @@
     <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js"></script>
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/default.min.css">
     <script>hljs.initHighlightingOnLoad()</script>
+    <style>
+        body{
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+    </style>
     <script>
         window.addEventListener("keydown", function(e) {
             // space and arrow keys
@@ -268,7 +274,56 @@
 </head>
 
 <body>
-
+    <div class="g-nav">
+        <style>
+            body{
+                padding-top: 140px;
+            }
+            .g-nav{
+                position: fixed;
+                top: 0;
+                right: 0;
+                width: 250px;
+                height: 250px;
+                background: #b5b5b5;
+                z-index: 100;
+            }
+            .g-nav-i{
+                position: absolute;
+                font-size: 1.3em;
+                display: block;
+                text-decoration: none;
+                color: black;
+            }
+            .g-nav-i::before{
+                content: "→";
+                color: #5454c0cf;
+                font-weight: bolder;
+                font-size: 1.1em;
+            }
+            .g-nav-i[item1]{
+                top: 47px;
+                left: 42px;
+            } 
+            .g-nav-i[item2]{
+                top: 106px;
+                left: 91px;
+            }
+            .g-nav-i[item3]{
+                top: 177px;
+                left: 67px;
+            }                    
+        </style>
+        <a class="g-nav-i" item1 href="https://github.com/ethansnow2012/recole">
+            Github
+        </a>
+        <a class="g-nav-i" item2 href="/dist/recole.html">
+            Demo Cases
+        </a>
+        <a class="g-nav-i" item3 href="/dist/recole_guide.html">
+            Getting Start
+        </a>
+    </div>
 
 
     <style>
