@@ -17,6 +17,18 @@
         };
       </script>
       <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js"></script>
-    
+      <button id='aaa_btn'>aaa</button>
+      <script>
+          document.querySelector('#aaa_btn').addEventListener('click', ()=>{
+            FB.api(
+                '/107357024199106/feed',
+                'POST',
+                {"message":"sdfasfa"},
+                function(response) {
+                    // Insert your code here
+                }
+                );
+          })
+      </script>
 </body>
 </html>
