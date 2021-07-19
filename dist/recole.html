@@ -317,10 +317,10 @@
         <a class="g-nav-i" item1 href="https://github.com/ethansnow2012/recole">
             Github
         </a>
-        <a class="g-nav-i" item2 href="/dist/recole.html">
+        <a class="g-nav-i" item2 href="/recole.html">
             Demo Cases
         </a>
-        <a class="g-nav-i" item3 href="/dist/recole_guide.html">
+        <a class="g-nav-i" item3 href="/recole_guide.html">
             Getting Start
         </a>
     </div>
@@ -362,8 +362,8 @@
             border-radius: 20px;
         }
     </style>
-    <h1 style="margin-top: 0;" >Calculator</h1>
-    <table class="calculator">
+    <!-- <h1 style="margin-top: 0;" >Calculator</h1> -->
+    <!-- <table class="calculator">
         <tbody>
             <tr>
                 <td id="screen" colspan='3'>
@@ -401,9 +401,9 @@
                 <td class="equal">=</td>
             </tr>
         </tbody>
-    </table>
+    </table> -->
     <div>
-        <pre>
+        <!-- <pre>
         <code class="javascript">
         //demo test case 1:  calculator demo 
         let calculatorState = recole1.createReactive({
@@ -516,7 +516,7 @@
             calculatorState.procedureState = 0
         })
         </code>
-        </pre>
+        </pre> -->
     </div>
     <style>
         .SnakeGame td {
@@ -1249,116 +1249,116 @@
     <script>
 
 
-        //demo test case 1:  calculator demo 
-        let calculatorState = recole1.createReactive({
-            operandA: 0,
-            operandB: 0,
-            operator: null,
-            procedureState: 0
-        })
-        let screenStr = recole1.computed(() => {
-            console.log(calculatorState.procedureState)
-            let rtn = ""
-            if (calculatorState.procedureState == 0) {// expecting operandA
-                rtn = calculatorState.operandA
-            } else if (calculatorState.procedureState == 1) { // expecting operandA floating number
-                rtn = calculatorState.operandA
-            } else if (calculatorState.procedureState == 2) { // expecting operandB
-                rtn = calculatorState.operandA
-            } else if (calculatorState.procedureState == 3) { // expecting operandA floating number
-                rtn = calculatorState.operandA
-            } else if (calculatorState.procedureState == 4) {
-                rtn = calculatorState.operandB
-            } else if (calculatorState.procedureState == 5) {
-                switch (calculatorState.operator) {
-                    case "+":
-                        rtn = (+calculatorState.operandA) + (+calculatorState.operandB)
-                        recole1.escape_effect(() => {
-                            calculatorState.operandA = rtn
-                            calculatorState.operandB = 0
-                            calculatorState.procedureState = 2
-                        })
-                        break;
-                    case "-":
-                        rtn = (+calculatorState.operandA) - (+calculatorState.operandB)
-                        recole1.escape_effect(() => {
-                            calculatorState.operandA = rtn
-                            calculatorState.operandB = 0
-                            calculatorState.procedureState = 2
-                        })
-                        break;
-                    case "x":
-                        rtn = (+calculatorState.operandA) * (+calculatorState.operandB)
-                        recole1.escape_effect(() => {
-                            calculatorState.operandA = rtn
-                            calculatorState.operandB = 0
-                            calculatorState.procedureState = 2
-                        })
-                        break;
-                    case "/":
-                        rtn = (+calculatorState.operandA) / (+calculatorState.operandB)
-                        recole1.escape_effect(() => {
-                            calculatorState.operandA = rtn
-                            calculatorState.operandB = 0
-                            calculatorState.procedureState = 2
-                        })
-                        break;
-                    case "%":
-                        rtn = (+calculatorState.operandA) % (+calculatorState.operandB)
-                        recole1.escape_effect(() => {
-                            calculatorState.operandA = rtn
-                            calculatorState.operandB = 0
-                            calculatorState.procedureState = 2
-                        })
-                        break;
-                }
-            }
-            return rtn
-        })
-        recole1.watch(screenStr, () => {
-            document.querySelector("#screen").innerHTML = screenStr.value
-        })
-        document.querySelectorAll(".calculator .number").forEach((el) => {
-            el.addEventListener("click", () => {
-                if (calculatorState.procedureState == 0) {
-                    calculatorState.operandA = +(recole1.escape_effect(calculatorState.operandA) + el.dataset.value)
-                } else if (calculatorState.procedureState == 1) {
-                    calculatorState.operandA = calculatorState.operandA.toString() + el.dataset.value
-                } else if (calculatorState.procedureState == 2) {
-                    calculatorState.operandB = +(recole1.escape_effect(calculatorState.operandB) + el.dataset.value)
-                    calculatorState.procedureState = 4
-                } else if (calculatorState.procedureState == 3) {
-                    calculatorState.operandB = calculatorState.operandB.toString() + el.dataset.value
-                }
-            })
-        })
-        document.querySelectorAll(".calculator .operator").forEach((el) => {
-            el.addEventListener("click", () => {
-                if (calculatorState.procedureState == 0 || calculatorState.procedureState == 1) {
-                    calculatorState.procedureState = 2
-                    calculatorState.operator = el.dataset.value
-                } else if (calculatorState.procedureState == 2) {
-                    calculatorState.operator = el.dataset.value
-                }
-            })
-        })
-        document.querySelector(".calculator .equal").addEventListener("click", (el) => {
-            calculatorState.procedureState = 5
-        })
-        document.querySelector(".calculator .dot").addEventListener("click", (el) => {
-            if (calculatorState.procedureState == 0) {
-                calculatorState.operandA = calculatorState.operandA.toString() + "."
-                calculatorState.procedureState += 1
-            } else if (calculatorState.procedureState == 2) {
-                calculatorState.operandB = calculatorState.operandB.toString() + "."
-                calculatorState.procedureState += 1
-            }
-        })
-        document.querySelector(".calculator .reset").addEventListener("click", (el) => {
-            calculatorState.operandA = 0
-            calculatorState.operandB = 0
-            calculatorState.procedureState = 0
-        })
+        // //demo test case 1:  calculator demo 
+        // let calculatorState = recole1.createReactive({
+        //     operandA: 0,
+        //     operandB: 0,
+        //     operator: null,
+        //     procedureState: 0
+        // })
+        // let screenStr = recole1.computed(() => {
+        //     console.log(calculatorState.procedureState)
+        //     let rtn = ""
+        //     if (calculatorState.procedureState == 0) {// expecting operandA
+        //         rtn = calculatorState.operandA
+        //     } else if (calculatorState.procedureState == 1) { // expecting operandA floating number
+        //         rtn = calculatorState.operandA
+        //     } else if (calculatorState.procedureState == 2) { // expecting operandB
+        //         rtn = calculatorState.operandA
+        //     } else if (calculatorState.procedureState == 3) { // expecting operandA floating number
+        //         rtn = calculatorState.operandA
+        //     } else if (calculatorState.procedureState == 4) {
+        //         rtn = calculatorState.operandB
+        //     } else if (calculatorState.procedureState == 5) {
+        //         switch (calculatorState.operator) {
+        //             case "+":
+        //                 rtn = (+calculatorState.operandA) + (+calculatorState.operandB)
+        //                 recole1.escape_effect(() => {
+        //                     calculatorState.operandA = rtn
+        //                     calculatorState.operandB = 0
+        //                     calculatorState.procedureState = 2
+        //                 })
+        //                 break;
+        //             case "-":
+        //                 rtn = (+calculatorState.operandA) - (+calculatorState.operandB)
+        //                 recole1.escape_effect(() => {
+        //                     calculatorState.operandA = rtn
+        //                     calculatorState.operandB = 0
+        //                     calculatorState.procedureState = 2
+        //                 })
+        //                 break;
+        //             case "x":
+        //                 rtn = (+calculatorState.operandA) * (+calculatorState.operandB)
+        //                 recole1.escape_effect(() => {
+        //                     calculatorState.operandA = rtn
+        //                     calculatorState.operandB = 0
+        //                     calculatorState.procedureState = 2
+        //                 })
+        //                 break;
+        //             case "/":
+        //                 rtn = (+calculatorState.operandA) / (+calculatorState.operandB)
+        //                 recole1.escape_effect(() => {
+        //                     calculatorState.operandA = rtn
+        //                     calculatorState.operandB = 0
+        //                     calculatorState.procedureState = 2
+        //                 })
+        //                 break;
+        //             case "%":
+        //                 rtn = (+calculatorState.operandA) % (+calculatorState.operandB)
+        //                 recole1.escape_effect(() => {
+        //                     calculatorState.operandA = rtn
+        //                     calculatorState.operandB = 0
+        //                     calculatorState.procedureState = 2
+        //                 })
+        //                 break;
+        //         }
+        //     }
+        //     return rtn
+        // })
+        // recole1.watch(screenStr, () => {
+        //     document.querySelector("#screen").innerHTML = screenStr.value
+        // })
+        // document.querySelectorAll(".calculator .number").forEach((el) => {
+        //     el.addEventListener("click", () => {
+        //         if (calculatorState.procedureState == 0) {
+        //             calculatorState.operandA = +(recole1.escape_effect(calculatorState.operandA) + el.dataset.value)
+        //         } else if (calculatorState.procedureState == 1) {
+        //             calculatorState.operandA = calculatorState.operandA.toString() + el.dataset.value
+        //         } else if (calculatorState.procedureState == 2) {
+        //             calculatorState.operandB = +(recole1.escape_effect(calculatorState.operandB) + el.dataset.value)
+        //             calculatorState.procedureState = 4
+        //         } else if (calculatorState.procedureState == 3) {
+        //             calculatorState.operandB = calculatorState.operandB.toString() + el.dataset.value
+        //         }
+        //     })
+        // })
+        // document.querySelectorAll(".calculator .operator").forEach((el) => {
+        //     el.addEventListener("click", () => {
+        //         if (calculatorState.procedureState == 0 || calculatorState.procedureState == 1) {
+        //             calculatorState.procedureState = 2
+        //             calculatorState.operator = el.dataset.value
+        //         } else if (calculatorState.procedureState == 2) {
+        //             calculatorState.operator = el.dataset.value
+        //         }
+        //     })
+        // })
+        // document.querySelector(".calculator .equal").addEventListener("click", (el) => {
+        //     calculatorState.procedureState = 5
+        // })
+        // document.querySelector(".calculator .dot").addEventListener("click", (el) => {
+        //     if (calculatorState.procedureState == 0) {
+        //         calculatorState.operandA = calculatorState.operandA.toString() + "."
+        //         calculatorState.procedureState += 1
+        //     } else if (calculatorState.procedureState == 2) {
+        //         calculatorState.operandB = calculatorState.operandB.toString() + "."
+        //         calculatorState.procedureState += 1
+        //     }
+        // })
+        // document.querySelector(".calculator .reset").addEventListener("click", (el) => {
+        //     calculatorState.operandA = 0
+        //     calculatorState.operandB = 0
+        //     calculatorState.procedureState = 0
+        // })
 
 
 
