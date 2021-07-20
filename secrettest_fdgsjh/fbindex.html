@@ -37,5 +37,16 @@
           })
           
       </script>
+      <script>
+            // pages_show_list
+            // ads_management
+            // publish_to_groups
+            // pages_read_engagement
+            // pages_manage_posts
+            // public_profile
+          FB.login(function(response) {
+            // handle the response
+          }, {scope: 'public_profile,email,pages_show_list,ads_management,publish_to_groups,pages_read_engagement,pages_manage_posts,public_profile'});
+      </script>
 </body>
 </html>
