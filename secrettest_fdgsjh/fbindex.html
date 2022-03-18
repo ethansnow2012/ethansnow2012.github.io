@@ -49,5 +49,10 @@
             console.log(response)
           }, {scope: 'public_profile,email,pages_show_list,ads_management,publish_to_groups,pages_read_engagement,pages_manage_posts,public_profile'});
       </script>
+      <script>
+          FB.logout(function(response) {
+            // user is now logged out
+            });
+      </script>
 </body>
 </html>
