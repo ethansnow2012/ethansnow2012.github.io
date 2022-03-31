@@ -2,8 +2,23 @@
   padding: 0;
   margin: 0;
 }
+:focus-visible{
+  outline: none;
+}
 
-
+/*
+  Theme:
+*/
+:root{
+  --color-blue-visual-weight: #282c34;
+  --color-basic-background: grey;
+}
+/*
+  Theme:
+*/
+:root{
+  --chakra-colors-gray-200: red !important;
+}
 
 
 

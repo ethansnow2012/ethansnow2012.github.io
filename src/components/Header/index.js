@@ -6,7 +6,7 @@ const Styled = styled.div`
     padding-top:15vmin;
     padding-bottom:15vmin;
     color: white;
-    background-color: #282c34;
+    background-color: var(--color-blue-visual-weight);
     justify-content: center;
     display: flex;
 `
