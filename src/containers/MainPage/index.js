@@ -3,18 +3,28 @@ import { Header, FilterTagWrapper, SubjectCardWrapper } from 'components'
 import {CSelect} from 'hoc/instance'
 import styled from 'styled-components'
 import { BaseContentSpacing } from 'containers/Functional'
+import { fakeTopics, fakeTags, fakeCategory } from 'testData/data'
+
 
 const Styled = styled.div`
     min-height: 100vh;
     background: var(--color-basic-background);
     .p-select-wrapper{
-        max-width:350px;
+        //max-width:350px;
         margin-left:auto;
         margin-right:auto;
     }
     .p-content-wrapper{
         background: white;
         padding: 5vmin 10vmin;
+    }
+    .p-select-wrapper-i1{
+        max-width:350px;
+        margin:auto;
+    }
+    .p-select-wrapper-i2{
+        max-width:600px;
+        margin:auto;
     }
 `
 
@@ -25,17 +35,24 @@ export function MainPage() {
             <Header></Header>
             <BaseContentSpacing>
                 <div className='p-select-wrapper'>
-                    <div>
+                    <div className='p-select-wrapper-i1'>
                         <CSelect>
-                            <option value='option1'>Option 1</option>
-                            <option value='option2'>Option 2</option>
-                            <option value='option3'>Option 3</option>
+                            {
+                                fakeCategory.data.map(()=>{
+                                    return (
+                                        <option value='option1'>Option 1</option>
+                                    )
+                                })
+                            }
                         </CSelect>
                     </div>
-                    <FilterTagWrapper data={[1,2,3]}></FilterTagWrapper>
+                    <div className='p-select-wrapper-i2'>
+                        <FilterTagWrapper data={fakeTags.data}></FilterTagWrapper>
+                    </div>
+                    
                 </div> 
                 <div className='p-content-wrapper'>
-                    <SubjectCardWrapper></SubjectCardWrapper>
+                    <SubjectCardWrapper data={fakeTopics.data}></SubjectCardWrapper>
                 </div>
             </BaseContentSpacing>
         </Styled>

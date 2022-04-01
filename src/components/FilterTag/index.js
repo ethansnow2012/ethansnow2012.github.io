@@ -2,6 +2,7 @@ import React from 'react'
 import styled from 'styled-components'
 const Styled = styled.div`
     position: relative;
+    min-width: max-content;
     &::before{
         content: '';
         width: 10px;
@@ -14,10 +15,10 @@ const Styled = styled.div`
     }
 `
 
-export function FilterTag({children}){
+export function FilterTag({children, tagData}){
     return (
         <Styled>
-            sssss
+            {tagData.name}
         </Styled>
     )
 }
