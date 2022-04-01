@@ -13,11 +13,10 @@ const Styled = styled.div`
 `
 
 export function SubjectCardWrapper({children, data}){
-    const [cardData, setCardData] = useState(data)
     return (
         <Styled>
             {
-                cardData.map((dataEl)=>{
+                data.filter(x=>x.display).map((dataEl)=>{
                     return (
                         <SubjectCard key={dataEl.id} data={dataEl} ></SubjectCard>
                     )

@@ -15,3 +15,5 @@ export function BaseContentSpacing({children}) {
         </Styled>
     )
 }
+
+export const DefaultStyle = Styled

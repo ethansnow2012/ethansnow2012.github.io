@@ -3,6 +3,7 @@ import styled from 'styled-components'
 const Styled = styled.div`
     position: relative;
     min-width: max-content;
+    ---color-filter-tag:${props=>props.color??''};
     &::before{
         content: '';
         width: 10px;
@@ -12,12 +13,13 @@ const Styled = styled.div`
         margin-right: 5px;
         position: relative;
         top: 1px;
+        background: var(---color-filter-tag);
     }
 `
 
 export function FilterTag({children, tagData}){
     return (
-        <Styled>
+        <Styled color={tagData.color}>
             {tagData.name}
         </Styled>
     )

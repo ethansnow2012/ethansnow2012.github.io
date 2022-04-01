@@ -10,42 +10,50 @@ fakeTags = {
         {//0
             id: faker.datatype.uuid(),
             name: faker.commerce.productName(),
-            description: faker.commerce.productDescription()
+            description: faker.commerce.productDescription(),
+            color: faker.internet.color(),
         },
         {//1
             id: faker.datatype.uuid(),
             name: faker.commerce.productName(),
-            description: faker.commerce.productDescription()
+            description: faker.commerce.productDescription(),
+            color: faker.internet.color(),
         },
         {//2
             id: faker.datatype.uuid(),
             name: faker.commerce.productName(),
-            description: faker.commerce.productDescription()
+            description: faker.commerce.productDescription(),
+            color: faker.internet.color(),
         },
         {//3
             id: faker.datatype.uuid(),
             name: faker.commerce.productName(),
-            description: faker.commerce.productDescription()
+            description: faker.commerce.productDescription(),
+            color: faker.internet.color(),
         },
         {//4
             id: faker.datatype.uuid(),
             name: faker.commerce.productName(),
-            description: faker.commerce.productDescription()
+            description: faker.commerce.productDescription(),
+            color: faker.internet.color(),
         },
         {//5
             id: faker.datatype.uuid(),
             name: faker.commerce.productName(),
-            description: faker.commerce.productDescription()
+            description: faker.commerce.productDescription(),
+            color: faker.internet.color(),
         },
         {//6
             id: faker.datatype.uuid(),
             name: faker.commerce.productName(),
-            description: faker.commerce.productDescription()
+            description: faker.commerce.productDescription(),
+            color: faker.internet.color(),
         },
         {//7
             id: faker.datatype.uuid(),
             name: faker.commerce.productName(),
-            description: faker.commerce.productDescription()
+            description: faker.commerce.productDescription(),
+            color: faker.internet.color(),
         }
     ]
 }
@@ -73,6 +81,7 @@ fakeCategory = {
         {
             id: faker.datatype.uuid(),
             name: 'Category Three',
+            selected:true,
             tags:[
                 fakeTags.data[2].id,
             ]

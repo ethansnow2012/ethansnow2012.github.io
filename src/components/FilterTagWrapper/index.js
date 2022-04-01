@@ -17,9 +17,9 @@ export function FilterTagWrapper({children, data}){
     return (
         <Styled>
             {
-                data.map((tagData)=>{
+                data.filter(x=>x.display).map((tagData)=>{
                     return (
-                        <FilterTag tagData={tagData}></FilterTag>
+                        <FilterTag key={tagData.id} tagData={tagData}></FilterTag>
                     )
                 })
             }
