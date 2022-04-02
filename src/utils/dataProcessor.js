@@ -12,6 +12,7 @@ function injectStyleState (data){
 }
 
 function toggleDisplayViaKeyAndId (data, layerNum, key, id ){
+    data = JSON.parse(JSON.stringify(data))
     if(Array.isArray(id)){
         const idArray = id
         if(layerNum==2 && data.data){
@@ -40,6 +41,7 @@ function toggleDisplayViaKeyAndId (data, layerNum, key, id ){
     } 
 }
 function toggleDisplayViaArrayOfIds(data, layerNum, arrayOfIds ){
+    data = JSON.parse(JSON.stringify(data))
     if(layerNum==2 && data.data){
         data.data.forEach((el)=>{
             let indexOf = arrayOfIds.indexOf(el['id'])

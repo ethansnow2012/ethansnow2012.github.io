@@ -6,7 +6,7 @@ const Styled = styled.div`
     background: black;
     width: 200px;
     height: 140px;
-    margin: 5px;
+    margin: 5px auto;
     padding: 10px 15px;
     color: white;
     & .topic{

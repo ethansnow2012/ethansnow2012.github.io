@@ -22,10 +22,15 @@ const Styled = styled.div`
         margin-right:auto;
     }
     & .p-select-wrapper > * + * {
-        margin-top: 10vmin;
+        margin-top: min(10vmin, 2em);
+    }
+    .p-content-wrapper-outter{
+        position: relative;
+        overflow: hidden;
+        transition: all 1s ease-out;
+        background: white;
     }
     .p-content-wrapper{
-        background: white;
         padding: 5vmin 10vmin;
     }
     .p-select-wrapper-i1{
@@ -39,12 +44,17 @@ const Styled = styled.div`
         margin-left:auto;
     }
     .p-select-wrapper-i2 * > *{
-        margin-top: 8vmin;
+        margin-top: min(8vmin, 23px);
     }
 `
 const _fakeCategory = injectStyleState(fakeCategory)
 const _fakeTags = injectStyleState(fakeTags)
 const _fakeTopics = injectStyleState(fakeTopics)
+
+function arraysEqual(a1,a2) {
+    /* WARNING: arrays must not contain {objects} or behavior may be undefined */
+    return JSON.stringify(a1)==JSON.stringify(a2);
+}
 
 export function MainPage() {
     const Raw_fakeCategory = useRef(_fakeCategory)
@@ -65,18 +75,6 @@ export function MainPage() {
     const [fakeTagState, setFakeTagState] = useState(Raw_fakeTags.current)
     const [fakeTopicState, setFakeTopicState] = useState(Raw_fakeTopics.current)
     
-    
-    const click = ()=>{
-        setFakeTopicState((self)=>{
-            let newSelf = {
-                ...self
-            }
-            newSelf.data[0].display = false
-            
-            console.log('newSelf', newSelf, newSelf.data[0].display)
-            return newSelf
-        })
-    }
     const select = (ev)=>{
         const selectedId = ev.currentTarget.value 
         refActiveCategory.current = Raw_fakeCategory.current.data.filter(x=>x.id==selectedId)[0]
@@ -98,11 +96,15 @@ export function MainPage() {
     }
     useEffect(()=>{
         //let categoryId = refCategoryId.current
-        console.log('useEffect1')
+        
         let categoryObject = refActiveCategory.current//Raw_fakeCategory.current.data.filter(x=>categoryId==x.id)[0]
         setFakeTagState((self)=>{
             const newSelf = toggleDisplayViaArrayOfIds(self, 2, categoryObject['tags'])
             refActiveTags.current = newSelf.data.filter(x=>x.display)
+            console.log('useEffect1')
+            if(arraysEqual(self.data, newSelf.data)){// prevent same value
+                return {...self}
+            }
             return {...newSelf}            
         })
         
@@ -110,22 +112,20 @@ export function MainPage() {
     }, [fakeCategoryState]) //cascading effect: fakeCategoryState -> fakeTagState
 
     useEffect(()=>{
-        //get tag ids
-        console.log('useEffect2', refActiveTags.current)
+        console.log('useEffect2')
         setFakeTopicState((self)=>{
             const newSelf = toggleDisplayViaKeyAndId(self, 2 , 'tags', refActiveTags.current.map(x=>x.id))
+            if(arraysEqual(self.data, newSelf.data)){// prevent same value
+                return {...self}
+            }
             return {...newSelf}   
         })
-        //refTagIds
     }, [fakeTagState]) //cascading effect: fakeTagState -> fakeTopicState
     
     return (
         <Styled>
             <Header></Header>
             <BaseContentSpacing>
-                <div onClick={click}>
-                    BTN
-                </div>
                 <div className='p-select-wrapper'>
                     <div className='p-select-wrapper-i1'>
                         <CSelect  defaultValue={fakeCategoryState.data.filter(x=>x.selected)[0].id} onChange={select}>
@@ -145,8 +145,10 @@ export function MainPage() {
                     </div>
                     
                 </div> 
-                <div className='p-content-wrapper'>
-                    <SubjectCardWrapper data={fakeTopicState.data}></SubjectCardWrapper>
+                <div className='p-content-wrapper-outter'>
+                    <div className='p-content-wrapper'>
+                        <SubjectCardWrapper data={fakeTopicState.data}></SubjectCardWrapper>
+                    </div>
                 </div>
             </BaseContentSpacing>
         </Styled>

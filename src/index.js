@@ -16,11 +16,11 @@ const container = document.getElementById('root');
 
 const root = createRoot(container);
 root.render(
-  <React.StrictMode>
+  // <React.StrictMode>
     <ChakraProvider theme={theme}>
       <App />
     </ChakraProvider>
-  </React.StrictMode>
+  // </React.StrictMode>
 )
 
 reportWebVitals();
