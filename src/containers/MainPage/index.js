@@ -85,7 +85,8 @@ export function MainPage() {
                 fakeCategory.data.unshift({
                     id: faker.datatype.uuid(),
                     name: 'All',
-                    tags: fakeTags.data.map(x=>x.id)
+                    tags: fakeTags.data.map(x=>x.id),
+                    selected:true,
                 })
                 
                 const _fakeCategory = injectStyleState(fakeCategory)

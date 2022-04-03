@@ -81,7 +81,6 @@ fakeCategory = {
         {
             id: faker.datatype.uuid(),
             name: 'Category Three',
-            selected:true,
             tags:[
                 fakeTags.data[2].id,
             ]
