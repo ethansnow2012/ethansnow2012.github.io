@@ -53,7 +53,7 @@ const adjectHeight = function(target) {
     }, (+transitionTime)*1000)
 }
 
-export function SubjectCardWrapper({children, data}){
+export function SubjectCardWrapper({children, data, tags}){
     const dataFiltered = data.filter(x=>x.display)
     const shouldBeDisplayedCount = useRef(dataFiltered.length)
     const isDisplayedCount = useRef(dataFiltered.length)
@@ -135,7 +135,7 @@ export function SubjectCardWrapper({children, data}){
                                     exit: (+transitionTime)*1000,
                                 }}
                             classNames="transition">
-                            <SubjectCard key={dataEl.id} data={dataEl} ></SubjectCard>
+                            <SubjectCard key={dataEl.id} data={dataEl} tags={tags} ></SubjectCard>
                         </CSSTransition>
                     )
                 })

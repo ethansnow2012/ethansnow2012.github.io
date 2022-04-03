@@ -4,6 +4,7 @@ import {CSelect} from 'hoc/instance'
 import styled from 'styled-components'
 import { BaseContentSpacing, BaseContentSpacingStyle } from 'containers/Functional'
 import { fakeTopics, fakeTags, fakeCategory } from 'testData/data'
+import {faker} from '@faker-js/faker'
 
 import { injectStyleState, toggleDisplayViaKeyAndId , toggleDisplayViaArrayOfIds } from 'utils/dataProcessor'
 
@@ -79,6 +80,13 @@ export function MainPage() {
             .then(values => {
                 console.log('values', values)
                 const [fakeCategory, fakeTags, fakeTopics] = values
+
+                // inject data: fakeCategory option all.
+                fakeCategory.data.unshift({
+                    id: faker.datatype.uuid(),
+                    name: 'All',
+                    tags: fakeTags.data.map(x=>x.id)
+                })
                 
                 const _fakeCategory = injectStyleState(fakeCategory)
                 const _fakeTags = injectStyleState(fakeTags)
@@ -187,7 +195,7 @@ export function MainPage() {
                 </div> 
                 <div className='p-content-wrapper-outter'>
                     <div className='p-content-wrapper'>
-                        <SubjectCardWrapper data={fakeTopicState.data}></SubjectCardWrapper>
+                        <SubjectCardWrapper data={fakeTopicState.data} tags={fakeTagState.data}></SubjectCardWrapper>
                     </div>
                 </div>
             </BaseContentSpacing>
