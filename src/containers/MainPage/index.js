@@ -65,7 +65,8 @@ export function MainPage() {
     const Raw_fakeCategory = useRef(fakeCategoryState)
     const Raw_fakeTags = useRef(fakeTagState)
     const Raw_fakeTopics = useRef(fakeTopicState)
-
+    
+    const [defaultSelect, setDefaultSelect] = useState(null);
     const refActiveCategory = useRef(Raw_fakeCategory.current.data.filter(x=>x.selected)[0])
     const refActiveTags = useRef(
                         Raw_fakeTags.current.data
@@ -92,7 +93,8 @@ export function MainPage() {
                                         .filter((x)=>{
                                             return refActiveCategory.current.tags.indexOf(x.id)>=0
                                         })
-                
+                                     
+                setDefaultSelect(refActiveCategory.current.id)
                 setFakeCategoryState(()=>{
                     return {...Raw_fakeCategory.current}
                 })
@@ -166,7 +168,7 @@ export function MainPage() {
             <BaseContentSpacing>
                 <div className='p-select-wrapper'>
                     <div className='p-select-wrapper-i1'>
-                        <CSelect  defaultValue={fakeCategoryState.data.filter(x=>x.selected)[0]?.id??''} onChange={select}>
+                        <CSelect defaultValue={defaultSelect} onChange={select} key={defaultSelect} >
                             {
                                 fakeCategoryState.data.map((category)=>{
                                     return (

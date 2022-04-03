@@ -1,4 +1,4 @@
- import React from 'react'
+ import React, {forwardRef} from 'react'
  import styled from 'styled-components'
 
 
@@ -9,10 +9,10 @@
  `
  
 export function ChakraCssInjector(ChakraEl, styleString){
-    return (props)=>(
+    return forwardRef((props, ref)=>(
         <Styled styleString={styleString}>
-            <ChakraEl {...props}/>
+            <ChakraEl ref={ref} {...props}/>
         </Styled>
-    )
+    ))
 }
 
