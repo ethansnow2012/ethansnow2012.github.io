@@ -55,6 +55,17 @@ export function SubjectCard({children, data, tags}){
     const filteredTagsLength = filteredTags.length
     const tagClick = useCallback((ev)=>{
         console.log('tagClick', ev)
+        
+        let tagId = ev.currentTarget.dataset.keyid
+        var url = new URL(window.location.href);
+        var theParam = url.searchParams.get('tag')
+        if(theParam){
+            url.searchParams.set('tag', tagId)
+        }else{
+            url.searchParams.append('tag', tagId);
+        }
+
+        window.location.href = url.toString()
     }, [])
     return (
         <Styled>
@@ -68,7 +79,7 @@ export function SubjectCard({children, data, tags}){
                 {
                     filteredTags?.map((tag)=>{
                         return (
-                            <div className='tag-wrapper-i' key={tag.id} style={{background: tag.color}} onClick={tagClick}>
+                            <div className='tag-wrapper-i' data-keyid={tag.id} key={tag.id} style={{background: tag.color}} onClick={tagClick}>
                                 {
                                     tag.name
                                 }
