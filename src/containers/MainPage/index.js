@@ -7,6 +7,8 @@ import { fakeTopics, fakeTags, fakeCategory } from 'testData/data'
 
 import { injectStyleState, toggleDisplayViaKeyAndId , toggleDisplayViaArrayOfIds } from 'utils/dataProcessor'
 
+import { getFakeTopics, getFakeTags, getFakeCategory } from 'service/data'
+
 
 
 const Styled = styled.div`
@@ -47,9 +49,7 @@ const Styled = styled.div`
         margin-top: min(8vmin, 23px);
     }
 `
-const _fakeCategory = injectStyleState(fakeCategory)
-const _fakeTags = injectStyleState(fakeTags)
-const _fakeTopics = injectStyleState(fakeTopics)
+
 
 function arraysEqual(a1,a2) {
     /* WARNING: arrays must not contain {objects} or behavior may be undefined */
@@ -57,24 +57,58 @@ function arraysEqual(a1,a2) {
 }
 
 export function MainPage() {
-    const Raw_fakeCategory = useRef(_fakeCategory)
-    const Raw_fakeTags = useRef(_fakeTags)
-    const Raw_fakeTopics = useRef(_fakeTopics)
 
+    const [fakeCategoryState, setFakeCategoryState] = useState({data:[]})
+    const [fakeTagState, setFakeTagState] = useState({data:[]})
+    const [fakeTopicState, setFakeTopicState] = useState({data:[]})
+
+    const Raw_fakeCategory = useRef(fakeCategoryState)
+    const Raw_fakeTags = useRef(fakeTagState)
+    const Raw_fakeTopics = useRef(fakeTopicState)
 
     const refActiveCategory = useRef(Raw_fakeCategory.current.data.filter(x=>x.selected)[0])
-
     const refActiveTags = useRef(
                         Raw_fakeTags.current.data
                             .filter((x)=>{
                                 return refActiveCategory.current.tags.indexOf(x.id)>=0
-                            })[0].id
+                            })[0]?.id
                         )
+    useEffect(()=>{
+        Promise.all([getFakeCategory(), getFakeTags(), getFakeTopics()])
+            .then(values => {
+                console.log('values', values)
+                const [fakeCategory, fakeTags, fakeTopics] = values
+                
+                const _fakeCategory = injectStyleState(fakeCategory)
+                const _fakeTags = injectStyleState(fakeTags)
+                const _fakeTopics = injectStyleState(fakeTopics)
 
-    const [fakeCategoryState, setFakeCategoryState] = useState(Raw_fakeCategory.current)
-    const [fakeTagState, setFakeTagState] = useState(Raw_fakeTags.current)
-    const [fakeTopicState, setFakeTopicState] = useState(Raw_fakeTopics.current)
-    
+                Raw_fakeCategory.current = _fakeCategory
+                Raw_fakeTags.current = _fakeTags
+                Raw_fakeTopics.current = _fakeTopics
+
+                refActiveCategory.current = Raw_fakeCategory.current.data.filter(x=>x.selected)[0]
+                refActiveTags.current = Raw_fakeTags.current.data
+                                        .filter((x)=>{
+                                            return refActiveCategory.current.tags.indexOf(x.id)>=0
+                                        })
+                
+                setFakeCategoryState(()=>{
+                    return {...Raw_fakeCategory.current}
+                })
+                setFakeTagState(()=>{
+                    const newSelf = toggleDisplayViaArrayOfIds(Raw_fakeTags.current, 2, refActiveCategory.current['tags'])
+                    return {...newSelf}
+                })
+                setFakeTopicState(()=>{
+                    const newSelf = toggleDisplayViaKeyAndId(Raw_fakeTopics.current, 2 , 'tags', refActiveTags.current.map(x=>x.id))
+                    return {...newSelf}
+                })
+            });
+        
+                            
+    },[])
+    //====
     const select = (ev)=>{
         const selectedId = ev.currentTarget.value 
         refActiveCategory.current = Raw_fakeCategory.current.data.filter(x=>x.id==selectedId)[0]
@@ -94,32 +128,36 @@ export function MainPage() {
             return newSelf
         })
     }
+    
     useEffect(()=>{
         //let categoryId = refCategoryId.current
         
         let categoryObject = refActiveCategory.current//Raw_fakeCategory.current.data.filter(x=>categoryId==x.id)[0]
-        setFakeTagState((self)=>{
-            const newSelf = toggleDisplayViaArrayOfIds(self, 2, categoryObject['tags'])
-            refActiveTags.current = newSelf.data.filter(x=>x.display)
-            console.log('useEffect1')
-            if(arraysEqual(self.data, newSelf.data)){// prevent same value
-                return {...self}
-            }
-            return {...newSelf}            
-        })
-        
+        if(categoryObject){ //reactive effect stopper
+            setFakeTagState((self)=>{
+                const newSelf = toggleDisplayViaArrayOfIds(self, 2, categoryObject['tags'])
+                refActiveTags.current = newSelf.data.filter(x=>x.display)
+                console.log('useEffect1')
+                if(arraysEqual(self.data, newSelf.data)){// prevent same value
+                    return {...self}
+                }
+                return {...newSelf}            
+            })
+        }
 
     }, [fakeCategoryState]) //cascading effect: fakeCategoryState -> fakeTagState
 
     useEffect(()=>{
-        console.log('useEffect2')
-        setFakeTopicState((self)=>{
-            const newSelf = toggleDisplayViaKeyAndId(self, 2 , 'tags', refActiveTags.current.map(x=>x.id))
-            if(arraysEqual(self.data, newSelf.data)){// prevent same value
-                return {...self}
-            }
-            return {...newSelf}   
-        })
+        if(refActiveTags.current){
+            setFakeTopicState((self)=>{
+                console.log('useEffect2')
+                const newSelf = toggleDisplayViaKeyAndId(self, 2 , 'tags', refActiveTags.current.map(x=>x.id))
+                if(arraysEqual(self.data, newSelf.data)){// prevent same value
+                    return {...self}
+                }
+                return {...newSelf}   
+            })
+        }
     }, [fakeTagState]) //cascading effect: fakeTagState -> fakeTopicState
     
     return (
@@ -128,7 +166,7 @@ export function MainPage() {
             <BaseContentSpacing>
                 <div className='p-select-wrapper'>
                     <div className='p-select-wrapper-i1'>
-                        <CSelect  defaultValue={fakeCategoryState.data.filter(x=>x.selected)[0].id} onChange={select}>
+                        <CSelect  defaultValue={fakeCategoryState.data.filter(x=>x.selected)[0]?.id??''} onChange={select}>
                             {
                                 fakeCategoryState.data.map((category)=>{
                                     return (
