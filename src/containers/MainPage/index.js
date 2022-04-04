@@ -34,7 +34,7 @@ const Styled = styled.div`
         background: white;
     }
     .p-content-wrapper{
-        padding: 5vmin 10vmin;
+        padding: 5vmin 6.5vmin;
     }
     .p-select-wrapper-i1{
         max-width:350px;
@@ -48,6 +48,12 @@ const Styled = styled.div`
     }
     .p-select-wrapper-i2 > * > * {
         margin-top: min(8vmin, 23px);
+    }
+    @media(max-width: 800px) {
+        & ${BaseContentSpacingStyle} {
+            padding-left: 10vmin;
+            padding-right: 10vmin;
+        }
     }
 `
 

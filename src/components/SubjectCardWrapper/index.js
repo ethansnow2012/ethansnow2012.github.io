@@ -14,6 +14,17 @@ const Styled = styled.div`
     & ${SubjectCardDefaultStyle}{
         position: relative;
     }
+    @media(max-width: 800px) {
+        & > *{
+            grid-template-columns: 1fr 1fr;
+        }   
+    }
+    @media(max-width: 576px) {
+        & > *{
+            grid-template-columns: 1fr;
+        }   
+    }
+    
 `
 const transition = styled.div`
     
