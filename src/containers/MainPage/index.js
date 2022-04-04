@@ -46,7 +46,7 @@ const Styled = styled.div`
         margin-right:auto;
         margin-left:auto;
     }
-    .p-select-wrapper-i2 * > *{
+    .p-select-wrapper-i2 > * > * {
         margin-top: min(8vmin, 23px);
     }
 `
@@ -57,11 +57,36 @@ function arraysEqual(a1,a2) {
     return JSON.stringify(a1)==JSON.stringify(a2);
 }
 
+function injectDefaultCategory (fakeCategory){
+    fakeCategory.data.unshift({
+        id: faker.datatype.uuid(),
+        name: 'All',
+        tags: fakeTags.data.map(x=>x.id),
+        selected:true,
+    })
+    return fakeCategory
+}
+
+function tagsFilter(tagsObject, activeCategoryObject){
+    const tagsHaveActive = tagsObject.filter(x=>x.active).length>0?true:false
+    return tagsObject
+        .filter((x)=>{
+            if(tagsHaveActive){
+                return x.active && x.display && activeCategoryObject.tags.indexOf(x.id)>=0
+            }
+            return x.display && activeCategoryObject.tags.indexOf(x.id)>=0
+        })
+}
+
 export function MainPage() {
 
     const [fakeCategoryState, setFakeCategoryState] = useState({data:[]})
     const [fakeTagState, setFakeTagState] = useState({data:[]})
     const [fakeTopicState, setFakeTopicState] = useState({data:[]})
+
+    const effectPreventer_1 = useRef(true)
+    const effectPreventer_2 = useRef(true)
+    const effect1_initialDataLoaded = useRef(false)
 
     const Raw_fakeCategory = useRef(fakeCategoryState)
     const Raw_fakeTags = useRef(fakeTagState)
@@ -80,28 +105,31 @@ export function MainPage() {
             .then(values => {
                 console.log('values', values)
                 const [fakeCategory, fakeTags, fakeTopics] = values
-
-                // inject data: fakeCategory option all.
-                fakeCategory.data.unshift({
-                    id: faker.datatype.uuid(),
-                    name: 'All',
-                    tags: fakeTags.data.map(x=>x.id),
-                    selected:true,
-                })
                 
-                const _fakeCategory = injectStyleState(fakeCategory)
-                const _fakeTags = injectStyleState(fakeTags)
+                const _fakeCategory = injectDefaultCategory(
+                                        injectStyleState(fakeCategory)
+                                    )
+                let _fakeTags = injectStyleState(fakeTags)
                 const _fakeTopics = injectStyleState(fakeTopics)
 
+                _fakeTags.data[0].active = true
+                
+                // relate with refs
                 Raw_fakeCategory.current = _fakeCategory
                 Raw_fakeTags.current = _fakeTags
                 Raw_fakeTopics.current = _fakeTopics
-
+                
+                // determine whether is active
                 refActiveCategory.current = Raw_fakeCategory.current.data.filter(x=>x.selected)[0]
-                refActiveTags.current = Raw_fakeTags.current.data
-                                        .filter((x)=>{
-                                            return refActiveCategory.current.tags.indexOf(x.id)>=0
-                                        })
+                // const tagsHaveActive = Raw_fakeTags.current.data.filter(x=>x.active).length>0?true:false
+                // refActiveTags.current = Raw_fakeTags.current.data
+                //                         .filter((x)=>{
+                //                             if(tagsHaveActive){
+                //                                 return x.active && refActiveCategory.current.tags.indexOf(x.id)>=0
+                //                             }
+                //                             return refActiveCategory.current.tags.indexOf(x.id)>=0
+                //                         })
+                refActiveTags.current = tagsFilter(Raw_fakeTags.current.data, refActiveCategory.current)
                                      
                 setDefaultSelect(refActiveCategory.current.id)
                 setFakeCategoryState(()=>{
@@ -139,26 +167,74 @@ export function MainPage() {
             return newSelf
         })
     }
+
+    const tagClickFactory = function(tagData){
+        return (ev)=>{
+            console.log('tagClick', tagData, ev)
+            const tagDataId = tagData.id
+            const tagsHaveActive = Raw_fakeTags.current.data.filter(x=>x.active).length>0?true:false
     
+            setFakeTagState((self)=>{
+                if(tagsHaveActive){
+                    self.data = self.data.map((x)=>{
+                        if(x.id==tagDataId){
+                            x.active = !x.active
+                            return x
+                        }
+                        return x
+                    })
+                    refActiveTags.current = tagsFilter(self.data, refActiveCategory.current)
+                }
+                return {...self}
+            })
+        }
+    }
+
+    
+    
+    /**
+     * useEffect1: category to tagState
+     *  trigger - fakeCategoryState
+     *  output - fakeTagState
+     *  inner state(ref) - effect1_initialDataLoaded
+     */
     useEffect(()=>{
-        //let categoryId = refCategoryId.current
-        
         let categoryObject = refActiveCategory.current//Raw_fakeCategory.current.data.filter(x=>categoryId==x.id)[0]
         if(categoryObject){ //reactive effect stopper
             setFakeTagState((self)=>{
                 const newSelf = toggleDisplayViaArrayOfIds(self, 2, categoryObject['tags'])
-                refActiveTags.current = newSelf.data.filter(x=>x.display)
-                console.log('useEffect1')
+                
+                // reset active states of tags
+                if(effect1_initialDataLoaded.current){
+                    newSelf.data.forEach(
+                        x=> delete x.active
+                    )
+                }
+                
+                refActiveTags.current = tagsFilter(newSelf.data, refActiveCategory.current, 'mode:remove_active')
+
+                effect1_initialDataLoaded.current = true
+
                 if(arraysEqual(self.data, newSelf.data)){// prevent same value
                     return {...self}
                 }
                 return {...newSelf}            
             })
         }
-
     }, [fakeCategoryState]) //cascading effect: fakeCategoryState -> fakeTagState
+    /**
+     * useEffect2: tagState to fakeTopicState
+     *  trigger - tagState
+     *  output - fakeTopicState
+     *  inner state(ref) - 
+     */
 
     useEffect(()=>{
+        if(effectPreventer_2.current==true){
+            effectPreventer_2.current = false
+            return
+        }
+
         if(refActiveTags.current){
             setFakeTopicState((self)=>{
                 console.log('useEffect2')
@@ -190,7 +266,7 @@ export function MainPage() {
                         </CSelect>
                     </div>
                     <div className='p-select-wrapper-i2'>
-                        <FilterTagWrapper data={fakeTagState.data}></FilterTagWrapper>
+                        <FilterTagWrapper key={fakeTagState.id} data={fakeTagState.data} tagClickFactory={tagClickFactory}></FilterTagWrapper>
                     </div>
                     
                 </div> 

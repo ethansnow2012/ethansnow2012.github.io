@@ -13,13 +13,15 @@ const Styled = styled.div`
     }
 `
 
-export function FilterTagWrapper({children, data}){
+export function FilterTagWrapper({children, data, tagClickFactory}){
+    const checkActive = data.filter(x=>x.active).length>0?true:false
+    console.log('FilterTagWrapper')
     return (
         <Styled>
             {
-                data.filter(x=>x.display).map((tagData)=>{
+                data.filter(x=>x.display).reverse().map((tagData)=>{//
                     return (
-                        <FilterTag key={tagData.id} tagData={tagData}></FilterTag>
+                        <FilterTag key={tagData.id} tagData={tagData} checkActive={checkActive} tagClickFactory={tagClickFactory}></FilterTag>
                     )
                 })
             }
