@@ -106,6 +106,7 @@ fakeTopics = {
             id: faker.datatype.uuid(),
             topic: faker.name.jobTitle(),
             description: faker.commerce.productDescription(),
+            content: faker.lorem.text(),
             tags:[
                 fakeTags.data[1].id,
                 fakeTags.data[2].id,
@@ -115,6 +116,7 @@ fakeTopics = {
             id: faker.datatype.uuid(),
             topic: faker.name.jobTitle(),
             description: faker.commerce.productDescription(),
+            content: faker.lorem.text(),
             tags:[
                 fakeTags.data[0].id,
                 fakeTags.data[1].id,
@@ -124,6 +126,7 @@ fakeTopics = {
             id: faker.datatype.uuid(),
             topic: faker.name.jobTitle(),
             description: faker.commerce.productDescription(),
+            content: faker.lorem.text(),
             tags:[
                 fakeTags.data[3].id,
             ]
@@ -132,6 +135,7 @@ fakeTopics = {
             id: faker.datatype.uuid(),
             topic: faker.name.jobTitle(),
             description: faker.commerce.productDescription(),
+            content: faker.lorem.text(),
             tags:[
                 fakeTags.data[0].id,
             ]
@@ -140,6 +144,7 @@ fakeTopics = {
             id: faker.datatype.uuid(),
             topic: faker.name.jobTitle(),
             description: faker.commerce.productDescription(),
+            content: faker.lorem.text(),
             tags:[
                 fakeTags.data[0].id,
                 fakeTags.data[1].id,
@@ -153,5 +158,5 @@ fakeTopics = {
 export {
     fakeTopics,
     fakeTags,
-    fakeCategory
+    fakeCategory,
 }

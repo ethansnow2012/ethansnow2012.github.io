@@ -1,6 +1,7 @@
 
-import React, {useCallback} from 'react'
+import React, {useCallback, useContext} from 'react'
 import styled from 'styled-components'
+import { SplitContext } from 'hoc/factory/RootPageHoc'
 
 const Styled = styled.div`
     background: black;
@@ -22,7 +23,36 @@ const Styled = styled.div`
         font-size:0.5em;
         flex: 1;
     }
-
+    & .goto-content-wrapper{
+        height: 10px;
+        position: relative;
+        top: -4px;
+        left: 5px;
+    }
+    & .goto-content{
+        cursor: pointer;
+        margin-left: auto;
+        width: max-content;
+        transition: all 1s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+        letter-spacing: 0px;
+        left:0px;
+        position:relative;
+        font-size: 1.7em;
+        line-height: 1;
+        height: 20px;
+        // padding: 3px 4px;
+        padding: 6px 7px;
+    }
+    & .goto-content > *{
+        transform: translateY(-13px);
+    }
+    & .goto-content:hover{
+        // background: green;
+        // padding: 6px 7px;
+        background: #ffffff33;
+        padding: 6px 7px;
+        border-radius: 3px;
+    }
     & .tag-wrapper{
         display:flex;
         flex-wrap: wrap;
@@ -49,10 +79,11 @@ const Styled = styled.div`
     }
 `
 
-export function SubjectCard({children, data, tags}){
+export function SubjectCard({children, data, tags, toRightContent}){
     console.log('SubjectCard', tags)
     const filteredTags = tags.filter( x => data.tags.indexOf(x.id)>=0 )
     const filteredTagsLength = filteredTags.length
+
     const tagClick = useCallback((ev)=>{
         console.log('tagClick', ev)
         
@@ -67,6 +98,12 @@ export function SubjectCard({children, data, tags}){
 
         window.location.href = url.toString()
     }, [])
+
+    const goteContent = useCallback(()=>{
+        if(typeof toRightContent=='function'){
+            toRightContent()
+        }
+    }, [])
     return (
         <Styled>
             <div className='topic'>
@@ -74,6 +111,11 @@ export function SubjectCard({children, data, tags}){
             </div>
             <div className='description'>
                 {data.description}
+            </div>
+            <div className='goto-content-wrapper'>
+                <div className='goto-content' onClick={goteContent}>
+                    <div>⇒</div>
+                </div>
             </div>
             <div className='tag-wrapper' length={filteredTagsLength}>
                 {
@@ -93,3 +135,10 @@ export function SubjectCard({children, data, tags}){
 }
 
 export const DefaultStyle = Styled
+
+export const SubjectCardWithContext = function(props) { // 
+    const {toRightContent} = useContext(SplitContext)
+    return (
+        <SubjectCard {...props} toRightContent={toRightContent}/>
+    )
+}

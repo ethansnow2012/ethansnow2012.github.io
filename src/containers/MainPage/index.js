@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef }from 'react'
+import React, { useState, useEffect, useRef, forwardRef }from 'react'
 import { Header, FilterTagWrapper, SubjectCardWrapper } from 'components'
 import {CSelect} from 'hoc/instance'
 import styled from 'styled-components'
@@ -13,12 +13,15 @@ import { getFakeTopics, getFakeTags, getFakeCategory } from 'service/data'
 
 
 const Styled = styled.div`
+    width:100%;
     min-height: 100vh;
     background: var(--color-basic-background);
+    
     & ${BaseContentSpacingStyle} {
         padding-top: 10vmin;
         padding-bottom: 10vmin;
     }
+    
     .p-select-wrapper{
         //max-width:350px;
         margin-left:auto;
@@ -84,7 +87,7 @@ function tagsFilter(tagsObject, activeCategoryObject){
         })
 }
 
-export function MainPage() {
+export const MainPage = forwardRef(function (props, ref) {
 
     const [fakeCategoryState, setFakeCategoryState] = useState({data:[]})
     const [fakeTagState, setFakeTagState] = useState({data:[]})
@@ -228,13 +231,13 @@ export function MainPage() {
             })
         }
     }, [fakeCategoryState]) //cascading effect: fakeCategoryState -> fakeTagState
+
     /**
      * useEffect2: tagState to fakeTopicState
      *  trigger - tagState
      *  output - fakeTopicState
      *  inner state(ref) - 
      */
-
     useEffect(()=>{
         if(effectPreventer_2.current==true){
             effectPreventer_2.current = false
@@ -254,8 +257,7 @@ export function MainPage() {
     }, [fakeTagState]) //cascading effect: fakeTagState -> fakeTopicState
     
     return (
-        <Styled>
-            <Header></Header>
+        <Styled ref={ref}>            
             <BaseContentSpacing>
                 <div className='p-select-wrapper'>
                     <div className='p-select-wrapper-i1'>
@@ -284,4 +286,5 @@ export function MainPage() {
             </BaseContentSpacing>
         </Styled>
     )
-}
+})
+export const DefaultStyle = Styled

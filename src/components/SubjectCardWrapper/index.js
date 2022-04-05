@@ -1,7 +1,7 @@
 
 import React, {useState, useRef, useCallback, useEffect} from 'react'
 import styled from 'styled-components'
-import {SubjectCard ,DefaultStyle as SubjectCardDefaultStyle} from 'components/SubjectCard'
+import {SubjectCard, SubjectCardWithContext ,DefaultStyle as SubjectCardDefaultStyle} from 'components/SubjectCard'
 import {TransitionGroup, CSSTransition, } from 'react-transition-group'
 
 const transitionTime = '0.5'
@@ -9,6 +9,7 @@ const Styled = styled.div`
     & > *{
         display: grid;
         grid-template-columns: 1fr 1fr 1fr;
+        grid-gap: 10px 0;
         justify-content: space-between;
     }
     & ${SubjectCardDefaultStyle}{
@@ -146,7 +147,7 @@ export function SubjectCardWrapper({children, data, tags}){
                                     exit: (+transitionTime)*1000,
                                 }}
                             classNames="transition">
-                            <SubjectCard key={dataEl.id} data={dataEl} tags={tags} ></SubjectCard>
+                            <SubjectCardWithContext key={dataEl.id} data={dataEl} tags={tags} ></SubjectCardWithContext>
                         </CSSTransition>
                     )
                 })
