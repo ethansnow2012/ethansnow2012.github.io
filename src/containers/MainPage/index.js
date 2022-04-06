@@ -18,8 +18,8 @@ const Styled = styled.div`
     background: var(--color-basic-background);
     
     & ${BaseContentSpacingStyle} {
-        padding-top: 10vmin;
-        padding-bottom: 10vmin;
+        padding-top: var(--maincontent-vpadding);
+        padding-bottom: var(--maincontent-vpadding);
     }
     
     .p-select-wrapper{
@@ -28,7 +28,7 @@ const Styled = styled.div`
         margin-right:auto;
     }
     & .p-select-wrapper > * + * {
-        margin-top: min(10vmin, 2em);
+        margin-top: var(--maincontent-innerspacing);
     }
     .p-content-wrapper-outter{
         position: relative;

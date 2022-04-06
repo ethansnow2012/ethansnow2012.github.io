@@ -12,6 +12,9 @@
 :root{
   --color-blue-visual-weight: #282c34;
   --color-basic-background: grey;
+  --maincontent-maxwidth: 800px;
+  --maincontent-vpadding: 10vmin;
+  --maincontent-innerspacing: min(10vmin,2em);
 }
 /*
   Theme:
