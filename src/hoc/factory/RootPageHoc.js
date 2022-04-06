@@ -15,7 +15,7 @@ const Styled = styled.div`
 export const SplitContext = createContext({});
 
 export function RootPageHoc(LeftContent, RightContent){//
-    const [splitPrecent, setSplitPrecent] = useState(20)// : 20 out of 100
+    const [splitPrecent, setSplitPrecent] = useState(10)// : 20 out of 100
     const [currentSplitLoc, setCurrentSplitLoc] = useState('left')
     const leftContentRef = useRef(null)
     const rightContentRef = useRef(null)
@@ -44,11 +44,11 @@ export function RootPageHoc(LeftContent, RightContent){//
             <div >AAA</div>
             <SplitContext.Provider value={{toRightContent}}>
                 <div className="splitwrapper">
-                    <HSpliter weightPercent={splitPrecent}>
+                    <HSpliter >
                         <LeftContent ref={leftContentRef} toRightContent={toRightContent}/>
                     </HSpliter>
                     <HSpliterLine currentSplitLoc={currentSplitLoc} toLeftContent={toLeftContent}></HSpliterLine>
-                    <HSpliter styleArgs={{active: true}} weightPercent={(100-splitPrecent)} shrink={60}>
+                    <HSpliter styleArgs={{active: true}} shrink={60}>
                         <RightContent ref={rightContentRef}/>
                     </HSpliter>
                 </div>

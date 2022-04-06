@@ -3,8 +3,6 @@ import React from 'react'
 import styled from 'styled-components'
 
 const Styled = styled.div`
-    flex-grow: ${props=>props.weightPercent??1};
-    flex-shrink: ${props=>props.weightPercent??1};
     .spliter-inner{
         position: relative;
         width:calc(100vw - ${props=>(props.shrink??0)+'px'});
@@ -12,9 +10,9 @@ const Styled = styled.div`
     }
 `
 
-export function HSpliter({children, weightPercent, shrink}){
+export function HSpliter({children, shrink}){
     return (
-        <Styled weightPercent={weightPercent} shrink={shrink}>
+        <Styled  shrink={shrink}>
             <div className="spliter-inner">
                 {children}
             </div>
