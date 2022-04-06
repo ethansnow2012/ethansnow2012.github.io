@@ -3,6 +3,11 @@ import React, {useEffect, useState, forwardRef} from 'react'
 import { getOneFakeTopic } from 'service/data'
 import styled from 'styled-components'
 
+// Import the Slate editor factory.
+import { createEditor } from 'slate'
+// Import the Slate components and React plugin.
+import { Slate, Editable, withReact } from 'slate-react'
+
 const Styled = styled.div`
     /* This page is contrasting the main page. */
     padding-top: var(--maincontent-vpadding);
@@ -39,9 +44,27 @@ const Styled = styled.div`
         margin-top: calc(var(--maincontent-innerspacing) * 1.8);
     }
 `
+const editorDataEmpty = [
+    {
+        type: 'paragraph',
+        children: [
+            { text: '' },
+        ],
+    }
+]
+
 
 export const ContentPage = forwardRef(function(props, ref) {
     const [topicContent, setTopicContent] = useState()
+
+    const [editorTitle] = useState(() => withReact(createEditor()))
+    const [editorData_title, setEditorData_title] = useState(editorDataEmpty)
+
+    const [editorDescription] = useState(() => withReact(createEditor()))
+    const [editorData_description, setEditorData_description] = useState(editorDataEmpty)
+
+    const [editorContent] = useState(() => withReact(createEditor()))
+    const [editorData_content, setEditorData_content] = useState(editorDataEmpty)
 
     useEffect(()=>{
         const _getOneFakeTopic = async ()=>{
@@ -51,23 +74,73 @@ export const ContentPage = forwardRef(function(props, ref) {
         _getOneFakeTopic()
     },[])
 
+    useEffect(()=>{
+        if(topicContent?.topic){
+            editorTitle.children =  [
+                        {
+                        type: 'paragraph',
+                        children: [
+                            { text: topicContent.topic },
+                        ],
+                    }
+                ]
+            editorTitle.onChange();
+        }
+        if(topicContent?.description){
+            editorDescription.children =  [
+                        {
+                        type: 'paragraph',
+                        children: [
+                            { text: topicContent.description },
+                        ],
+                    }
+                ]
+            editorDescription.onChange();
+        }
+        if(topicContent?.content){
+            editorContent.children =  [
+                        {
+                        type: 'paragraph',
+                        children: [
+                            { text: topicContent.content },
+                        ],
+                    }
+                ]
+            editorContent.onChange();
+        }
+    },[topicContent])
+    
+    
+
+    const slateOnChange = (value)=>{
+        console.log('slateOnChange')
+    }
+
     return (
         <Styled ref={ref}>
-            <div className="inner">
-                <div className="topichead">
-                    <div className="topichead-title">
-                        {topicContent?.topic}
+            
+                <div className="inner">
+                    <div className="topichead">
+                        <div className="topichead-title">
+                            <Slate editor={editorTitle} value={editorData_title} onChange={slateOnChange}>
+                                <Editable />
+                            </Slate>
+                        </div>
+                    </div>
+                    <div className="topicDescription">
+                        <div className="topicDescription-inner">
+                            <Slate editor={editorDescription} value={editorData_description} onChange={slateOnChange}>
+                                <Editable />
+                            </Slate>
+                        </div>
+                    </div>
+                    <div className="topicContent">
+                            <Slate editor={editorContent} value={editorData_content} onChange={slateOnChange}>
+                                <Editable />
+                            </Slate>
                     </div>
                 </div>
-                <div className="topicDescription">
-                    <div className="topicDescription-inner">
-                        {topicContent?.description}
-                    </div>
-                </div>
-                <div className="topicContent">
-                    {topicContent?.content}
-                </div>
-            </div>
+            
         </Styled>
     )
 })
