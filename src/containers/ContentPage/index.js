@@ -4,8 +4,10 @@ import { getOneFakeTopic } from 'service/data'
 import styled from 'styled-components'
 
 const Styled = styled.div`
+    /* This page is contrasting the main page. */
     padding-top: var(--maincontent-vpadding);
     padding-bottom: var(--maincontent-vpadding);
+    color: #404040;
     & .inner{
         max-width: var(--maincontent-maxwidth);
         margin:auto;
