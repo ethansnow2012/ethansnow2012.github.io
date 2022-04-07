@@ -34,9 +34,9 @@
       // Initialize Firebase
       firebase.initializeApp(firebaseConfig);
       var firestore = firebase.firestore();
-
       const firebaseAuth = new firebase.auth.GoogleAuthProvider();
-      const firebaseGSignin = (onSucceed)=>{
+
+      const firebaseGSignin = async (onSucceed)=>{
         // firebase.auth().signInWithRedirect(firebase_auth).then((result)=>{
         //   console.log(result)
         // }).catch((err)=>{
@@ -45,23 +45,26 @@
         firebaseAuth.setCustomParameters({
           prompt: 'select_account'
         });
-        firebase.auth().signInWithPopup(firebaseAuth).then((result)=>{
-          console.log(result)
-          if(result.user.displayName){
-            if(onSucceed){
-              onSucceed()
+        await firebase.auth().signInWithPopup(firebaseAuth).then((result)=>{
+            console.log(result)
+            if(result.user.displayName){
+              return result
             }
-          }
-        }).catch((err)=>{
-          console.log(err)
-        })
+          }).catch((err)=>{
+            throw new Error(400);
+          })
         
       }
+
       const firebaseGSignout = ()=>{
         firebase.auth().signOut()
       }
-      
 
+      window.firebase = firebase
+      window.firestore = firebase.firestore();
+      window.firebaseAuth = firebaseAuth
+      window.firebaseGSignin = firebaseGSignin
+      window.firebaseGSignout = firebaseGSignout
 
     </script>
   </body>
