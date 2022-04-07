@@ -1,9 +1,10 @@
 import {fakeTopics, fakeTags, fakeCategory} from 'testData/data'
 
-export async function getOneFakeTopic(){
+export async function getOneFakeTopic(id){
     return new Promise((resolve, reject)=>{
         setTimeout(()=>{
-            resolve(fakeTopics.data[0])
+            console.log('getOneFakeTopic', fakeTopics.data.filter(x=>x.id==id))
+            resolve(fakeTopics.data.filter(x=>x.id==id)[0])
         },500+(Math.random()*500))
     })
 }

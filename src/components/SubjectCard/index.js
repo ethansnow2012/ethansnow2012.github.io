@@ -100,14 +100,14 @@ export function SubjectCard({children, data, tags, toRightContent, rightContentR
         window.location.href = url.toString()
     }, [])
 
-    const goteContent = useCallback(()=>{
+    const gotoContent = useCallback(()=>{
         if(typeof toRightContent=='function'){
             toRightContent()
             window.history.pushState(null,'', `/content/${data.id}`)
             //change content here
             console.log('ffggaa', leftContentRef)
             const [contentPageState, setContentPageState] = rightContentRef.current.contentPageState
-            const [topicState, setTopicState] = leftContentRef.current.mainTopicState
+            const [topicState, setTopicState] = leftContentRef.current.innerStates._topicState
             setContentPageState((self)=>{
                 const topicId = (new URL(window.location)).pathname.split('/')[2]
                 const dueTopic = topicState.data.filter(x=>x.id==topicId)[0]
@@ -124,7 +124,7 @@ export function SubjectCard({children, data, tags, toRightContent, rightContentR
                 {data.description}
             </div>
             <div className='goto-content-wrapper'>
-                <div className='goto-content' onClick={goteContent}>
+                <div className='goto-content' onClick={gotoContent}>
                     <div>⇒</div>
                 </div>
             </div>

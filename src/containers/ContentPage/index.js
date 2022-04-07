@@ -82,14 +82,21 @@ export const ContentPage = forwardRef(function(props, ref) {
     },[])
 
     useEffect(()=>{
-        if(props.selfPosition==props.pageOptions.priority){
+        const isLandDirectly = (props.selfPosition==props.pageOptions.priority)
+        if(isLandDirectly){
             gotoCurrentLocation()
         }
-        const _getOneFakeTopic = async ()=>{
-            const fakeTopic =  await getOneFakeTopic()
-            setTopicContent(fakeTopic)
+        const _getOneTopic = async ()=>{
+            let dueTopic = null
+            if(isLandDirectly){
+                const topicId = (new URL(window.location)).pathname.split('/')[2]
+                dueTopic =  await getOneFakeTopic(topicId)
+                setTopicContent(dueTopic)
+            }else{
+                // state update via other component here
+            }
         }
-        _getOneFakeTopic()
+        _getOneTopic()
     },[])
 
     useEffect(()=>{

@@ -92,7 +92,11 @@ export const MainPage = forwardRef(function (props, ref) {
     useImperativeHandle(ref, ()=>
         ({
             simpleConsole: ()=>{ console.log('simpleConsole', ref) },
-            mainTopicState: [fakeTopicState, setFakeTopicState],
+            innerStates:{
+                _categoryState: [fakeCategoryState, setFakeCategoryState],
+                _tagState: [fakeTagState, setFakeTagState],
+                _topicState: [fakeTopicState, setFakeTopicState],
+            },
             rawRef
         })
     )
