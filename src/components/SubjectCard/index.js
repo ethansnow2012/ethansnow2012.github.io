@@ -79,7 +79,7 @@ const Styled = styled.div`
     }
 `
 
-export function SubjectCard({children, data, tags, toRightContent}){
+export function SubjectCard({children, data, tags, toRightContent, rightContentRef, leftContentRef}){
     console.log('SubjectCard', tags)
 
     const filteredTags = tags.filter( x => data.tags.indexOf(x.id)>=0 )
@@ -103,7 +103,16 @@ export function SubjectCard({children, data, tags, toRightContent}){
     const goteContent = useCallback(()=>{
         if(typeof toRightContent=='function'){
             toRightContent()
-            window.history.pushState(null,'', '/xcontent')
+            window.history.pushState(null,'', `/content/${data.id}`)
+            //change content here
+            console.log('ffggaa', leftContentRef)
+            const [contentPageState, setContentPageState] = rightContentRef.current.contentPageState
+            const [topicState, setTopicState] = leftContentRef.current.mainTopicState
+            setContentPageState((self)=>{
+                const topicId = (new URL(window.location)).pathname.split('/')[2]
+                const dueTopic = topicState.data.filter(x=>x.id==topicId)[0]
+                return {...dueTopic}
+            })
         }
     }, [])
     return (
@@ -139,8 +148,8 @@ export function SubjectCard({children, data, tags, toRightContent}){
 export const DefaultStyle = Styled
 
 export const SubjectCardWithContext = function(props) { // 
-    const {toRightContent} = useContext(SplitContext)
+    const {toRightContent, leftContent, contentPageState, leftContentRef, rightContentRef} = useContext(SplitContext)
     return (
-        <SubjectCard {...props} toRightContent={toRightContent}/>
+        <SubjectCard {...props} toRightContent={toRightContent} leftContentRef={leftContentRef} rightContentRef={rightContentRef}/>
     )
 }

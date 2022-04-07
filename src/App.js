@@ -15,7 +15,7 @@ function App() {
           <Route path='/' element={RootPageHoc(MainPage, ContentPage, {priority:'left'})}></Route>
           {/* <Route path='/content1' element={<RootPage renderCode={'1'}/>}></Route>
           <Route path='/content2' element={<RootPage renderCode={'2'}/>}></Route> */}
-          <Route path='/xcontent' element={RootPageHoc(MainPage, ContentPage, {priority:'right'})}></Route>
+          <Route path='/content/:id' element={RootPageHoc(MainPage, ContentPage, {priority:'right'})}></Route>
         </Routes>
       </BrowserRouter>
     </div>
