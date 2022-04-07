@@ -1,8 +1,9 @@
-import React, {useState, useRef, createContext} from 'react'
+import React, {useState, useRef, createContext, useEffect, useCallback} from 'react'
 import styled from 'styled-components'
 import { Header, FilterTagWrapper, SubjectCardWrapper } from 'components'
 import { BaseContentSpacing, BaseContentSpacingStyle, HSpliter, HSpliterLine } from 'containers/Functional'
 import { MainPage, DefaultStyle as MainPageDefaultStyle } from 'containers/MainPage'
+
 
 
 const Styled = styled.div`
@@ -14,42 +15,68 @@ const Styled = styled.div`
 `
 export const SplitContext = createContext({});
 
-export function RootPageHoc(LeftContent, RightContent){//
+export function RootPageHoc(LeftContent, RightContent, pageOptions){
+    console.log('RootPageHoc')
+    const initialized = useRef(false);
     const [splitPrecent, setSplitPrecent] = useState(10)// : 20 out of 100
-    const [currentSplitLoc, setCurrentSplitLoc] = useState('left')
+    const [currentSplitLoc, setCurrentSplitLoc] = useState(pageOptions.priority?pageOptions.priority:'left')//
     const leftContentRef = useRef(null)
     const rightContentRef = useRef(null)
     
 
-    const toRightContent = ()=>{
-        setCurrentSplitLoc('right')
-        window.scrollBy({ // fix: scrollIntoView interanl bug(not invole)
-            top: -0.1,
-            left: 0,
-        })
-        rightContentRef.current.scrollIntoView({behavior:"smooth"})
-    }
-    const toLeftContent = ()=>{
-        setCurrentSplitLoc('left')
-        window.scrollBy({ // fix: scrollIntoView interanl bug(not invole)
-            top: -0.1,
-            left: 0,
-        })
-        leftContentRef.current.scrollIntoView({behavior:"smooth", inline: 'start', block: 'start' })
-        
-    }
+    const toRightContent = useCallback(
+        ()=>{
+            // let scrollIntoView = rightContentRef.current.scrollIntoView
+            //                     ??rightContentRef.current.rawRef.current.scrollIntoView
+            let rawRef = rightContentRef.current.scrollIntoView?
+                rightContentRef
+                :
+                rightContentRef.current.rawRef
+            setCurrentSplitLoc('right')
+            window.scrollBy({ // fix: scrollIntoView interanl bug(not invole)
+                top: -0.1,
+                left: 0,
+            })
+            rawRef.current.scrollIntoView({behavior:"smooth"})
+        }, 
+    [])
+
+    const toLeftContent = useCallback(
+        ()=>{
+            let rawRef = leftContentRef.current.scrollIntoView?
+                leftContentRef
+                :
+                leftContentRef.current.rawRef
+    
+            setCurrentSplitLoc('left')
+            window.scrollBy({ // fix: scrollIntoView interanl bug(not invole)
+                top: -0.1,
+                left: 0,
+            })
+            rawRef.current.scrollIntoView({behavior:"smooth", inline: 'start', block: 'start' })    
+        }, 
+    [])
+    
+    useEffect(()=>{
+        if(initialized.current){
+            //rightContentRef.current.simpleConsole()
+        }
+        initialized.current = true
+    },[currentSplitLoc])
     return (
         <Styled>
             <Header></Header>
             <div >AAA</div>
-            <SplitContext.Provider value={{toRightContent}}>
+            <SplitContext.Provider value={{toRightContent, toLeftContent, leftContentRef, rightContentRef}}>
                 <div className="splitwrapper">
                     <HSpliter >
-                        <LeftContent ref={leftContentRef} toRightContent={toRightContent}/>
+                        {/* pairContentRef={rightContentRef}  */}
+                        <LeftContent ref={leftContentRef} pageOptions={pageOptions} selfPosition={'left'}/>
                     </HSpliter>
-                    <HSpliterLine currentSplitLoc={currentSplitLoc} toLeftContent={toLeftContent}></HSpliterLine>
-                    <HSpliter styleArgs={{active: true}} shrink={60}>
-                        <RightContent ref={rightContentRef}/>
+                    <HSpliterLine currentSplitLoc={currentSplitLoc} ></HSpliterLine>
+                    <HSpliter shrink={60}>
+                        {/* pairContentRef={leftContentRef}  */}
+                        <RightContent ref={rightContentRef} pageOptions={pageOptions} selfPosition={'right'}/>
                     </HSpliter>
                 </div>
             </SplitContext.Provider>

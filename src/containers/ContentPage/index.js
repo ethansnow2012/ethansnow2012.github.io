@@ -1,5 +1,5 @@
 
-import React, {useEffect, useState, forwardRef} from 'react'
+import React, {useEffect, useState, useImperativeHandle, forwardRef, useRef, useCallback} from 'react'
 import { getOneFakeTopic } from 'service/data'
 import styled from 'styled-components'
 
@@ -41,7 +41,10 @@ const Styled = styled.div`
         box-shadow: 2px 3px 5px 2px #888;
     }
     & .topicContent{
+        background:#cbcbcb;
+        padding:var(--blockpadding) calc(var(--blockpadding) * 2);
         margin-top: calc(var(--maincontent-innerspacing) * 1.8);
+        min-height: 40vmin;
     }
 `
 const editorDataEmpty = [
@@ -56,6 +59,7 @@ const editorDataEmpty = [
 
 export const ContentPage = forwardRef(function(props, ref) {
     const [topicContent, setTopicContent] = useState()
+    const rawRef = useRef()
 
     const [editorTitle] = useState(() => withReact(createEditor()))
     const [editorData_title, setEditorData_title] = useState(editorDataEmpty)
@@ -66,7 +70,20 @@ export const ContentPage = forwardRef(function(props, ref) {
     const [editorContent] = useState(() => withReact(createEditor()))
     const [editorData_content, setEditorData_content] = useState(editorDataEmpty)
 
+    useImperativeHandle(ref, ()=>
+        ({
+            simpleConsole: ()=>{ console.log('simpleConsole', ref) },
+            rawRef
+        })
+    )
+    const gotoCurrentLocation = useCallback(()=>{
+        ref.current.rawRef.current.scrollIntoView()
+    },[])
+
     useEffect(()=>{
+        if(props.selfPosition==props.pageOptions.priority){
+            gotoCurrentLocation()
+        }
         const _getOneFakeTopic = async ()=>{
             const fakeTopic =  await getOneFakeTopic()
             setTopicContent(fakeTopic)
@@ -115,10 +132,22 @@ export const ContentPage = forwardRef(function(props, ref) {
     const slateOnChange = (value)=>{
         console.log('slateOnChange')
     }
+    const handleKeyDown = useCallback((event)=>{
+        console.log('handleKeyDown')
+        event.preventDefault();
+        let charCode = String.fromCharCode(event.which).toLowerCase();
+        if((event.ctrlKey || event.metaKey) && charCode === 's') {
+          //alert("CTRL+S Pressed");
+          console.log('saving', )//get the main page ref  || pairContentRef={leftContentRef} 
+        }else if((event.ctrlKey || event.metaKey) && charCode === 'c') {
+          //alert("CTRL+C Pressed");
+        }else if((event.ctrlKey || event.metaKey) && charCode === 'v') {
+          //alert("CTRL+V Pressed");
+        }
+    }, [])
 
     return (
-        <Styled ref={ref}>
-            
+        <Styled ref={rawRef} onKeyDown={handleKeyDown}>
                 <div className="inner">
                     <div className="topichead">
                         <div className="topichead-title">

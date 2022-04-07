@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, forwardRef }from 'react'
+import React, { useState, useEffect, useRef, forwardRef, useImperativeHandle }from 'react'
 import { Header, FilterTagWrapper, SubjectCardWrapper } from 'components'
 import {CSelect} from 'hoc/instance'
 import styled from 'styled-components'
@@ -88,7 +88,13 @@ function tagsFilter(tagsObject, activeCategoryObject){
 }
 
 export const MainPage = forwardRef(function (props, ref) {
-
+    const rawRef = useRef()
+    useImperativeHandle(ref, ()=>
+        ({
+            simpleConsole: ()=>{ console.log('simpleConsole', ref) },
+            rawRef
+        })
+    )
     const [fakeCategoryState, setFakeCategoryState] = useState({data:[]})
     const [fakeTagState, setFakeTagState] = useState({data:[]})
     const [fakeTopicState, setFakeTopicState] = useState({data:[]})
@@ -199,8 +205,6 @@ export const MainPage = forwardRef(function (props, ref) {
         }
     }
 
-    
-    
     /**
      * useEffect1: category to tagState
      *  trigger - fakeCategoryState
@@ -257,7 +261,7 @@ export const MainPage = forwardRef(function (props, ref) {
     }, [fakeTagState]) //cascading effect: fakeTagState -> fakeTopicState
     
     return (
-        <Styled ref={ref}>            
+        <Styled ref={rawRef}>            
             <BaseContentSpacing>
                 <div className='p-select-wrapper'>
                     <div className='p-select-wrapper-i1'>

@@ -1,6 +1,7 @@
-import React from 'react'
+import React, {useContext} from 'react'
 import styled from 'styled-components'
 import { CSSTransition, } from 'react-transition-group'
+import { SplitContext } from 'hoc/factory/RootPageHoc'
 
 const Styled = styled.div`
     width: 3px;
@@ -27,11 +28,13 @@ const Styled = styled.div`
 `
 const transitionTime = '0.5'
 
-export function HSpliterLine({children, toLeftContent, currentSplitLoc}){
+export function HSpliterLine({children, currentSplitLoc}){
+    const {toLeftContent} = useContext(SplitContext)
     const clickGoBack = ()=>{
         console.log('currentSplitLoc', currentSplitLoc)
         if(typeof toLeftContent=='function'){
             toLeftContent()
+            window.history.pushState(null,'', '/')
         }
     }
     console.log('HSpliterLine')

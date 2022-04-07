@@ -15,6 +15,7 @@
   --maincontent-maxwidth: 800px;
   --maincontent-vpadding: 10vmin;
   --maincontent-innerspacing: min(10vmin,2em);
+  --blockpadding: min(2vmin,2em);
 }
 /*
   Theme:

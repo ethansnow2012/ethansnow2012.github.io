@@ -81,6 +81,7 @@ const Styled = styled.div`
 
 export function SubjectCard({children, data, tags, toRightContent}){
     console.log('SubjectCard', tags)
+
     const filteredTags = tags.filter( x => data.tags.indexOf(x.id)>=0 )
     const filteredTagsLength = filteredTags.length
 
@@ -102,6 +103,7 @@ export function SubjectCard({children, data, tags, toRightContent}){
     const goteContent = useCallback(()=>{
         if(typeof toRightContent=='function'){
             toRightContent()
+            window.history.pushState(null,'', '/xcontent')
         }
     }, [])
     return (
