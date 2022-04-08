@@ -80,7 +80,7 @@ const Styled = styled.div`
 `
 
 export function SubjectCard({children, data, tags, toRightContent, rightContentRef, leftContentRef}){
-    console.log('SubjectCard', tags)
+    //console.log('SubjectCard', tags)
 
     const filteredTags = tags.filter( x => data.tags.indexOf(x.id)>=0 )
     const filteredTagsLength = filteredTags.length

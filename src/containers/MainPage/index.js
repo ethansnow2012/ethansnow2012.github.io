@@ -1,5 +1,6 @@
-import React, { useState, useEffect, useRef, forwardRef, useImperativeHandle }from 'react'
+import React, { useState, useContext ,useEffect, useRef, forwardRef, useImperativeHandle }from 'react'
 import { Header, FilterTagWrapper, SubjectCardWrapper } from 'components'
+import { globalContext } from 'App'
 import {CSelect} from 'hoc/instance'
 import styled from 'styled-components'
 import { BaseContentSpacing, BaseContentSpacingStyle } from 'containers/Functional'
@@ -88,6 +89,7 @@ function tagsFilter(tagsObject, activeCategoryObject){
 }
 
 export const MainPage = forwardRef(function (props, ref) {
+    const {firebase} = useContext(globalContext)
     const rawRef = useRef()
     useImperativeHandle(ref, ()=>
         ({
@@ -121,7 +123,7 @@ export const MainPage = forwardRef(function (props, ref) {
                             })[0]?.id
                         )
     useEffect(()=>{
-        Promise.all([getFakeCategory(), getFakeTags(), getFakeTopics()])
+        Promise.all([getFakeCategory(firebase), getFakeTags(firebase), getFakeTopics(firebase)])
             .then(values => {
                 console.log('values', values)
                 const [fakeCategory, fakeTags, fakeTopics] = values

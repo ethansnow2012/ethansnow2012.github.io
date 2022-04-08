@@ -1,7 +1,8 @@
 
-import React, {useEffect, useState, useImperativeHandle, forwardRef, useRef, useCallback} from 'react'
+import React, {useEffect, useContext,  useState, useImperativeHandle, forwardRef, useRef, useCallback} from 'react'
 import { getOneFakeTopic } from 'service/data'
 import styled from 'styled-components'
+import { globalContext } from 'App'
 
 // Import the Slate editor factory.
 import { createEditor } from 'slate'
@@ -58,6 +59,7 @@ const editorDataEmpty = [
 
 
 export const ContentPage = forwardRef(function(props, ref) {
+    const {firebase} = useContext(globalContext)
     const [topicContent, setTopicContent] = useState()
     const rawRef = useRef()
 
@@ -90,7 +92,7 @@ export const ContentPage = forwardRef(function(props, ref) {
             let dueTopic = null
             if(isLandDirectly){
                 const topicId = (new URL(window.location)).pathname.split('/')[2]
-                dueTopic =  await getOneFakeTopic(topicId)
+                dueTopic =  await getOneFakeTopic(topicId, firebase)
                 setTopicContent(dueTopic)
             }else{
                 // state update via other component here

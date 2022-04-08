@@ -8,49 +8,49 @@ fakeTags = {
     id: faker.datatype.uuid(),
     data: [
         {//0
-            id: faker.datatype.uuid(),
+            id:'af7ac9b9-1c47-4998-817e-8c3c0bef64fe',// faker.datatype.uuid(),
             name: faker.commerce.productName(),
             description: faker.commerce.productDescription(),
             color: faker.internet.color(),
         },
         {//1
-            id: faker.datatype.uuid(),
+            id: 'f807d533-ea0b-4f69-95f1-c3e62e69d73d', //faker.datatype.uuid(),
             name: faker.commerce.productName(),
             description: faker.commerce.productDescription(),
             color: faker.internet.color(),
         },
         {//2
-            id: faker.datatype.uuid(),
+            id: '66acbe6d-c287-4354-b83d-850b836d2e4c',//faker.datatype.uuid(),
             name: faker.commerce.productName(),
             description: faker.commerce.productDescription(),
             color: faker.internet.color(),
         },
         {//3
-            id: faker.datatype.uuid(),
+            id: 'd5b22ff8-71a5-46b7-a819-366d75a2133a',//faker.datatype.uuid(),
             name: faker.commerce.productName(),
             description: faker.commerce.productDescription(),
             color: faker.internet.color(),
         },
         {//4
-            id: faker.datatype.uuid(),
+            id: 'fbf01690-3311-4e37-8893-480274b060d9',//faker.datatype.uuid(),
             name: faker.commerce.productName(),
             description: faker.commerce.productDescription(),
             color: faker.internet.color(),
         },
         {//5
-            id: faker.datatype.uuid(),
+            id: '7c8f0b3a-a96f-43ff-9f6c-c1c1ff665ac3',//faker.datatype.uuid(),
             name: faker.commerce.productName(),
             description: faker.commerce.productDescription(),
             color: faker.internet.color(),
         },
         {//6
-            id: faker.datatype.uuid(),
+            id: 'c6cf54eb-2865-4479-9cfb-dc7ef1f46c10',//faker.datatype.uuid(),
             name: faker.commerce.productName(),
             description: faker.commerce.productDescription(),
             color: faker.internet.color(),
         },
         {//7
-            id: faker.datatype.uuid(),
+            id: 'cd8f5155-d8c8-42ee-8937-fb30388f3af2',//faker.datatype.uuid(),
             name: faker.commerce.productName(),
             description: faker.commerce.productDescription(),
             color: faker.internet.color(),
@@ -62,7 +62,7 @@ fakeCategory = {
     id: faker.datatype.uuid(),
     data: [
         {
-            id: faker.datatype.uuid(),
+            id: 'bdc14f54-eda7-4ea4-bac8-6e10ace99e25',
             name: 'Category One',
             tags:[
                 fakeTags.data[3].id,
@@ -70,7 +70,7 @@ fakeCategory = {
             ]
         },
         {
-            id: faker.datatype.uuid(),
+            id: 'a3b8616b-a4b8-4818-960f-f02ef82304b8',
             name: 'Category Two',
             tags:[
                 fakeTags.data[3].id,
@@ -79,14 +79,14 @@ fakeCategory = {
             ]
         },
         {
-            id: faker.datatype.uuid(),
+            id: 'f6e85e5e-dc30-4ec8-b0b3-73fa3ecc1fab',
             name: 'Category Three',
             tags:[
                 fakeTags.data[2].id,
             ]
         },
         {
-            id: faker.datatype.uuid(),
+            id: 'f6377f5e-0df9-4e2b-82e1-bb7d7d28dec0',
             name: 'Category Four',
             tags:[
                 fakeTags.data[0].id,
