@@ -1,6 +1,6 @@
 import React, {useState, useRef, createContext, useEffect, useCallback} from 'react'
 import styled from 'styled-components'
-import { Header, FilterTagWrapper, SubjectCardWrapper } from 'components'
+import { HeaderWithContext, FilterTagWrapper, SubjectCardWrapper } from 'components'
 import { BaseContentSpacing, BaseContentSpacingStyle, HSpliter, HSpliterLine } from 'containers/Functional'
 import { MainPage, DefaultStyle as MainPageDefaultStyle } from 'containers/MainPage'
 
@@ -65,9 +65,9 @@ export function RootPageHoc(LeftContent, RightContent, pageOptions){
     },[currentSplitLoc])
     return (
         <Styled>
-            <Header></Header>
-            <div >AAA</div>
             <SplitContext.Provider value={{toRightContent, toLeftContent, leftContentRef, rightContentRef}}>{/* pseudo type define: SplitContextValue */}
+                <HeaderWithContext></HeaderWithContext>
+                <div >AAA</div>
                 <div className="splitwrapper">
                     <HSpliter >
                         {/* pairContentRef={rightContentRef}  */}

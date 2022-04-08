@@ -1,11 +1,12 @@
 
 import {FilterTagWrapper} from './FilterTagWrapper'
-import {Header} from './Header'
+import {Header, HeaderWithContext} from './Header'
 import {SubjectCardWrapper} from './SubjectCardWrapper'
 
 
 export {
     FilterTagWrapper,
     Header,
+    HeaderWithContext,
     SubjectCardWrapper
 }

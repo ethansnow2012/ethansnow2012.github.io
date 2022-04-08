@@ -12,7 +12,7 @@ const test_dbCollectionSchema = {
                 {
                     categories:{},
                     tags:{},
-                    topic:{}
+                    topics:{}
                 }
             ]// actual
         }

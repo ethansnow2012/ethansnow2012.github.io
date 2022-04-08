@@ -24,7 +24,7 @@ const Styled = styled.div`
     }
 `
 
-export function Header() {
+export function Header(props) {
     const [isLoggedIn, setIsLoggedIn] = useState(false)
     const {firebase} = useContext(globalContext)
     const logIn = ()=>{
@@ -35,6 +35,24 @@ export function Header() {
     const signOut = ()=>{
         //firebase.firebaseGSignout()
         setIsLoggedIn(false)
+    }
+    const save = ()=>{
+        console.log('props save', props)
+        const {_categoryState, _tagState, _topicState} = props.leftContentRef.current.innerStates
+        const [categoryState, setCategoryState] = _categoryState
+        const [tagState, setTagState] = _tagState
+        const [topicState, setTopicState] = _topicState
+
+        firebaseEndpoints.authed.setStore(
+            firebase, 
+            'test_random',
+            {
+                categories:categoryState,
+                tags:tagState,
+                topics:topicState,
+            }
+        )
+
     }
     useEffect(()=>{
         firebase.self.auth().onAuthStateChanged(function(user) {
@@ -52,12 +70,12 @@ export function Header() {
 
     useEffect(()=>{
         if(isLoggedIn){
-            console.log('firebaseEndpoints', firebaseEndpoints, firebaseEndpoints.authed)
-            firebaseEndpoints.authed.setStore(
-                firebase, 
-                'test_random',
-                {}
-            )
+            console.log('firebaseEndpoints', props.leftContentRef)
+            // firebaseEndpoints.authed.setStore(
+            //     firebase, 
+            //     'test_random',
+            //     {}
+            // )
         }    
     }, [isLoggedIn])
     
@@ -71,6 +89,7 @@ export function Header() {
                     :
                     <div className='btn' onClick={logIn}>LogIn</div>
                 }
+                <div className='btn' onClick={save}>Save</div>
             </div>
         </Styled>
     )
