@@ -1,7 +1,7 @@
 
 import React, {useCallback, useContext} from 'react'
 import styled from 'styled-components'
-import { SplitContext } from 'hoc/factory/RootPageHoc'
+import { WithContextFactory }from 'hoc/factory/WithContext'
 
 const Styled = styled.div`
     background: black;
@@ -147,9 +147,11 @@ export function SubjectCard({children, data, tags, toRightContent, rightContentR
 
 export const DefaultStyle = Styled
 
-export const SubjectCardWithContext = function(props) { // 
-    const {toRightContent, leftContent, contentPageState, leftContentRef, rightContentRef} = useContext(SplitContext)
-    return (
-        <SubjectCard {...props} toRightContent={toRightContent} leftContentRef={leftContentRef} rightContentRef={rightContentRef}/>
-    )
-}
+// component mutate:
+// export const SubjectCardWithContext = function(props) { // 
+//     const {toRightContent, leftContent, contentPageState, leftContentRef, rightContentRef} = useContext(SplitContext)
+//     return (
+//         <SubjectCard {...props} toRightContent={toRightContent} leftContentRef={leftContentRef} rightContentRef={rightContentRef}/>
+//     )
+// }
+export const SubjectCardWithContext = WithContextFactory(SubjectCard)

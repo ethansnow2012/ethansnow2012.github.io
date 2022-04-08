@@ -67,7 +67,7 @@ export function RootPageHoc(LeftContent, RightContent, pageOptions){
         <Styled>
             <Header></Header>
             <div >AAA</div>
-            <SplitContext.Provider value={{toRightContent, toLeftContent, leftContentRef, rightContentRef}}>
+            <SplitContext.Provider value={{toRightContent, toLeftContent, leftContentRef, rightContentRef}}>{/* pseudo type define: SplitContextValue */}
                 <div className="splitwrapper">
                     <HSpliter >
                         {/* pairContentRef={rightContentRef}  */}

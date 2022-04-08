@@ -2,6 +2,8 @@
 import React, { useContext, useState, useEffect } from 'react'
 import styled from 'styled-components'
 import { globalContext } from 'App'
+import { firebaseEndpoints } from 'service/firebaseEndpoints'
+import { WithContextFactory }from 'hoc/factory/WithContext'
 
 const Styled = styled.div`
     position: relative;
@@ -38,11 +40,26 @@ export function Header() {
         firebase.self.auth().onAuthStateChanged(function(user) {
             if (user) {
                 setIsLoggedIn(true)
+                // await firestore
+                //     .collection(memberSchema.form.collectionStr)
+                //     .doc(firebase.auth().currentUser.uid)
+                //     .update(dataFirestore)
             } else {
                 setIsLoggedIn(false)
             }
           });
     }, [])
+
+    useEffect(()=>{
+        if(isLoggedIn){
+            console.log('firebaseEndpoints', firebaseEndpoints, firebaseEndpoints.authed)
+            firebaseEndpoints.authed.setStore(
+                firebase, 
+                'test_random',
+                {}
+            )
+        }    
+    }, [isLoggedIn])
     
     return (
         <Styled>
@@ -58,3 +75,6 @@ export function Header() {
         </Styled>
     )
 }
+
+// component mutate:
+export const HeaderWithContext = WithContextFactory(Header)

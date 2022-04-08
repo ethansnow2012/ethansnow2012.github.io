@@ -12,9 +12,10 @@ function App() {
   return (
     <div className="App">
       <globalContext.Provider value={
-          {
+          { // pseudo type define: fireGlobalContext
             firebase:{
               self:window.firebase,
+              store:window.firestore,
               firebaseGSignin: window.firebaseGSignin,
               firebaseGSignout: window.firebaseGSignout
             }
