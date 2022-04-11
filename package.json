@@ -15,12 +15,12 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
+    "start": "env-cmd -f .env.local react-scripts start",
+    "build": "env-cmd -f .env.local react-scripts build",
+    "test": "env-cmd -f .env.local react-scripts test",
     "eject": "react-scripts eject",
-    "predeploy": "export REACT_APP_NODE_ENV=github_page && npm run build",
-    "deploy": "export REACT_APP_NODE_ENV=github_page && gh-pages -d build"
+    "predeploy": "env-cmd -f .env.production npm run build",
+    "deploy": "env-cmd -f .env.production gh-pages -d build"
   },
   "eslintConfig": {
     "extends": [
@@ -45,6 +45,7 @@
     "@emotion/react": "^11.8.2",
     "@emotion/styled": "^11.8.1",
     "@faker-js/faker": "^6.1.1",
+    "env-cmd": "^10.1.0",
     "framer-motion": "^5.6.0",
     "gh-pages": "^3.2.3",
     "react-helmet": "^6.1.0",
