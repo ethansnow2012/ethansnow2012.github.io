@@ -5,6 +5,7 @@ import styled from 'styled-components'
 import { globalContext } from 'App'
 import { firebaseEndpoints } from 'service/firebaseEndpoints'
 import { WithContextFactory }from 'hoc/factory/WithContext'
+import { SplitContext } from 'hoc/factory/RootPageHoc'
 
 const StyledFloating = styled.div`
     z-index: 90000;
@@ -57,7 +58,7 @@ const Styled = styled.div`
 
 
 export function HeaderFloating({fromParentArgs, portalTarget}) {
-    const {isLoggedIn, isSaving, signOut, logIn, save} = fromParentArgs
+    const {isLoggedIn, isSaving, signOut, logIn, save, currentSplitLoc} = fromParentArgs
     return ReactDom.createPortal(
         <StyledFloating>
             <div className='control'> 
@@ -67,18 +68,21 @@ export function HeaderFloating({fromParentArgs, portalTarget}) {
                     :
                     <div className='btn' onClick={logIn}>LogIn</div>
                 }
-                <div className='btn' onClick={save} >
+                {
+                    (isLoggedIn&&currentSplitLoc=='right')?
+                    <div className='btn' onClick={save} >
+                        <span className={('btn-spinner') + (isSaving?' active':'')} style={{'position':'relative', 'top':'0.2em'}}>
+                            <svg style={{'---svg-fill':'grey', 'width': '0.8em', 'height': '0.8em'}}>
+                                <use href="#svg-loading"/>
+                            </svg>
+                        </span>
+                        <span>
+                            Save
+                        </span>
+                    </div>
+                    :''
+                }
                 
-                    <span className={('btn-spinner') + (isSaving?' active':'')} style={{'position':'relative', 'top':'0.2em'}}>
-                        <svg style={{'---svg-fill':'grey', 'width': '0.8em', 'height': '0.8em'}}>
-                            <use href="#svg-loading"/>
-                        </svg>
-                    </span>
-                    <span>
-                        Save
-                    </span>
-                    
-                </div>
             </div>
         </StyledFloating>,
         document.querySelector(portalTarget||"#root-fix-header")
@@ -86,6 +90,7 @@ export function HeaderFloating({fromParentArgs, portalTarget}) {
 }
 
 export function Header(props) {
+    const { currentSplitLoc}  = useContext(SplitContext)
     const [isLoggedIn, setIsLoggedIn] = useState(false)
     const [isSaving, setIsSaving] = useState(false)
     const {firebase} = useContext(globalContext)
@@ -142,7 +147,7 @@ export function Header(props) {
             // )
         }    
     }, [isLoggedIn])
-    const fromParentArgs = {isLoggedIn, isSaving, signOut, logIn, save}
+    const fromParentArgs = {isLoggedIn, isSaving, signOut, logIn, save, currentSplitLoc}
     return (
         <Styled>
             xxxxxdddddxxxxx

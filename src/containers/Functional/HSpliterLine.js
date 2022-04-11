@@ -28,10 +28,9 @@ const Styled = styled.div`
 `
 const transitionTime = '0.5'
 
-export function HSpliterLine({children, currentSplitLoc}){
-    const {toLeftContent} = useContext(SplitContext)
+export function HSpliterLine({children}){
+    const {toLeftContent, currentSplitLoc} = useContext(SplitContext)
     const clickGoBack = ()=>{
-        console.log('currentSplitLoc', currentSplitLoc)
         if(typeof toLeftContent=='function'){
             toLeftContent()
             window.history.pushState(null,'', '/')
