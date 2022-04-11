@@ -43,7 +43,7 @@ _authed.prototype.setStore = (fireGlobalContext, collectionKey, data)=>{
     dataRootType.uid = firebase.self.auth().currentUser.uid
     dataRootType.data = data
 
-    firebase.store
+    return firebase.store
         .collection(collectionKey)
         .doc(userUid)
         .set(dataRootType)

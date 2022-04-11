@@ -1,20 +1,46 @@
 
 import React, { useContext, useState, useEffect } from 'react'
+import ReactDom from 'react-dom'
 import styled from 'styled-components'
 import { globalContext } from 'App'
 import { firebaseEndpoints } from 'service/firebaseEndpoints'
 import { WithContextFactory }from 'hoc/factory/WithContext'
 
 const StyledFloating = styled.div`
+    z-index: 90000;
+    position: fixed;
+    right:0;
+    top:0;
+    mix-blend-mode: exclusion;
     .control{
-        position: fixed;
-        right:0;
-        top:0;
-        mix-blend-mode: exclusion;
+        color: white;
     }
     .control .btn{
+        display:flex;
+        width: max-content;
         padding: 5px 8px;
         cursor: pointer;
+    }
+    .control .btn-spinner{
+        opacity:0;
+        width: max-content;
+        height: max-content;
+        margin-right:3px;
+        animation: lds-dual-ring 1.2s linear infinite;
+        transition: opacity 1s ease;
+    }
+
+    .control .btn-spinner.active{
+        opacity:1;  
+    }
+    
+    @keyframes lds-dual-ring {
+        from{
+            transform: rotate(0deg);
+        }
+        to{
+            transform: rotate(360deg);
+        }
     }
 `
 
@@ -27,13 +53,12 @@ const Styled = styled.div`
     background-color: var(--color-blue-visual-weight);
     justify-content: center;
     display: flex;
-    
 `
 
 
-export function HeaderFloating({fromParent}) {
-    const {isLoggedIn, signOut, logIn, save} = fromParent
-    return (
+export function HeaderFloating({fromParentArgs, portalTarget}) {
+    const {isLoggedIn, isSaving, signOut, logIn, save} = fromParentArgs
+    return ReactDom.createPortal(
         <StyledFloating>
             <div className='control'> 
                 {
@@ -42,14 +67,27 @@ export function HeaderFloating({fromParent}) {
                     :
                     <div className='btn' onClick={logIn}>LogIn</div>
                 }
-                <div className='btn' onClick={save}>Save</div>
+                <div className='btn' onClick={save} >
+                
+                    <span className={('btn-spinner') + (isSaving?' active':'')} style={{'position':'relative', 'top':'0.2em'}}>
+                        <svg style={{'---svg-fill':'grey', 'width': '0.8em', 'height': '0.8em'}}>
+                            <use href="#svg-loading"/>
+                        </svg>
+                    </span>
+                    <span>
+                        Save
+                    </span>
+                    
+                </div>
             </div>
-        </StyledFloating>
+        </StyledFloating>,
+        document.querySelector(portalTarget||"#root-fix-header")
     )
 }
 
 export function Header(props) {
     const [isLoggedIn, setIsLoggedIn] = useState(false)
+    const [isSaving, setIsSaving] = useState(false)
     const {firebase} = useContext(globalContext)
     const logIn = ()=>{
         firebase.firebaseGSignin().then(()=>{
@@ -66,7 +104,7 @@ export function Header(props) {
         const [categoryState, setCategoryState] = _categoryState
         const [tagState, setTagState] = _tagState
         const [topicState, setTopicState] = _topicState
-
+        setIsSaving(true)
         firebaseEndpoints.authed.setStore(
             firebase, 
             'test_random',
@@ -75,7 +113,9 @@ export function Header(props) {
                 tags:tagState,
                 topics:topicState,
             }
-        )
+        ).then(()=>{
+            setIsSaving(false)
+        })
 
     }
     useEffect(()=>{
@@ -102,11 +142,11 @@ export function Header(props) {
             // )
         }    
     }, [isLoggedIn])
-    
+    const fromParentArgs = {isLoggedIn, isSaving, signOut, logIn, save}
     return (
         <Styled>
             xxxxxdddddxxxxx
-            <HeaderFloating fromParent={isLoggedIn, signOut, logIn, save}></HeaderFloating>
+            <HeaderFloating fromParentArgs={fromParentArgs}></HeaderFloating>
         </Styled>
     )
 }

@@ -5,12 +5,14 @@ import { ContentPage } from 'containers/ContentPage'
 // import { RootPage } from 'containers/Functional/RootPage'
 import { RootPageHoc } from 'hoc/factory/RootPageHoc'
 import { createContext } from 'react'
+import { ContentMeta } from 'components'
 
 export const globalContext = createContext(null)
 
 function App() {
   return (
     <div className="App">
+      <ContentMeta/>
       <globalContext.Provider value={
           { // pseudo type define: fireGlobalContext
             firebase:{
