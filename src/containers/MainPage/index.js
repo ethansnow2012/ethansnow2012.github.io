@@ -134,7 +134,7 @@ export const MainPage = forwardRef(function (props, ref) {
                 let _fakeTags = injectStyleState(fakeTags)
                 const _fakeTopics = injectStyleState(fakeTopics)
 
-                _fakeTags.data[0].active = true
+                //_fakeTags.data[0].active = true //fake at lease one active tag
                 
                 // relate with refs
                 Raw_fakeCategory.current = _fakeCategory

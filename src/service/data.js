@@ -3,7 +3,7 @@ import { firebaseEndpoints } from 'service/firebaseEndpoints'
 
 let NODE_ENV = process.env.REACT_APP_NODE_ENV
 
-//NODE_ENV = 'github_page'
+//NODE_ENV = 'github_page' // open this to use real database from firebase
 
 export async function getOneFakeTopic(id, fireGlobalContext){// use type define: fireGlobalContext
     if(NODE_ENV=='github_page'){
