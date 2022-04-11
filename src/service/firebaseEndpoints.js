@@ -38,6 +38,14 @@ _authed.prototype.setStore = (fireGlobalContext, collectionKey, data)=>{
     const firebase = fireGlobalContext
     const userUid = firebase.self.auth().currentUser.uid
 
+    //effects!
+    Object.keys(data).map(function(key) {
+        let el = data[key]
+        if(el.data){
+            data[key].data = el.data.filter(x=>x.ui_data!=true)
+        }
+    })
+
     // require fields:
     const dataRootType = {}
     dataRootType.uid = firebase.self.auth().currentUser.uid

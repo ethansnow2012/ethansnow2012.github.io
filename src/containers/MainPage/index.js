@@ -71,6 +71,7 @@ function injectDefaultCategory (fakeCategory){
     fakeCategory.data.unshift({
         id: faker.datatype.uuid(),
         name: 'All',
+        ui_data:true,
         tags: fakeTags.data.map(x=>x.id),
         selected:true,
     })
