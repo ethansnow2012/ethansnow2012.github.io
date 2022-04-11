@@ -5,6 +5,20 @@ import { globalContext } from 'App'
 import { firebaseEndpoints } from 'service/firebaseEndpoints'
 import { WithContextFactory }from 'hoc/factory/WithContext'
 
+const StyledFloating = styled.div`
+    .control{
+        position: fixed;
+        right:0;
+        top:0;
+        mix-blend-mode: exclusion;
+    }
+    .control .btn{
+        padding: 5px 8px;
+        cursor: pointer;
+    }
+`
+
+
 const Styled = styled.div`
     position: relative;
     padding-top:15vmin;
@@ -13,16 +27,26 @@ const Styled = styled.div`
     background-color: var(--color-blue-visual-weight);
     justify-content: center;
     display: flex;
-    .control{
-        position: absolute;
-        right:0;
-        top:0;
-    }
-    .control .btn{
-        padding: 5px 8px;
-        cursor: pointer;
-    }
+    
 `
+
+
+export function HeaderFloating({fromParent}) {
+    const {isLoggedIn, signOut, logIn, save} = fromParent
+    return (
+        <StyledFloating>
+            <div className='control'> 
+                {
+                    isLoggedIn?
+                    <div className='btn' onClick={signOut}>SignOut</div>
+                    :
+                    <div className='btn' onClick={logIn}>LogIn</div>
+                }
+                <div className='btn' onClick={save}>Save</div>
+            </div>
+        </StyledFloating>
+    )
+}
 
 export function Header(props) {
     const [isLoggedIn, setIsLoggedIn] = useState(false)
@@ -82,18 +106,13 @@ export function Header(props) {
     return (
         <Styled>
             xxxxxdddddxxxxx
-            <div className='control'> 
-                {
-                    isLoggedIn?
-                    <div className='btn' onClick={signOut}>SignOut</div>
-                    :
-                    <div className='btn' onClick={logIn}>LogIn</div>
-                }
-                <div className='btn' onClick={save}>Save</div>
-            </div>
+            <HeaderFloating fromParent={isLoggedIn, signOut, logIn, save}></HeaderFloating>
         </Styled>
     )
 }
+
+
+
 
 // component mutate:
 export const HeaderWithContext = WithContextFactory(Header)
