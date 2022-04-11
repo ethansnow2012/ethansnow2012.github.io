@@ -3,6 +3,7 @@ import React, {useEffect, useContext,  useState, useImperativeHandle, forwardRef
 import { getOneFakeTopic } from 'service/data'
 import styled from 'styled-components'
 import { globalContext } from 'App'
+import { SplitContext } from 'hoc/factory/RootPageHoc'
 
 // Import the Slate editor factory.
 import { createEditor } from 'slate'
@@ -60,6 +61,7 @@ const editorDataEmpty = [
 
 export const ContentPage = forwardRef(function(props, ref) {
     const {firebase} = useContext(globalContext)
+    const {leftContentRef} = useContext(SplitContext)
     const [topicContent, setTopicContent] = useState()
     const rawRef = useRef()
 
@@ -118,12 +120,47 @@ export const ContentPage = forwardRef(function(props, ref) {
     
     
 
-    const slateOnChange = (value)=>{
-        console.log('slateOnChange')
-    }
+    const slateOnChange = (targetKey)=>{
+        const  leftInnerStatesKey = '_topicState'
+        return (value)=>{
+            // bad example: do not update self's state
+            // setTopicContent((self)=>{
+            //     if(JSON.stringify(value)==JSON.stringify(self[targetKey])){
+            //         //nop
+            //         return self
+            //     }else{
+            //         self[targetKey] = value
+            //         return {...self}
+            //     }
+            // })
+            
+            //update the origin data instead to be reactive
+            if(leftContentRef){
+                const [state, setState] = leftContentRef.current.innerStates[leftInnerStatesKey]
+                let updated = false
+                setState((self)=>{
+                    state.data.map((el)=>{
+                        if(el.id==topicContent.id){
+                            console.log('change')
+                            el[targetKey] = value
+                            updated = true
+                        }
+                        return el
+                    })
+
+                    if(updated){
+                        return {...self}
+                    }
+                    return self//nop
+                })
+            }
+            
+            
+        }
+    } 
     const handleKeyDown = useCallback((event)=>{
         console.log('handleKeyDown')
-        let preventDefault = true//false
+        let preventDefault = false
         let charCode = String.fromCharCode(event.which).toLowerCase();
         if((event.ctrlKey || event.metaKey) && charCode === 's') {
           //alert("CTRL+S Pressed");
@@ -146,20 +183,20 @@ export const ContentPage = forwardRef(function(props, ref) {
                 <div className="inner">
                     <div className="topichead">
                         <div className="topichead-title">
-                            <Slate editor={editorTitle} value={editorData_title} onChange={slateOnChange}>
+                            <Slate editor={editorTitle} value={editorData_title} onChange={slateOnChange('topic')}>
                                 <Editable />
                             </Slate>
                         </div>
                     </div>
                     <div className="topicDescription">
                         <div className="topicDescription-inner">
-                            <Slate editor={editorDescription} value={editorData_description} onChange={slateOnChange}>
+                            <Slate editor={editorDescription} value={editorData_description} onChange={slateOnChange('description')}>
                                 <Editable />
                             </Slate>
                         </div>
                     </div>
                     <div className="topicContent">
-                            <Slate editor={editorContent} value={editorData_content} onChange={slateOnChange}>
+                            <Slate editor={editorContent} value={editorData_content} onChange={slateOnChange('content')}>
                                 <Editable />
                             </Slate>
                     </div>
