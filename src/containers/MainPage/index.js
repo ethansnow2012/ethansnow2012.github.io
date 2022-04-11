@@ -194,20 +194,22 @@ export const MainPage = forwardRef(function (props, ref) {
         return (ev)=>{
             console.log('tagClick', tagData, ev)
             const tagDataId = tagData.id
-            const tagsHaveActive = Raw_fakeTags.current.data.filter(x=>x.active).length>0?true:false
+            // const tagsHaveActive = Raw_fakeTags.current.data.filter(x=>x.active).length>0?true:false
     
             setFakeTagState((self)=>{
-                if(tagsHaveActive){
-                    self.data = self.data.map((x)=>{
-                        if(x.id==tagDataId){
-                            x.active = !x.active
-                            return x
-                        }
+                // if(tagsHaveActive){
+                self.data = self.data.map((x)=>{
+                    if(x.id==tagDataId){
+                        x.active = !x.active
                         return x
-                    })
-                    refActiveTags.current = tagsFilter(self.data, refActiveCategory.current)
-                }
+                    }
+                    return x
+                })
+                    
+                // }
+                refActiveTags.current = tagsFilter(self.data, refActiveCategory.current)
                 return {...self}
+                
             })
         }
     }
