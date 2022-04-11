@@ -98,15 +98,45 @@ fakeCategory = {
     ]
 } 
 
+// type define Slate Content : using the same data structure with Slate.js
+// [{
+//     "type":"paragraph",
+//     "children":[
+//         {
+//             "text":"Boston's most advanced compression wear technology increases muscle oxygenation, stabilizes active muscles"
+//         }
+//     ]
+// }]
 
 fakeTopics = {
     id: faker.datatype.uuid(),
     data: [
         {
             id: 'c5ab82f7-da61-4952-b46d-4d9b13e67c23',//faker.datatype.uuid(),
-            topic: faker.name.jobTitle(),
-            description: faker.commerce.productDescription(),
-            content: faker.lorem.text(),
+            topic: [{
+                "type":"paragraph",
+                "children":[
+                    {
+                        "text":faker.name.jobTitle()
+                    }
+                ]
+            }],
+            description: [{
+                "type":"paragraph",
+                "children":[
+                    {
+                        "text": faker.commerce.productDescription(),
+                    }
+                ]
+            }],
+            content: [{
+                "type":"paragraph",
+                "children":[
+                    {
+                        "text": faker.lorem.text(),
+                    }
+                ]
+            }],
             tags:[
                 fakeTags.data[1].id,
                 fakeTags.data[2].id,
@@ -114,9 +144,30 @@ fakeTopics = {
         },
         {
             id: '1af898f8-5ac0-47f0-88ff-e563b6be38d7',//faker.datatype.uuid(),
-            topic: faker.name.jobTitle(),
-            description: faker.commerce.productDescription(),
-            content: faker.lorem.text(),
+            topic: [{
+                "type":"paragraph",
+                "children":[
+                    {
+                        "text":faker.name.jobTitle()
+                    }
+                ]
+            }],
+            description: [{
+                "type":"paragraph",
+                "children":[
+                    {
+                        "text": faker.commerce.productDescription(),
+                    }
+                ]
+            }],
+            content: [{
+                "type":"paragraph",
+                "children":[
+                    {
+                        "text": faker.lorem.text(),
+                    }
+                ]
+            }],
             tags:[
                 fakeTags.data[0].id,
                 fakeTags.data[1].id,
@@ -124,27 +175,90 @@ fakeTopics = {
         },
         {
             id: 'b199bb59-ddd1-4e5d-9b72-560200f25972',//faker.datatype.uuid(),
-            topic: faker.name.jobTitle(),
-            description: faker.commerce.productDescription(),
-            content: faker.lorem.text(),
+            topic: [{
+                "type":"paragraph",
+                "children":[
+                    {
+                        "text":faker.name.jobTitle()
+                    }
+                ]
+            }],
+            description: [{
+                "type":"paragraph",
+                "children":[
+                    {
+                        "text": faker.commerce.productDescription(),
+                    }
+                ]
+            }],
+            content: [{
+                "type":"paragraph",
+                "children":[
+                    {
+                        "text": faker.lorem.text(),
+                    }
+                ]
+            }],
             tags:[
                 fakeTags.data[3].id,
             ]
         },
         {
             id: '06663524-faec-4dd2-8ac6-570d01b62eb3',//faker.datatype.uuid(),
-            topic: faker.name.jobTitle(),
-            description: faker.commerce.productDescription(),
-            content: faker.lorem.text(),
+            topic: [{
+                "type":"paragraph",
+                "children":[
+                    {
+                        "text":faker.name.jobTitle()
+                    }
+                ]
+            }],
+            description: [{
+                "type":"paragraph",
+                "children":[
+                    {
+                        "text": faker.commerce.productDescription(),
+                    }
+                ]
+            }],
+            content: [{
+                "type":"paragraph",
+                "children":[
+                    {
+                        "text": faker.lorem.text(),
+                    }
+                ]
+            }],
             tags:[
                 fakeTags.data[0].id,
             ]
         },
         {
             id: '9693d8ed-fea9-4dd6-8608-a55afafb29c7',//faker.datatype.uuid(),
-            topic: faker.name.jobTitle(),
-            description: faker.commerce.productDescription(),
-            content: faker.lorem.text(),
+            topic: [{
+                "type":"paragraph",
+                "children":[
+                    {
+                        "text":faker.name.jobTitle()
+                    }
+                ]
+            }],
+            description: [{
+                "type":"paragraph",
+                "children":[
+                    {
+                        "text": faker.commerce.productDescription(),
+                    }
+                ]
+            }],
+            content: [{
+                "type":"paragraph",
+                "children":[
+                    {
+                        "text": faker.lorem.text(),
+                    }
+                ]
+            }],
             tags:[
                 fakeTags.data[0].id,
                 fakeTags.data[1].id,

@@ -115,13 +115,16 @@ export function SubjectCard({children, data, tags, toRightContent, rightContentR
             })
         }
     }, [])
+    const parstSlateDataToString = (data)=>{
+        return data.filter(x=>x.type=='paragraph').map(x=>x.children.map(y=>y.text).join('')).join('')
+    }
     return (
         <Styled>
             <div className='topic'>
-                {data.topic}
+                {parstSlateDataToString(data.topic)}
             </div>
             <div className='description'>
-                {data.description}
+                {parstSlateDataToString(data.description)}
             </div>
             <div className='goto-content-wrapper'>
                 <div className='goto-content' onClick={gotoContent}>

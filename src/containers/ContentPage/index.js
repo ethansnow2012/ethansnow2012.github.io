@@ -103,36 +103,15 @@ export const ContentPage = forwardRef(function(props, ref) {
 
     useEffect(()=>{
         if(topicContent?.topic){
-            editorTitle.children =  [
-                        {
-                        type: 'paragraph',
-                        children: [
-                            { text: topicContent.topic },
-                        ],
-                    }
-                ]
+            editorTitle.children = topicContent.topic
             editorTitle.onChange();
         }
         if(topicContent?.description){
-            editorDescription.children =  [
-                        {
-                        type: 'paragraph',
-                        children: [
-                            { text: topicContent.description },
-                        ],
-                    }
-                ]
+            editorDescription.children = topicContent.description
             editorDescription.onChange();
         }
         if(topicContent?.content){
-            editorContent.children =  [
-                        {
-                        type: 'paragraph',
-                        children: [
-                            { text: topicContent.content },
-                        ],
-                    }
-                ]
+            editorContent.children = topicContent.content
             editorContent.onChange();
         }
     },[topicContent])
@@ -144,7 +123,7 @@ export const ContentPage = forwardRef(function(props, ref) {
     }
     const handleKeyDown = useCallback((event)=>{
         console.log('handleKeyDown')
-        let preventDefault = false
+        let preventDefault = true//false
         let charCode = String.fromCharCode(event.which).toLowerCase();
         if((event.ctrlKey || event.metaKey) && charCode === 's') {
           //alert("CTRL+S Pressed");
