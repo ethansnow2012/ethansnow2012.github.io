@@ -4,6 +4,8 @@ import { HeaderWithContext, FilterTagWrapper, SubjectCardWrapper } from 'compone
 import { BaseContentSpacing, BaseContentSpacingStyle, HSpliter, HSpliterLine } from 'containers/Functional'
 import { MainPage, DefaultStyle as MainPageDefaultStyle } from 'containers/MainPage'
 
+import {RouterMeta} from 'components/RouterMeta'
+
 
 
 const Styled = styled.div`
@@ -65,6 +67,7 @@ export function RootPageHoc(LeftContent, RightContent, pageOptions){
     },[currentSplitLoc])
     return (
         <Styled>
+            <RouterMeta/>
             <SplitContext.Provider value={{toRightContent, toLeftContent, leftContentRef, rightContentRef, currentSplitLoc}}>{/* pseudo type define: SplitContextValue */}
                 <HeaderWithContext></HeaderWithContext>
                 {/* <div >AAA</div> */}
