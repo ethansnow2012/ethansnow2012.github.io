@@ -63,7 +63,7 @@ export function RootPageHoc(LeftContent, RightContent, pageOptions){
         }
         initialized.current = true
     },[currentSplitLoc])
-    return (
+    return ()=>(
         <Styled>
             <SplitContext.Provider value={{toRightContent, toLeftContent, leftContentRef, rightContentRef, currentSplitLoc}}>{/* pseudo type define: SplitContextValue */}
                 <HeaderWithContext></HeaderWithContext>
