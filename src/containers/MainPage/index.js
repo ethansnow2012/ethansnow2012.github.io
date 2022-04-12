@@ -1,4 +1,4 @@
-import React, { useState, useContext ,useEffect, useRef, forwardRef, useImperativeHandle }from 'react'
+import React, { useState, useContext ,useEffect, useRef, forwardRef, useImperativeHandle, useCallback }from 'react'
 import { Header, FilterTagWrapper, SubjectCardWrapper } from 'components'
 import { globalContext } from 'App'
 import {CSelect} from 'hoc/instance'
@@ -123,7 +123,17 @@ export const MainPage = forwardRef(function (props, ref) {
                                 return refActiveCategory.current.tags.indexOf(x.id)>=0
                             })[0]?.id
                         )
+
+    const gotoCurrentLocation = useCallback(()=>{
+        rawRef.current.scrollIntoView()
+    },[])
+
     useEffect(()=>{
+        console.log('MainPage effect')
+        const isLandDirectly = (props.selfPosition==props.pageOptions.priority)
+        if(isLandDirectly){
+            gotoCurrentLocation()
+        }
         Promise.all([getFakeCategory(firebase), getFakeTags(firebase), getFakeTopics(firebase)])
             .then(values => {
                 console.log('values', values)
