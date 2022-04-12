@@ -7,9 +7,14 @@ import { RootPageHoc } from 'hoc/factory/RootPageHoc'
 import { createContext } from 'react'
 import { ContentMeta } from 'components'
 
+
+
 export const globalContext = createContext(null)
+const MainPageCombined = RootPageHoc(MainPage, ContentPage, {priority:'left'})
+const ContentPageCombined = RootPageHoc(MainPage, ContentPage, {priority:'right'})
 
 function App() {
+  
   return (
     <div className="App">
       <ContentMeta/>
@@ -26,10 +31,10 @@ function App() {
         
         <BrowserRouter >
           <Routes>
-            <Route path='/' element={RootPageHoc(MainPage, ContentPage, {priority:'left'})}></Route>
+            <Route path='/' element={<MainPageCombined/>}></Route>
             {/* <Route path='/content1' element={<RootPage renderCode={'1'}/>}></Route>
             <Route path='/content2' element={<RootPage renderCode={'2'}/>}></Route> */}
-            <Route path='/content/:id' element={RootPageHoc(MainPage, ContentPage, {priority:'right'})}></Route>
+            <Route path='/content/:id' element={<ContentPageCombined/>}></Route>
           </Routes>
         </BrowserRouter>
       </globalContext.Provider>
