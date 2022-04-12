@@ -4,7 +4,6 @@ import { MainPage } from 'containers/MainPage'
 import { ContentPage } from 'containers/ContentPage'
 // import { RootPage } from 'containers/Functional/RootPage'
 import { RootPageHoc } from 'hoc/factory/RootPageHoc'
-import GitHubPageRoute from 'hoc/factory/GithubRoute'
 import { createContext } from 'react'
 import { ContentMeta } from 'components'
 
@@ -27,10 +26,10 @@ function App() {
         
         <BrowserRouter >
           <Routes>
-            <Route path='/' element={GitHubPageRoute(RootPageHoc(MainPage, ContentPage, {priority:'left'}),'')}></Route>
+            <Route path='/' element={RootPageHoc(MainPage, ContentPage, {priority:'left'})}></Route>
             {/* <Route path='/content1' element={<RootPage renderCode={'1'}/>}></Route>
             <Route path='/content2' element={<RootPage renderCode={'2'}/>}></Route> */}
-            <Route path='/content/:id' element={GitHubPageRoute(RootPageHoc(MainPage, ContentPage, {priority:'right'}),'')}></Route>
+            <Route path='/content/:id' element={RootPageHoc(MainPage, ContentPage, {priority:'right'})}></Route>
           </Routes>
         </BrowserRouter>
       </globalContext.Provider>
