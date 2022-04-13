@@ -1,6 +1,7 @@
 import React, { useState, useContext ,useEffect, useRef, forwardRef, useImperativeHandle, useCallback }from 'react'
 import { Header, FilterTagWrapper, SubjectCardWrapper } from 'components'
 import { globalContext } from 'App'
+import { SplitContext } from 'hoc/factory/RootPageHoc'
 import {CSelect} from 'hoc/instance'
 import styled from 'styled-components'
 import { BaseContentSpacing, BaseContentSpacingStyle } from 'containers/Functional'
@@ -90,15 +91,17 @@ function tagsFilter(tagsObject, activeCategoryObject){
 }
 
 export const MainPage = forwardRef(function (props, ref) {
+    const { headRef }  = useContext(SplitContext)
     const {firebase} = useContext(globalContext)
     const rawRef = useRef()
     useImperativeHandle(ref, ()=>
         ({
             simpleConsole: ()=>{ console.log('simpleConsole', ref) },
-            innerStates:{
+            innerStates:{ // pseudo field key defined/used
                 _categoryState: [fakeCategoryState, setFakeCategoryState],
                 _tagState: [fakeTagState, setFakeTagState],
                 _topicState: [fakeTopicState, setFakeTopicState],
+                _isEditing: [isEditing, setIsEditing]
             },
             rawRef
         })
@@ -106,6 +109,11 @@ export const MainPage = forwardRef(function (props, ref) {
     const [fakeCategoryState, setFakeCategoryState] = useState({data:[]})
     const [fakeTagState, setFakeTagState] = useState({data:[]})
     const [fakeTopicState, setFakeTopicState] = useState({data:[]})
+
+    const [toBeSaved, setTobeSaved] = useState(false)
+
+    const [isEditing, setIsEditing] = useState(false)
+    const [isSaving, setIsSaving] = useState(false)
 
     const effectPreventer_1 = useRef(true)
     const effectPreventer_2 = useRef(true)
@@ -200,31 +208,63 @@ export const MainPage = forwardRef(function (props, ref) {
             return newSelf
         })
     }
-
-    const tagClickFactory = function(tagData){
+    const tagEditBlurFactory = (tagData)=>{
         return (ev)=>{
-            console.log('tagClick', tagData, ev)
+            console.log('tagEditBlur', tagData, ev)
             const tagDataId = tagData.id
-            // const tagsHaveActive = Raw_fakeTags.current.data.filter(x=>x.active).length>0?true:false
-    
+            const newText = ev.currentTarget.innerText
             setFakeTagState((self)=>{
-                // if(tagsHaveActive){
                 self.data = self.data.map((x)=>{
                     if(x.id==tagDataId){
-                        x.active = !x.active
+                        x.name = newText
                         return x
                     }
                     return x
                 })
-                    
-                // }
-                refActiveTags.current = tagsFilter(self.data, refActiveCategory.current)
                 return {...self}
-                
             })
+            setTobeSaved(true)
         }
     }
-
+    
+    const tagClickFactory = useCallback(function(tagData){
+        return (ev)=>{
+            if(isEditing){
+                console.log('isEditing')
+            }else{
+                console.log('tagClick', tagData, ev)
+                const tagDataId = tagData.id
+        
+                setFakeTagState((self)=>{
+                    self.data = self.data.map((x)=>{
+                        if(x.id==tagDataId){
+                            x.active = !x.active
+                            return x
+                        }
+                        return x
+                    })
+                    refActiveTags.current = tagsFilter(self.data, refActiveCategory.current)
+                    return {...self}
+                    
+                })
+            }
+            
+        }
+    }, [isEditing]) 
+    /**
+     * useEffect0: isEditing mode change
+     *  trigger - isEditing
+     *  output - fakeTagState
+     */
+    useEffect(()=>{
+        setFakeTagState((self)=>{
+            self.data = self.data.map((x)=>{
+                x.editable = isEditing
+                return x
+            })
+            return {...self}
+        })
+    }, [isEditing])
     /**
      * useEffect1: category to tagState
      *  trigger - fakeCategoryState
@@ -263,6 +303,7 @@ export const MainPage = forwardRef(function (props, ref) {
      *  inner state(ref) - 
      */
     useEffect(()=>{
+        console.log('useEffect2')
         if(effectPreventer_2.current==true){
             effectPreventer_2.current = false
             return
@@ -279,6 +320,23 @@ export const MainPage = forwardRef(function (props, ref) {
             })
         }
     }, [fakeTagState]) //cascading effect: fakeTagState -> fakeTopicState
+    
+    //useMemo(() => toBeSaved, [toBeSaved]);
+    useEffect(()=>{
+        if(toBeSaved){
+            setTimeout(()=>{
+                if(toBeSaved){//what's the closure here
+                    console.log('main page saving', headRef)
+                    const [isSaving, setIsSaving] = headRef.current.innerStates._isSaving
+                    setIsSaving(true)//mimic http
+                    setTimeout(()=>{
+                        setTobeSaved(false)
+                        setIsSaving(false)//mimic http
+                    },1000)
+                }
+            }, 2000)
+        }
+    }, [toBeSaved])
     
     return (
         <Styled ref={rawRef}>            
@@ -298,7 +356,7 @@ export const MainPage = forwardRef(function (props, ref) {
                         </CSelect>
                     </div>
                     <div className='p-select-wrapper-i2'>
-                        <FilterTagWrapper key={fakeTagState.id} data={fakeTagState.data} tagClickFactory={tagClickFactory}></FilterTagWrapper>
+                        <FilterTagWrapper key={fakeTagState.id} data={fakeTagState.data} tagClickFactory={tagClickFactory} tagEditBlurFactory={tagEditBlurFactory}></FilterTagWrapper>
                     </div>
                     
                 </div> 

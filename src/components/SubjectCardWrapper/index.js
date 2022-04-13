@@ -66,6 +66,7 @@ const adjectHeight = function(target) {
 }
 
 export function SubjectCardWrapper({children, data, tags}){
+    console.log('SubjectCardWrapper')
     const dataFiltered = data.filter(x=>x.display)
     const shouldBeDisplayedCount = useRef(dataFiltered.length)
     const isDisplayedCount = useRef(dataFiltered.length)

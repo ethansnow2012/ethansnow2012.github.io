@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import {FilterTag , DefaultStyle} from 'components/FilterTag'
+import {FilterTag, FilterTagWithContext , DefaultStyle} from 'components/FilterTag'
 const Styled = styled.div`
     display: flex;
     flex-gap: 2em;
@@ -13,7 +13,7 @@ const Styled = styled.div`
     }
 `
 
-export function FilterTagWrapper({children, data, tagClickFactory}){
+export function FilterTagWrapper({children, data, tagClickFactory, tagEditBlurFactory}){
     const checkActive = data.filter(x=>x.active).length>0?true:false
     console.log('FilterTagWrapper')
     return (
@@ -21,7 +21,7 @@ export function FilterTagWrapper({children, data, tagClickFactory}){
             {
                 data.filter(x=>x.display).reverse().map((tagData)=>{//
                     return (
-                        <FilterTag key={tagData.id} tagData={tagData} checkActive={checkActive} tagClickFactory={tagClickFactory}></FilterTag>
+                        <FilterTag key={tagData.id} tagData={tagData} checkActive={checkActive} tagClickFactory={tagClickFactory} tagEditBlurFactory={tagEditBlurFactory}></FilterTag>
                     )
                 })
             }

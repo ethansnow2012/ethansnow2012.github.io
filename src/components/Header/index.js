@@ -1,10 +1,10 @@
 
-import React, { useContext, useState, useEffect } from 'react'
+import React, { useContext, useState, useEffect, useImperativeHandle, forwardRef } from 'react'
 import ReactDom from 'react-dom'
 import styled from 'styled-components'
 import { globalContext } from 'App'
 import { firebaseEndpoints } from 'service/firebaseEndpoints'
-import { WithContextFactory }from 'hoc/factory/WithContext'
+import { WithContextFactory, WithContextWithForwardRefFactory }from 'hoc/factory/WithContext'
 import { SplitContext } from 'hoc/factory/RootPageHoc'
 
 const StyledFloating = styled.div`
@@ -58,7 +58,10 @@ const Styled = styled.div`
 
 
 export function HeaderFloating({fromParentArgs, portalTarget}) {
-    const {isLoggedIn, isSaving, signOut, logIn, save, currentSplitLoc} = fromParentArgs
+    const {
+        isLoggedIn, isSaving, isEditing, signOut, logIn, 
+        save, currentSplitLoc, toggleEditMode, mainPageSave
+    } = fromParentArgs
     return ReactDom.createPortal(
         <StyledFloating>
             <div className='control'> 
@@ -82,6 +85,32 @@ export function HeaderFloating({fromParentArgs, portalTarget}) {
                     </div>
                     :''
                 }
+                {
+                    (isLoggedIn&&currentSplitLoc=='left')?
+                        isEditing?
+                        <div className='btn' onClick={toggleEditMode}>
+                            Edit Mode
+                        </div>
+                        :
+                        <div className='btn' onClick={toggleEditMode}>
+                            View Mode
+                        </div>
+                    :''
+                }
+                {
+                    (isLoggedIn&&currentSplitLoc=='left'&&isEditing)?
+                    <div className='btn' onClick={mainPageSave} >
+                        <span className={('btn-spinner') + (isSaving?' active':'')} style={{'position':'relative', 'top':'0.2em'}}>
+                            <svg style={{'---svg-fill':'grey', 'width': '0.8em', 'height': '0.8em'}}>
+                                <use href="#svg-loading"/>
+                            </svg>
+                        </span>
+                        <span>
+                            Save
+                        </span>
+                    </div>
+                    :''
+                }
                 
             </div>
         </StyledFloating>,
@@ -89,11 +118,24 @@ export function HeaderFloating({fromParentArgs, portalTarget}) {
     )
 }
 
-export function Header(props) {
-    const { currentSplitLoc}  = useContext(SplitContext)
+export const Header = forwardRef(function (props, ref) {//forward state here
+    const { currentSplitLoc, leftContentRef, rightContentRef }  = useContext(SplitContext)
     const [isLoggedIn, setIsLoggedIn] = useState(false)
     const [isSaving, setIsSaving] = useState(false)
+    const [isEditing, setIsEditing] = useState(false)
     const {firebase} = useContext(globalContext)
+
+    useImperativeHandle(ref, ()=>
+        ({
+            simpleConsole: ()=>{ console.log('simpleConsole', ref) },
+            innerStates:{ // pseudo field key defined/used
+                _isSaving:[isSaving, setIsSaving],
+                _isEditing: [isEditing, setIsEditing]
+            },
+            //rawRef
+        })
+    )
+
     const logIn = ()=>{
         firebase.firebaseGSignin().then(()=>{
             setIsLoggedIn(true)
@@ -102,6 +144,16 @@ export function Header(props) {
     const signOut = ()=>{
         //firebase.firebaseGSignout()
         setIsLoggedIn(false)
+    }
+    const mainPageSave = ()=>{
+        console.log('mainPageSave')
+        setIsSaving(true)
+
+        // saving opration here
+
+        setTimeout(()=>{
+            setIsSaving(false)
+        }, 1000)
     }
     const save = ()=>{
         console.log('props save', props)
@@ -122,6 +174,12 @@ export function Header(props) {
             setIsSaving(false)
         })
 
+    }
+    const toggleEditMode = ()=>{
+        const [mainPageIsEditing, setMainPageIsEditing] = leftContentRef.current.innerStates._isEditing
+        
+        setIsEditing(!isEditing)
+        setMainPageIsEditing(!mainPageIsEditing)
     }
     useEffect(()=>{
         firebase.self.auth().onAuthStateChanged(function(user) {
@@ -147,17 +205,18 @@ export function Header(props) {
             // )
         }    
     }, [isLoggedIn])
-    const fromParentArgs = {isLoggedIn, isSaving, signOut, logIn, save, currentSplitLoc}
+    const fromParentArgs = {isLoggedIn, isSaving, isEditing, toggleEditMode, signOut, logIn, save, mainPageSave, currentSplitLoc}
     return (
         <Styled>
             xxxxxdddddxxxxx
             <HeaderFloating fromParentArgs={fromParentArgs}></HeaderFloating>
         </Styled>
     )
-}
+})
 
 
 
 
 // component mutate:
 export const HeaderWithContext = WithContextFactory(Header)
+export const HeaderWithContextWithForwardRef = WithContextWithForwardRefFactory(Header)

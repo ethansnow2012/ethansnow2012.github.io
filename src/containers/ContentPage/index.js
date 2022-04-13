@@ -77,7 +77,10 @@ export const ContentPage = forwardRef(function(props, ref) {
     useImperativeHandle(ref, ()=>
         ({
             simpleConsole: ()=>{ console.log('simpleConsole', ref) },
-            contentPageState: [topicContent, setTopicContent],
+            //contentPageState: [topicContent, setTopicContent],
+            innerStates:{
+                _topicContent: [topicContent, setTopicContent]
+            },
             rawRef
         })
     )

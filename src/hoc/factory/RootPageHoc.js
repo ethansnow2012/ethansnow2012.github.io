@@ -1,6 +1,6 @@
 import React, {useState, useRef, createContext, useEffect, useCallback} from 'react'
 import styled from 'styled-components'
-import { HeaderWithContext, FilterTagWrapper, SubjectCardWrapper } from 'components'
+import { HeaderWithContext, HeaderWithContextWithForwardRef, FilterTagWrapper, SubjectCardWrapper } from 'components'
 import { BaseContentSpacing, BaseContentSpacingStyle, HSpliter, HSpliterLine } from 'containers/Functional'
 import { MainPage, DefaultStyle as MainPageDefaultStyle } from 'containers/MainPage'
 
@@ -24,8 +24,10 @@ export function RootPageHoc(LeftContent, RightContent, pageOptions){
         const initialized = useRef(false);
         
         const [currentSplitLoc, setCurrentSplitLoc] = useState(pageOptions.priority?pageOptions.priority:'left')//
+
         const leftContentRef = useRef(null)
         const rightContentRef = useRef(null)
+        const headRef = useRef(null)
         
 
         const toRightContent = useCallback(
@@ -67,13 +69,11 @@ export function RootPageHoc(LeftContent, RightContent, pageOptions){
             }
             initialized.current = true
         },[currentSplitLoc])
-
         return (
             <Styled>
                 <RouterMeta/>
-                <SplitContext.Provider value={{toRightContent, toLeftContent, leftContentRef, rightContentRef, currentSplitLoc}}>{/* pseudo type define: SplitContextValue */}
-                    <HeaderWithContext></HeaderWithContext>
-                    {/* <div >AAA</div> */}
+                <SplitContext.Provider value={{toRightContent, toLeftContent, leftContentRef, headRef, rightContentRef, currentSplitLoc}}>{/* pseudo type define: SplitContextValue */}
+                    <HeaderWithContextWithForwardRef ref={headRef}></HeaderWithContextWithForwardRef>
                     <div className="splitwrapper">
                         <HSpliter >
                             {/* pairContentRef={rightContentRef}  */}

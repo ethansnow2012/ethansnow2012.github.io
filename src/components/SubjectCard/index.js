@@ -80,7 +80,7 @@ const Styled = styled.div`
 `
 
 export function SubjectCard({children, data, tags, toRightContent, rightContentRef, leftContentRef}){
-    //console.log('SubjectCard', tags)
+    console.log('SubjectCard', tags)
 
     const filteredTags = tags.filter( x => data.tags.indexOf(x.id)>=0 )
     const filteredTagsLength = filteredTags.length
@@ -106,7 +106,7 @@ export function SubjectCard({children, data, tags, toRightContent, rightContentR
             window.history.pushState(null,'', `/content/${data.id}`)
             //change content here
             console.log('ffggaa', leftContentRef)
-            const [contentPageState, setContentPageState] = rightContentRef.current.contentPageState
+            const [contentPageState, setContentPageState] = rightContentRef.current.innerStates._topicContent
             const [topicState, setTopicState] = leftContentRef.current.innerStates._topicState
             setContentPageState((self)=>{
                 const topicId = (new URL(window.location)).pathname.split('/')[2]
