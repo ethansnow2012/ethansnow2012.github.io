@@ -15,6 +15,9 @@ const StyledFloating = styled.div`
     mix-blend-mode: exclusion;
     .control{
         color: white;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
     }
     .control .btn{
         display:flex;
@@ -22,6 +25,13 @@ const StyledFloating = styled.div`
         padding: 5px 8px;
         cursor: pointer;
     }
+    .control .btn.default-hide{
+        display: none
+    }
+    .control .btn.default-hide.active{
+        display:flex;
+    }
+    
     .control .btn-spinner{
         opacity:0;
         width: max-content;
@@ -99,7 +109,7 @@ export function HeaderFloating({fromParentArgs, portalTarget}) {
                 }
                 {
                     (isLoggedIn&&currentSplitLoc=='left'&&isEditing)?
-                    <div className='btn' onClick={mainPageSave} >
+                    <div className={('btn') + (' default-hide') + (isSaving?' active':'')} onClick={mainPageSave} >
                         <span className={('btn-spinner') + (isSaving?' active':'')} style={{'position':'relative', 'top':'0.2em'}}>
                             <svg style={{'---svg-fill':'grey', 'width': '0.8em', 'height': '0.8em'}}>
                                 <use href="#svg-loading"/>
