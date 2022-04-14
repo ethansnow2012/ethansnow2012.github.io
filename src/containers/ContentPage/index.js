@@ -6,7 +6,7 @@ import { globalContext } from 'App'
 import { SplitContext } from 'hoc/factory/RootPageHoc'
 
 // Import the Slate editor factory.
-import { createEditor } from 'slate'
+import { createEditor, Transforms } from 'slate'
 // Import the Slate components and React plugin.
 import { Slate, Editable, withReact } from 'slate-react'
 
@@ -43,10 +43,26 @@ const Styled = styled.div`
         box-shadow: 2px 3px 5px 2px #888;
     }
     & .topicContent{
+        position: relative;
         background:#cbcbcb;
         padding:var(--blockpadding) calc(var(--blockpadding) * 2);
         margin-top: calc(var(--maincontent-innerspacing) * 1.8);
         min-height: 40vmin;
+    }
+    & .topicContent *[role='textbox'] * + *{
+        margin-top:5px;
+    }
+    & .topicContent .incinfo{
+        position: absolute;
+        top: -20px;
+        right: 0;
+        font-size: 0.5em;
+    }
+    & .editToolbar{
+        background:white;
+    }
+    & .p-slate-code{
+        background: #ffffff4a;
     }
 `
 const editorDataEmpty = [
@@ -63,6 +79,7 @@ export const ContentPage = forwardRef(function(props, ref) {
     const {firebase} = useContext(globalContext)
     const {leftContentRef} = useContext(SplitContext)
     const [topicContent, setTopicContent] = useState()
+    const [isLoggedIn, setIsLoggedIn] = useState(false)
     const rawRef = useRef()
 
     const [editorTitle] = useState(() => withReact(createEditor()))
@@ -79,7 +96,8 @@ export const ContentPage = forwardRef(function(props, ref) {
             simpleConsole: ()=>{ console.log('simpleConsole', ref) },
             //contentPageState: [topicContent, setTopicContent],
             innerStates:{
-                _topicContent: [topicContent, setTopicContent]
+                _topicContent: [topicContent, setTopicContent],
+                _isLoggedIn: [isLoggedIn, setIsLoggedIn]
             },
             rawRef
         })
@@ -87,6 +105,27 @@ export const ContentPage = forwardRef(function(props, ref) {
     const gotoCurrentLocation = useCallback(()=>{
         ref.current.rawRef.current.scrollIntoView()
     },[])
+
+    const CodeElement = props => {
+        return (
+          <pre {...props.attributes} className="p-slate-code">
+            <code>{props.children}</code>
+          </pre>
+        )
+      }
+      
+    const DefaultElement = props => {
+        return <p {...props.attributes}>{props.children}</p>
+    }
+
+    const renderElement = useCallback(props => {
+        switch (props.element.type) {
+          case 'code':
+            return <CodeElement {...props} />
+          default:
+            return <DefaultElement {...props} />
+        }
+      }, [])
 
     useEffect(()=>{
         const isLandDirectly = (props.selfPosition==props.pageOptions.priority)
@@ -181,6 +220,19 @@ export const ContentPage = forwardRef(function(props, ref) {
         }
     }, [])
 
+    const editorContentOnKeyDown = (event) => {
+        console.log('editorContentOnKeyDown')
+        
+        if(event.key === '`' && event.ctrlKey){
+            event.preventDefault()
+            Transforms.insertNodes(
+                editorContent,
+                { type: 'code', children: [{ text: 'xxxx' }] },
+                { at: [editorContent.children.length] }
+            )
+        }
+      }
+
     return (
         <Styled ref={rawRef} onKeyDown={handleKeyDown}>
                 <div className="inner">
@@ -199,9 +251,22 @@ export const ContentPage = forwardRef(function(props, ref) {
                         </div>
                     </div>
                     <div className="topicContent">
-                            <Slate editor={editorContent} value={editorData_content} onChange={slateOnChange('content')}>
-                                <Editable />
-                            </Slate>
+                        {
+                            (
+                                isLoggedIn?
+                                <div className="incinfo">Command:  <span style={{fontWeight:'bolder'}}>ctrl + `</span>  to insert a code block</div>
+                                :
+                                ""
+                            )
+                        }
+                        <Slate editor={editorContent} value={editorData_content} onChange={slateOnChange('content')}>
+                            <div className="editToolbar" style={{display: 'none'}}>aaaa(Transforms)</div>{/*hide this for; wait for construction*/}
+                            
+                            <Editable 
+                                renderElement={renderElement}
+                                onKeyDown={editorContentOnKeyDown}
+                            />
+                        </Slate>
                     </div>
                 </div>
             

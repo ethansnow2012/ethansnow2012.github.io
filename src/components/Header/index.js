@@ -224,6 +224,11 @@ export const Header = forwardRef(function (props, ref) {//forward state here
             //     {}
             // )
         }    
+        if(rightContentRef.current){ // sync the states
+            const [contentIsLoggedIn, setContentIsLoggedIn] = rightContentRef.current.innerStates._isLoggedIn
+            setContentIsLoggedIn(isLoggedIn)
+        }
+        
     }, [isLoggedIn])
     const fromParentArgs = {isLoggedIn, isSaving, isEditing, toggleEditMode, signOut, logIn, clickSaveContentPage, mainPageSave, currentSplitLoc}
     return (
