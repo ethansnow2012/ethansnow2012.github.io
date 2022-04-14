@@ -170,10 +170,10 @@ export const ContentPage = forwardRef(function(props, ref) {
           preventDefault = true
           console.log('saving', )//get the main page ref  || pairContentRef={leftContentRef} 
         }else if((event.ctrlKey || event.metaKey) && charCode === 'c') {
-            preventDefault = true
+            //preventDefault = true
           //alert("CTRL+C Pressed");
         }else if((event.ctrlKey || event.metaKey) && charCode === 'v') {
-            preventDefault = true
+            //preventDefault = true
           //alert("CTRL+V Pressed");
         }
         if(preventDefault){
