@@ -37,6 +37,7 @@ const Styled = styled.div`
     }
     &.editable > *{
         background: #ffffff38;
+        cursor: text !important;
     }
 `
 //

@@ -31,18 +31,30 @@ _notAuthed.prototype.getStore = (fireGlobalContext, collectionKey, dataKey, opti
         })
     })
 }
+
+const fieldForUi = [
+    'editable',
+    'active'
+]
 const _authed = function () {}
 
 _authed.prototype.setStore = (fireGlobalContext, collectionKey, data)=>{
     console.log('fireGlobalContext', fireGlobalContext)
+    data= JSON.parse(JSON.stringify(data))
     const firebase = fireGlobalContext
     const userUid = firebase.self.auth().currentUser.uid
 
-    //effects!
+    // mutate data before it get stored
     Object.keys(data).map(function(key) {
         let el = data[key]
         if(el.data){
             data[key].data = el.data.filter(x=>x.ui_data!=true)
+                .map((x)=>{ 
+                    fieldForUi.forEach((dueField)=>{
+                        delete x[dueField]
+                    })
+                    return x
+                })
         }
     })
 
