@@ -234,6 +234,7 @@ export const ContentPage = forwardRef(function(props, ref) {
             selected = null;
         }
         //end: get the select block
+
         if(event.key === '`' && event.ctrlKey){
             event.preventDefault()
             Transforms.insertNodes(
@@ -243,10 +244,11 @@ export const ContentPage = forwardRef(function(props, ref) {
             )
         }else if(event.key === "Enter" && event.shiftKey){
             event.preventDefault()
+            const targetIndex = editorContent.children.indexOf(selected) + 1
             Transforms.insertNodes(
                 editorContent,
                 { type: 'paragraph', children: [{ text: ' ' }] },
-                { at: [editorContent.children.length] }
+                { at: [targetIndex] }//editorContent.children.length
             )
         }else if(event.key==="Enter"){
             event.preventDefault()
