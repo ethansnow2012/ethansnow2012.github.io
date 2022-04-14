@@ -1,13 +1,14 @@
 import {fakeTopics, fakeTags, fakeCategory} from 'testData/data'
 import { firebaseEndpoints } from 'service/firebaseEndpoints'
 
-let NODE_ENV = process.env.REACT_APP_NODE_ENV
+const NODE_ENV = process.env.REACT_APP_NODE_ENV
+const TARGET_COLLECTION =  process.env.REACT_APP_TARGET_COLLECTION
 
 //NODE_ENV = 'github_page' // open this to use real database from firebase
 
 export async function getOneFakeTopic(id, fireGlobalContext){// use type define: fireGlobalContext
     if(NODE_ENV=='github_page'){
-        return firebaseEndpoints.notAuthed.getStore(fireGlobalContext, 'test_random', 'topics', {filter:{id}})
+        return firebaseEndpoints.notAuthed.getStore(fireGlobalContext, TARGET_COLLECTION, 'topics', {filter:{id}})
     }else{
         return new Promise((resolve, reject)=>{
             setTimeout(()=>{
@@ -19,7 +20,7 @@ export async function getOneFakeTopic(id, fireGlobalContext){// use type define:
 }
 export async function getFakeTopics(fireGlobalContext){
     if(NODE_ENV=='github_page'){
-        return firebaseEndpoints.notAuthed.getStore(fireGlobalContext, 'test_random', 'topics')
+        return firebaseEndpoints.notAuthed.getStore(fireGlobalContext, TARGET_COLLECTION, 'topics')
     }else{
         return new Promise((resolve, reject)=>{
             setTimeout(()=>{
@@ -30,7 +31,7 @@ export async function getFakeTopics(fireGlobalContext){
 }
 export async function getFakeTags(fireGlobalContext){
     if(NODE_ENV=='github_page'){
-        return firebaseEndpoints.notAuthed.getStore(fireGlobalContext, 'test_random', 'tags')
+        return firebaseEndpoints.notAuthed.getStore(fireGlobalContext, TARGET_COLLECTION, 'tags')
     }else{
         return new Promise((resolve, reject)=>{
             setTimeout(()=>{
@@ -41,7 +42,7 @@ export async function getFakeTags(fireGlobalContext){
 }
 export async function getFakeCategory(fireGlobalContext){
     if(NODE_ENV=='github_page'){
-        return firebaseEndpoints.notAuthed.getStore(fireGlobalContext, 'test_random', 'categories')
+        return firebaseEndpoints.notAuthed.getStore(fireGlobalContext, TARGET_COLLECTION, 'categories')
     }else{
         return new Promise((resolve, reject)=>{
             setTimeout(()=>{

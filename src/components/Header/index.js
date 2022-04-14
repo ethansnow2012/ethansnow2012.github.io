@@ -7,6 +7,8 @@ import { firebaseEndpoints } from 'service/firebaseEndpoints'
 import { WithContextFactory, WithContextWithForwardRefFactory }from 'hoc/factory/WithContext'
 import { SplitContext } from 'hoc/factory/RootPageHoc'
 
+const TARGET_COLLECTION =  process.env.REACT_APP_TARGET_COLLECTION
+
 const StyledFloating = styled.div`
     z-index: 90000;
     position: fixed;
@@ -174,7 +176,7 @@ export const Header = forwardRef(function (props, ref) {//forward state here
         setIsSaving(true)
         firebaseEndpoints.authed.setStore(
             firebase, 
-            'test_random',
+            TARGET_COLLECTION,
             {
                 categories:categoryState,
                 tags:tagState,
