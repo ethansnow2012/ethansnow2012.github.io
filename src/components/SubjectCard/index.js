@@ -17,7 +17,7 @@ const Styled = styled.div`
     }
     & .topic{
         margin-bottom:7px;
-        font-size:0.9em;
+        font-size:1.15em;
     }
     & .description{
         font-size:0.5em;

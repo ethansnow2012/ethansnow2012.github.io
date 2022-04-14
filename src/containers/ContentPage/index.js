@@ -52,6 +52,9 @@ const Styled = styled.div`
     & .topicContent *[role='textbox'] * + *{
         margin-top:5px;
     }
+    & .topicContent *[role='textbox'] pre + pre{
+        margin-top:0px;
+    }
     & .topicContent .incinfo{
         position: absolute;
         top: -20px;
@@ -222,14 +225,32 @@ export const ContentPage = forwardRef(function(props, ref) {
 
     const editorContentOnKeyDown = (event) => {
         console.log('editorContentOnKeyDown')
-        
+        // get the select block
+        let selected
+        let selection = editorContent.selection
+        if (selection !== null && selection.anchor !== null) {
+            selected = editorContent.children[selection.anchor.path[0]];
+        } else {
+            selected = null;
+        }
+        //end: get the select block
         if(event.key === '`' && event.ctrlKey){
             event.preventDefault()
             Transforms.insertNodes(
                 editorContent,
-                { type: 'code', children: [{ text: 'xxxx' }] },
+                { type: 'code', children: [{ text: `xxxx` }] },
                 { at: [editorContent.children.length] }
             )
+        }else if(event.key === "Enter" && event.shiftKey){
+            event.preventDefault()
+            Transforms.insertNodes(
+                editorContent,
+                { type: 'paragraph', children: [{ text: ' ' }] },
+                { at: [editorContent.children.length] }
+            )
+        }else if(event.key==="Enter"){
+            event.preventDefault()
+            editorContent.insertText("\n")
         }
       }
 
