@@ -17,3 +17,6 @@ In root dir: .env.production
 ```
 REACT_APP_NODE_ENV=github_page
 ```
+
+## Seed Data for Firebase
+Using data in localhost, then overwrite the TARGET_COLLECTION variable(then save!) to change the saving distnation the firebase to get the seed data in firebase.

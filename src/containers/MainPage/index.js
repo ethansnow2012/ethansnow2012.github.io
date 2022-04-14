@@ -90,7 +90,8 @@ function tagsFilter(tagsObject, activeCategoryObject){
         })
 }
 
-const TARGET_COLLECTION =  process.env.REACT_APP_TARGET_COLLECTION
+let TARGET_COLLECTION =  process.env.REACT_APP_TARGET_COLLECTION
+// TARGET_COLLECTION = 'alpha_github_page_data_root'
 
 export const MainPage = forwardRef(function (props, ref) {
     const { headRef }  = useContext(SplitContext)
