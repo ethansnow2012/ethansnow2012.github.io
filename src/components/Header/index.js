@@ -6,6 +6,7 @@ import { globalContext } from 'App'
 import { firebaseEndpoints } from 'service/firebaseEndpoints'
 import { WithContextFactory, WithContextWithForwardRefFactory }from 'hoc/factory/WithContext'
 import { SplitContext } from 'hoc/factory/RootPageHoc'
+import { storeMainContent } from 'service/data'
 
 const TARGET_COLLECTION =  process.env.REACT_APP_TARGET_COLLECTION
 
@@ -72,7 +73,7 @@ const Styled = styled.div`
 export function HeaderFloating({fromParentArgs, portalTarget}) {
     const {
         isLoggedIn, isSaving, isEditing, signOut, logIn, 
-        save, currentSplitLoc, toggleEditMode, mainPageSave
+        clickSaveContentPage, currentSplitLoc, toggleEditMode, mainPageSave
     } = fromParentArgs
     return ReactDom.createPortal(
         <StyledFloating>
@@ -85,7 +86,7 @@ export function HeaderFloating({fromParentArgs, portalTarget}) {
                 }
                 {
                     (isLoggedIn&&currentSplitLoc=='right')?
-                    <div className='btn' onClick={save} >
+                    <div className='btn' onClick={clickSaveContentPage()} >
                         <span className={('btn-spinner') + (isSaving?' active':'')} style={{'position':'relative', 'top':'0.2em'}}>
                             <svg style={{'---svg-fill':'grey', 'width': '0.8em', 'height': '0.8em'}}>
                                 <use href="#svg-loading"/>
@@ -167,26 +168,33 @@ export const Header = forwardRef(function (props, ref) {//forward state here
             setIsSaving(false)
         }, 1000)
     }
-    const save = ()=>{
-        console.log('props save', props)
-        const {_categoryState, _tagState, _topicState} = props.leftContentRef.current.innerStates
-        const [categoryState, setCategoryState] = _categoryState
-        const [tagState, setTagState] = _tagState
-        const [topicState, setTopicState] = _topicState
-        setIsSaving(true)
-        firebaseEndpoints.authed.setStore(
-            firebase, 
-            TARGET_COLLECTION,
-            {
-                categories:categoryState,
-                tags:tagState,
-                topics:topicState,
+    const clickSaveContentPage = ()=>{
+        let busySaveContentPage = false
+        return ()=>{
+            if(busySaveContentPage){
+                return
             }
-        ).then(()=>{
-            setIsSaving(false)
-        })
-
+            busySaveContentPage = true
+            console.log('props save', props)
+            const {_categoryState, _tagState, _topicState} = props.leftContentRef.current.innerStates
+            const [categoryState, setCategoryState] = _categoryState
+            const [tagState, setTagState] = _tagState
+            const [topicState, setTopicState] = _topicState
+            setIsSaving(true)
+    
+            storeMainContent(
+                firebase,
+                TARGET_COLLECTION, 
+                categoryState,
+                tagState,
+                topicState
+            ).then(()=>{
+                busySaveContentPage = false
+                setIsSaving(false)
+            })
+        }
     }
+    
     const toggleEditMode = ()=>{
         const [mainPageIsEditing, setMainPageIsEditing] = leftContentRef.current.innerStates._isEditing
         
@@ -217,7 +225,7 @@ export const Header = forwardRef(function (props, ref) {//forward state here
             // )
         }    
     }, [isLoggedIn])
-    const fromParentArgs = {isLoggedIn, isSaving, isEditing, toggleEditMode, signOut, logIn, save, mainPageSave, currentSplitLoc}
+    const fromParentArgs = {isLoggedIn, isSaving, isEditing, toggleEditMode, signOut, logIn, clickSaveContentPage, mainPageSave, currentSplitLoc}
     return (
         <Styled>
             xxxxxdddddxxxxx

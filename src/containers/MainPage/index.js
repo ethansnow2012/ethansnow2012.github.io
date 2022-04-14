@@ -10,7 +10,7 @@ import {faker} from '@faker-js/faker'
 
 import { injectStyleState, toggleDisplayViaKeyAndId , toggleDisplayViaArrayOfIds } from 'utils/dataProcessor'
 
-import { getFakeTopics, getFakeTags, getFakeCategory } from 'service/data'
+import { getFakeTopics, getFakeTags, getFakeCategory, storeMainContent } from 'service/data'
 
 
 
@@ -89,6 +89,8 @@ function tagsFilter(tagsObject, activeCategoryObject){
             return x.display && activeCategoryObject.tags.indexOf(x.id)>=0
         })
 }
+
+const TARGET_COLLECTION =  process.env.REACT_APP_TARGET_COLLECTION
 
 export const MainPage = forwardRef(function (props, ref) {
     const { headRef }  = useContext(SplitContext)
@@ -329,10 +331,16 @@ export const MainPage = forwardRef(function (props, ref) {
                     console.log('main page saving', headRef)
                     const [isSaving, setIsSaving] = headRef.current.innerStates._isSaving
                     setIsSaving(true)//mimic http
-                    setTimeout(()=>{
+                    storeMainContent(
+                        firebase,
+                        TARGET_COLLECTION, 
+                        fakeCategoryState,
+                        fakeTagState,
+                        fakeTopicState
+                    ).then(()=>{
                         setTobeSaved(false)
                         setIsSaving(false)//mimic http
-                    },1000)
+                    })
                 }
             }, 2000)
         }

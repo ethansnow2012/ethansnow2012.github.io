@@ -51,3 +51,23 @@ export async function getFakeCategory(fireGlobalContext){
         })
     }
 }
+
+export async function storeMainContent(firebase, TARGET_COLLECTION ,_categories, _tags, _topics){
+    if(NODE_ENV=='github_page'){
+        return firebaseEndpoints.authed.setStore(
+            firebase, 
+            TARGET_COLLECTION,
+            {
+                categories: _categories,
+                tags: _tags,
+                topics: _topics,
+            }
+        )
+    }else{
+        return new Promise((resolve, reject)=>{
+            setTimeout(()=>{
+                resolve(true)
+            },500+(Math.random()*500))
+        })
+    }
+}
