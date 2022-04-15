@@ -52,6 +52,9 @@ const Styled = styled.div`
     & .topicContent *[role='textbox'] * + *{
         margin-top:5px;
     }
+    & .topicContent *[role='textbox'] > *[data-slate-node="element"]{
+        border-left: 2px solid #7fffd4a8
+    }
     & .topicContent *[role='textbox'] pre + pre{
         margin-top:0px;
     }
@@ -234,27 +237,34 @@ export const ContentPage = forwardRef(function(props, ref) {
             selected = null;
         }
         //end: get the select block
-
-        if(event.key === '`' && event.ctrlKey){
-            event.preventDefault()
-            Transforms.insertNodes(
-                editorContent,
-                { type: 'code', children: [{ text: `xxxx` }] },
-                { at: [editorContent.children.length] }
-            )
-        }else if(event.key === "Enter" && event.shiftKey){
-            event.preventDefault()
-            const targetIndex = editorContent.children.indexOf(selected) + 1
-            Transforms.insertNodes(
-                editorContent,
-                { type: 'paragraph', children: [{ text: ' ' }] },
-                { at: [targetIndex] }//editorContent.children.length
-            )
-        }else if(event.key==="Enter"){
-            event.preventDefault()
-            editorContent.insertText("\n")
+        switch (event.key) {
+            case '`':
+                if(event.ctrlKey){
+                    event.preventDefault()
+                    Transforms.insertNodes(
+                        editorContent,
+                        { type: 'code', children: [{ text: `xxxx` }] },
+                        { at: [editorContent.children.length] }
+                    )
+                }
+                break;
+            case 'Enter':
+                if(event.shiftKey){
+                    event.preventDefault()
+                    const targetIndex = editorContent.children.indexOf(selected) + 1
+                    Transforms.insertNodes(
+                        editorContent,
+                        { type: 'paragraph', children: [{ text: ' ' }] },
+                        { at: [targetIndex] }//editorContent.children.length
+                    )
+                }else if(event.ctrlKey){
+                    event.preventDefault()
+                    editorContent.insertText("\n")
+                }
+            default:
+                break;
         }
-      }
+    }
 
     return (
         <Styled ref={rawRef} onKeyDown={handleKeyDown}>
