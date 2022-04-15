@@ -39,7 +39,13 @@ const Styled = styled.div`
         background: white;
     }
     .p-content-wrapper{
+        position: relative;
         padding: 5vmin 6.5vmin;
+    }
+    .p-content-wrapper-controlwrapper{
+        position: absolute;
+        left: calc(5vmin -  0.35em);
+        top: calc(6.5vmin + 5px - 9px );
     }
     .p-select-wrapper-i1{
         max-width:350px;
@@ -191,7 +197,53 @@ export const MainPage = forwardRef(function (props, ref) {
         
                             
     },[])
+
+   
     //====
+    const clickAddTopic = ()=>{
+        console.log('clickAddTopic')
+
+        const newTopic = {
+            id: faker.datatype.uuid(),
+            display: true,
+            topic: [{
+                "type":"paragraph",
+                "children":[
+                    {
+                        "text":""
+                    }
+                ]
+            }],
+            description: [{
+                "type":"paragraph",
+                "children":[
+                    {
+                        "text": ''
+                    }
+                ]
+            }],
+            content: [{
+                "type":"paragraph",
+                "children":[
+                    {
+                        "text": ''
+                    }
+                ]
+            }],
+            tags:[
+                
+            ]
+        }
+        setTopicState((self)=>{
+            let newSelf = {}
+            self.data.unshift(newTopic)
+            for(let key in self){
+                newSelf[key] = self[key]
+            }
+            return {...self}
+        })
+    }
+
     const select = (ev)=>{
         const selectedId = ev.currentTarget.value 
         refActiveCategory.current = Raw_fakeCategory.current.data.filter(x=>x.id==selectedId)[0]
@@ -371,6 +423,13 @@ export const MainPage = forwardRef(function (props, ref) {
                 </div> 
                 <div className='p-content-wrapper-outter'>
                     <div className='p-content-wrapper'>
+                        <div className='p-content-wrapper-controlwrapper'>
+                            <div className='p-content-wrapper-controlwrapper-i' onClick={clickAddTopic}>
+                                <svg style={{'---svg-fill':'grey', 'width': '1.2em', 'height': '1.2em'}}>
+                                    <use href="#svg-add-item"/>
+                                </svg>
+                            </div>
+                        </div>
                         <SubjectCardWrapper data={topicState.data} tags={tagState.data}></SubjectCardWrapper>
                     </div>
                 </div>
