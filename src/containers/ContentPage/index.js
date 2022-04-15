@@ -250,7 +250,7 @@ export const ContentPage = forwardRef(function(props, ref) {
                 event.key = 0
                 break;
             case 'Enter':
-                if(event.shiftKey){
+                if(event.ctrlKey){
                     event.preventDefault()
                     const targetIndex = editorContent.children.indexOf(selected) + 1
                     Transforms.insertNodes(
@@ -258,7 +258,7 @@ export const ContentPage = forwardRef(function(props, ref) {
                         { type: 'paragraph', children: [{ text: ' ' }] },
                         { at: [targetIndex] }//editorContent.children.length
                     )
-                }else if(event.ctrlKey){
+                }else if(event.shiftKey){
                     event.preventDefault()
                     editorContent.insertText("\n")
                 }
@@ -290,8 +290,9 @@ export const ContentPage = forwardRef(function(props, ref) {
                                 isLoggedIn?
                                 <div className="incinfo">
                                     Command:  <span style={{fontWeight:'bolder'}}>ctrl + `</span>  to insert a code block<br/>
-                                    Command:  <span style={{fontWeight:'bolder'}}>ctrl + Enter</span>  change line<br/>
-                                    Command:  <span style={{fontWeight:'bolder'}}>shift + Enter</span>  now block below
+                                    Command:  <span style={{fontWeight:'bolder'}}>ctrl + Enter</span>  now block below<br/>
+                                    Command:  <span style={{fontWeight:'bolder'}}>shift + Enter</span>  change line
+                                    
                                 </div>
                                 :
                                 ""
