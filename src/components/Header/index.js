@@ -8,7 +8,8 @@ import { WithContextFactory, WithContextWithForwardRefFactory }from 'hoc/factory
 import { SplitContext } from 'hoc/factory/RootPageHoc'
 import { storeMainContent } from 'service/data'
 
-const TARGET_COLLECTION =  process.env.REACT_APP_TARGET_COLLECTION
+let TARGET_COLLECTION =  process.env.REACT_APP_TARGET_COLLECTION
+//TARGET_COLLECTION = 'alpha_github_page_data_root'
 
 const StyledFloating = styled.div`
     z-index: 90000;
@@ -200,11 +201,14 @@ export const Header = forwardRef(function (props, ref) {//forward state here
         
         setIsEditing(!isEditing)
         setMainPageIsEditing(!mainPageIsEditing)
+        
     }
     useEffect(()=>{
         firebase.self.auth().onAuthStateChanged(function(user) {
             if (user) {
                 setIsLoggedIn(true)
+                const [contentPageIsEditing, setContentIsEditing] = rightContentRef.current.innerStates._isEditing
+                setContentIsEditing(!contentPageIsEditing)
                 // await firestore
                 //     .collection(memberSchema.form.collectionStr)
                 //     .doc(firebase.auth().currentUser.uid)

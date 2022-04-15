@@ -97,7 +97,7 @@ function tagsFilter(tagsObject, activeCategoryObject){
 }
 
 let TARGET_COLLECTION =  process.env.REACT_APP_TARGET_COLLECTION
-// TARGET_COLLECTION = 'alpha_github_page_data_root'
+//TARGET_COLLECTION = 'alpha_github_page_data_root'
 
 export const MainPage = forwardRef(function (props, ref) {
     const { headRef }  = useContext(SplitContext)
@@ -112,6 +112,7 @@ export const MainPage = forwardRef(function (props, ref) {
                 _topicState: [topicState, setTopicState],
                 _isEditing: [isEditing, setIsEditing]
             },
+            saveMainStates: saveMainStates,
             rawRef
         })
     )
@@ -242,6 +243,7 @@ export const MainPage = forwardRef(function (props, ref) {
             }
             return {...self}
         })
+        setTobeSaved(true)
     }
 
     const select = (ev)=>{
@@ -375,25 +377,28 @@ export const MainPage = forwardRef(function (props, ref) {
             })
         }
     }, [tagState]) //cascading effect: tagState -> topicState
-    
+    const saveMainStates = ()=>{
+        console.log('main page saving', headRef)
+        const [isSaving, setIsSaving] = headRef.current.innerStates._isSaving
+        setIsSaving(true)//mimic http
+        storeMainContent(
+            firebase,
+            TARGET_COLLECTION, 
+            categoryState,
+            tagState,
+            topicState
+        ).then(()=>{
+            setTobeSaved(false)
+            setIsSaving(false)//mimic http
+        })
+    }
+
     //useMemo(() => toBeSaved, [toBeSaved]);
     useEffect(()=>{
         if(toBeSaved){
             setTimeout(()=>{
                 if(toBeSaved){//what's the closure here
-                    console.log('main page saving', headRef)
-                    const [isSaving, setIsSaving] = headRef.current.innerStates._isSaving
-                    setIsSaving(true)//mimic http
-                    storeMainContent(
-                        firebase,
-                        TARGET_COLLECTION, 
-                        categoryState,
-                        tagState,
-                        topicState
-                    ).then(()=>{
-                        setTobeSaved(false)
-                        setIsSaving(false)//mimic http
-                    })
+                    saveMainStates()
                 }
             }, 2000)
         }

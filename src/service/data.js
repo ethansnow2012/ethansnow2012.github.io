@@ -1,8 +1,8 @@
 import {fakeTopics, fakeTags, fakeCategory} from 'testData/data'
 import { firebaseEndpoints } from 'service/firebaseEndpoints'
 
-const NODE_ENV = process.env.REACT_APP_NODE_ENV
-const TARGET_COLLECTION =  process.env.REACT_APP_TARGET_COLLECTION
+let NODE_ENV = process.env.REACT_APP_NODE_ENV
+let TARGET_COLLECTION =  process.env.REACT_APP_TARGET_COLLECTION
 
 //NODE_ENV = 'github_page' // open this to use real database from firebase
 

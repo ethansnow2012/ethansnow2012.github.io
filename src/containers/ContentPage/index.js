@@ -1,6 +1,6 @@
 
 import React, {useEffect, useContext,  useState, useImperativeHandle, forwardRef, useRef, useCallback} from 'react'
-import { getOneFakeTopic } from 'service/data'
+import { storeMainContent, getOneFakeTopic } from 'service/data'
 import styled from 'styled-components'
 import { globalContext } from 'App'
 import { SplitContext } from 'hoc/factory/RootPageHoc'
@@ -32,6 +32,7 @@ const Styled = styled.div`
         margin-left: auto;
         margin-right: auto;
         width: max-content;
+        min-width: 22px;
     }
     & .topicDescription{
         max-width:400px;
@@ -70,6 +71,9 @@ const Styled = styled.div`
     & .p-slate-code{
         background: #ffffff4a;
     }
+    &.isEditable .topichead-title{
+        border-bottom: 1px solid #80808075;
+    }
 `
 const editorDataEmpty = [
     {
@@ -80,12 +84,15 @@ const editorDataEmpty = [
     }
 ]
 
+let TARGET_COLLECTION =  process.env.REACT_APP_TARGET_COLLECTION
 
 export const ContentPage = forwardRef(function(props, ref) {
     const {firebase} = useContext(globalContext)
-    const {leftContentRef} = useContext(SplitContext)
+    const {headRef, leftContentRef} = useContext(SplitContext)
     const [topicContent, setTopicContent] = useState()
     const [isLoggedIn, setIsLoggedIn] = useState(false)
+    const [isEditing, setIsEditing] = useState(false)
+    //const [toBeSaved, setTobeSaved] = useState(false)
     const rawRef = useRef()
 
     const [editorTitle] = useState(() => withReact(createEditor()))
@@ -103,7 +110,8 @@ export const ContentPage = forwardRef(function(props, ref) {
             //contentPageState: [topicContent, setTopicContent],
             innerStates:{
                 _topicContent: [topicContent, setTopicContent],
-                _isLoggedIn: [isLoggedIn, setIsLoggedIn]
+                _isLoggedIn: [isLoggedIn, setIsLoggedIn],
+                _isEditing: [isEditing, setIsEditing]
             },
             rawRef
         })
@@ -165,45 +173,46 @@ export const ContentPage = forwardRef(function(props, ref) {
             editorContent.onChange();
         }
     },[topicContent])
+
+    // useEffect(()=>{
+        
+    // },[toBeSaved])
+
+    const updateRootDataByKeyFactoty = useCallback((state, setState, targetKey, value, contentId)=>{
+        let updated = false
+        return ()=>{
+            setState((self)=>{
+                state.data.map((el)=>{
+                    if(el.id==contentId){
+                        console.log('change')
+                        el[targetKey] = value
+                        updated = true
+                    }
+                    return el
+                })
     
+                if(updated){
+                    return {...self}
+                }
+                return self//nop
+            })
+        }
+    }, [])
     
 
     const slateOnChange = (targetKey)=>{
         const  leftInnerStatesKey = '_topicState'
         return (value)=>{
-            // bad example: do not update self's state
-            // setTopicContent((self)=>{
-            //     if(JSON.stringify(value)==JSON.stringify(self[targetKey])){
-            //         //nop
-            //         return self
-            //     }else{
-            //         self[targetKey] = value
-            //         return {...self}
-            //     }
-            // })
             
             //update the origin data instead to be reactive
             if(leftContentRef){
                 const [state, setState] = leftContentRef.current.innerStates[leftInnerStatesKey]
-                let updated = false
-                setState((self)=>{
-                    state.data.map((el)=>{
-                        if(el.id==topicContent.id){
-                            console.log('change')
-                            el[targetKey] = value
-                            updated = true
-                        }
-                        return el
-                    })
+                
+                const updateRootDataByKey = updateRootDataByKeyFactoty(state, setState, targetKey, value, topicContent.id)
+                updateRootDataByKey()
+                leftContentRef.current.saveMainStates()
 
-                    if(updated){
-                        return {...self}
-                    }
-                    return self//nop
-                })
             }
-            
-            
         }
     } 
     const handleKeyDown = useCallback((event)=>{
@@ -268,7 +277,7 @@ export const ContentPage = forwardRef(function(props, ref) {
     }
 
     return (
-        <Styled ref={rawRef} onKeyDown={handleKeyDown}>
+        <Styled ref={rawRef} onKeyDown={handleKeyDown} className={(isEditing?' isEditable':'')}>
                 <div className="inner">
                     <div className="topichead">
                         <div className="topichead-title">
