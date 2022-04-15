@@ -60,7 +60,7 @@ const Styled = styled.div`
     }
     & .topicContent .incinfo{
         position: absolute;
-        top: -20px;
+        top: -54px;
         right: 0;
         font-size: 0.5em;
     }
@@ -247,6 +247,7 @@ export const ContentPage = forwardRef(function(props, ref) {
                         { at: [editorContent.children.length] }
                     )
                 }
+                event.key = 0
                 break;
             case 'Enter':
                 if(event.shiftKey){
@@ -287,7 +288,11 @@ export const ContentPage = forwardRef(function(props, ref) {
                         {
                             (
                                 isLoggedIn?
-                                <div className="incinfo">Command:  <span style={{fontWeight:'bolder'}}>ctrl + `</span>  to insert a code block</div>
+                                <div className="incinfo">
+                                    Command:  <span style={{fontWeight:'bolder'}}>ctrl + `</span>  to insert a code block<br/>
+                                    Command:  <span style={{fontWeight:'bolder'}}>ctrl + Enter</span>  change line<br/>
+                                    Command:  <span style={{fontWeight:'bolder'}}>shift + Enter</span>  now block below
+                                </div>
                                 :
                                 ""
                             )
