@@ -101,17 +101,17 @@ export const MainPage = forwardRef(function (props, ref) {
         ({
             simpleConsole: ()=>{ console.log('simpleConsole', ref) },
             innerStates:{ // pseudo field key defined/used
-                _categoryState: [fakeCategoryState, setFakeCategoryState],
-                _tagState: [fakeTagState, setFakeTagState],
-                _topicState: [fakeTopicState, setFakeTopicState],
+                _categoryState: [categoryState, setCategoryState],
+                _tagState: [tagState, setTagState],
+                _topicState: [topicState, setTopicState],
                 _isEditing: [isEditing, setIsEditing]
             },
             rawRef
         })
     )
-    const [fakeCategoryState, setFakeCategoryState] = useState({data:[]})
-    const [fakeTagState, setFakeTagState] = useState({data:[]})
-    const [fakeTopicState, setFakeTopicState] = useState({data:[]})
+    const [categoryState, setCategoryState] = useState({data:[]})
+    const [tagState, setTagState] = useState({data:[]})
+    const [topicState, setTopicState] = useState({data:[]})
 
     const [toBeSaved, setTobeSaved] = useState(false)
 
@@ -122,9 +122,9 @@ export const MainPage = forwardRef(function (props, ref) {
     const effectPreventer_2 = useRef(true)
     const effect1_initialDataLoaded = useRef(false)
 
-    const Raw_fakeCategory = useRef(fakeCategoryState)
-    const Raw_fakeTags = useRef(fakeTagState)
-    const Raw_fakeTopics = useRef(fakeTopicState)
+    const Raw_fakeCategory = useRef(categoryState)
+    const Raw_fakeTags = useRef(tagState)
+    const Raw_fakeTopics = useRef(topicState)
     
     const [defaultSelect, setDefaultSelect] = useState(null);
     const refActiveCategory = useRef(Raw_fakeCategory.current.data.filter(x=>x.selected)[0])
@@ -176,14 +176,14 @@ export const MainPage = forwardRef(function (props, ref) {
                 refActiveTags.current = tagsFilter(Raw_fakeTags.current.data, refActiveCategory.current)
                                      
                 setDefaultSelect(refActiveCategory.current.id)
-                setFakeCategoryState(()=>{
+                setCategoryState(()=>{
                     return {...Raw_fakeCategory.current}
                 })
-                setFakeTagState(()=>{
+                setTagState(()=>{
                     const newSelf = toggleDisplayViaArrayOfIds(Raw_fakeTags.current, 2, refActiveCategory.current['tags'])
                     return {...newSelf}
                 })
-                setFakeTopicState(()=>{
+                setTopicState(()=>{
                     const newSelf = toggleDisplayViaKeyAndId(Raw_fakeTopics.current, 2 , 'tags', refActiveTags.current.map(x=>x.id))
                     return {...newSelf}
                 })
@@ -195,7 +195,7 @@ export const MainPage = forwardRef(function (props, ref) {
     const select = (ev)=>{
         const selectedId = ev.currentTarget.value 
         refActiveCategory.current = Raw_fakeCategory.current.data.filter(x=>x.id==selectedId)[0]
-        setFakeCategoryState((self)=>{
+        setCategoryState((self)=>{
             let newSelf = {}
             for(let key in self){
                 if(key=='selected'){
@@ -216,7 +216,7 @@ export const MainPage = forwardRef(function (props, ref) {
             console.log('tagEditBlur', tagData, ev)
             const tagDataId = tagData.id
             const newText = ev.currentTarget.innerText
-            setFakeTagState((self)=>{
+            setTagState((self)=>{
                 self.data = self.data.map((x)=>{
                     if(x.id==tagDataId){
                         x.name = newText
@@ -238,7 +238,7 @@ export const MainPage = forwardRef(function (props, ref) {
                 console.log('tagClick', tagData, ev)
                 const tagDataId = tagData.id
         
-                setFakeTagState((self)=>{
+                setTagState((self)=>{
                     self.data = self.data.map((x)=>{
                         if(x.id==tagDataId){
                             x.active = !x.active
@@ -257,10 +257,10 @@ export const MainPage = forwardRef(function (props, ref) {
     /**
      * useEffect0: isEditing mode change
      *  trigger - isEditing
-     *  output - fakeTagState
+     *  output - tagState
      */
     useEffect(()=>{
-        setFakeTagState((self)=>{
+        setTagState((self)=>{
             self.data = self.data.map((x)=>{
                 x.editable = isEditing
                 return x
@@ -270,14 +270,14 @@ export const MainPage = forwardRef(function (props, ref) {
     }, [isEditing])
     /**
      * useEffect1: category to tagState
-     *  trigger - fakeCategoryState
-     *  output - fakeTagState
+     *  trigger - categoryState
+     *  output - tagState
      *  inner state(ref) - effect1_initialDataLoaded
      */
     useEffect(()=>{
         let categoryObject = refActiveCategory.current//Raw_fakeCategory.current.data.filter(x=>categoryId==x.id)[0]
         if(categoryObject){ //reactive effect stopper
-            setFakeTagState((self)=>{
+            setTagState((self)=>{
                 const newSelf = toggleDisplayViaArrayOfIds(self, 2, categoryObject['tags'])
                 
                 // reset active states of tags
@@ -297,12 +297,12 @@ export const MainPage = forwardRef(function (props, ref) {
                 return {...newSelf}            
             })
         }
-    }, [fakeCategoryState]) //cascading effect: fakeCategoryState -> fakeTagState
+    }, [categoryState]) //cascading effect: categoryState -> tagState
 
     /**
-     * useEffect2: tagState to fakeTopicState
+     * useEffect2: tagState to topicState
      *  trigger - tagState
-     *  output - fakeTopicState
+     *  output - topicState
      *  inner state(ref) - 
      */
     useEffect(()=>{
@@ -313,7 +313,7 @@ export const MainPage = forwardRef(function (props, ref) {
         }
 
         if(refActiveTags.current){
-            setFakeTopicState((self)=>{
+            setTopicState((self)=>{
                 console.log('useEffect2')
                 const newSelf = toggleDisplayViaKeyAndId(self, 2 , 'tags', refActiveTags.current.map(x=>x.id))
                 if(arraysEqual(self.data, newSelf.data)){// prevent same value
@@ -322,7 +322,7 @@ export const MainPage = forwardRef(function (props, ref) {
                 return {...newSelf}   
             })
         }
-    }, [fakeTagState]) //cascading effect: fakeTagState -> fakeTopicState
+    }, [tagState]) //cascading effect: tagState -> topicState
     
     //useMemo(() => toBeSaved, [toBeSaved]);
     useEffect(()=>{
@@ -335,9 +335,9 @@ export const MainPage = forwardRef(function (props, ref) {
                     storeMainContent(
                         firebase,
                         TARGET_COLLECTION, 
-                        fakeCategoryState,
-                        fakeTagState,
-                        fakeTopicState
+                        categoryState,
+                        tagState,
+                        topicState
                     ).then(()=>{
                         setTobeSaved(false)
                         setIsSaving(false)//mimic http
@@ -354,7 +354,7 @@ export const MainPage = forwardRef(function (props, ref) {
                     <div className='p-select-wrapper-i1'>
                         <CSelect defaultValue={defaultSelect} onChange={select} key={defaultSelect} >
                             {
-                                fakeCategoryState.data.map((category)=>{
+                                categoryState.data.map((category)=>{
                                     return (
                                         <option key={category.id} value={category.id} >
                                             {category.name}
@@ -365,13 +365,13 @@ export const MainPage = forwardRef(function (props, ref) {
                         </CSelect>
                     </div>
                     <div className='p-select-wrapper-i2'>
-                        <FilterTagWrapper key={fakeTagState.id} data={fakeTagState.data} tagClickFactory={tagClickFactory} tagEditBlurFactory={tagEditBlurFactory}></FilterTagWrapper>
+                        <FilterTagWrapper key={tagState.id} data={tagState.data} tagClickFactory={tagClickFactory} tagEditBlurFactory={tagEditBlurFactory}></FilterTagWrapper>
                     </div>
                     
                 </div> 
                 <div className='p-content-wrapper-outter'>
                     <div className='p-content-wrapper'>
-                        <SubjectCardWrapper data={fakeTopicState.data} tags={fakeTagState.data}></SubjectCardWrapper>
+                        <SubjectCardWrapper data={topicState.data} tags={tagState.data}></SubjectCardWrapper>
                     </div>
                 </div>
             </BaseContentSpacing>
