@@ -42,7 +42,7 @@ _authed.prototype.setStore = (fireGlobalContext, collectionKey, data)=>{
     console.log('fireGlobalContext', fireGlobalContext)
     data= JSON.parse(JSON.stringify(data))
     const firebase = fireGlobalContext
-    const userUid = firebase.self.auth().currentUser.uid
+    const userUid = firebase.self.auth()?.currentUser.uid
 
     // mutate data before it get stored
     Object.keys(data).map(function(key) {

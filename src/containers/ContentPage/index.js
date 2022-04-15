@@ -175,8 +175,8 @@ export const ContentPage = forwardRef(function(props, ref) {
     },[topicContent])
 
     // useEffect(()=>{
-        
-    // },[toBeSaved])
+    //     console.log('isEditing')
+    // },[isEditing])
 
     const updateRootDataByKeyFactoty = useCallback((state, setState, targetKey, value, contentId)=>{
         let updated = false
@@ -196,6 +196,8 @@ export const ContentPage = forwardRef(function(props, ref) {
                 }
                 return self//nop
             })
+            let actuallyUpdated = updated
+            return actuallyUpdated
         }
     }, [])
     
@@ -209,9 +211,10 @@ export const ContentPage = forwardRef(function(props, ref) {
                 const [state, setState] = leftContentRef.current.innerStates[leftInnerStatesKey]
                 
                 const updateRootDataByKey = updateRootDataByKeyFactoty(state, setState, targetKey, value, topicContent.id)
-                updateRootDataByKey()
-                leftContentRef.current.saveMainStates()
-
+                const actuallyUpdated = updateRootDataByKey()
+                if(actuallyUpdated){
+                    leftContentRef.current.saveMainStates()
+                }
             }
         }
     } 
@@ -282,14 +285,14 @@ export const ContentPage = forwardRef(function(props, ref) {
                     <div className="topichead">
                         <div className="topichead-title">
                             <Slate editor={editorTitle} value={editorData_title} onChange={slateOnChange('topic')}>
-                                <Editable />
+                                <Editable readOnly={!isEditing} />
                             </Slate>
                         </div>
                     </div>
                     <div className="topicDescription">
                         <div className="topicDescription-inner">
-                            <Slate editor={editorDescription} value={editorData_description} onChange={slateOnChange('description')}>
-                                <Editable />
+                            <Slate editor={editorDescription}  value={editorData_description} onChange={slateOnChange('description')}>
+                                <Editable readOnly={!isEditing} />
                             </Slate>
                         </div>
                     </div>
@@ -307,10 +310,11 @@ export const ContentPage = forwardRef(function(props, ref) {
                                 ""
                             )
                         }
-                        <Slate editor={editorContent} value={editorData_content} onChange={slateOnChange('content')}>
+                        <Slate editor={editorContent}  value={editorData_content} onChange={slateOnChange('content')}>
                             <div className="editToolbar" style={{display: 'none'}}>aaaa(Transforms)</div>{/*hide this for; wait for construction*/}
                             
                             <Editable 
+                                readOnly={!isEditing}
                                 renderElement={renderElement}
                                 onKeyDown={editorContentOnKeyDown}
                             />

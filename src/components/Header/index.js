@@ -151,13 +151,14 @@ export const Header = forwardRef(function (props, ref) {//forward state here
     )
 
     const logIn = ()=>{
-        firebase.firebaseGSignin().then(()=>{
-            setIsLoggedIn(true)
-        })
+        firebase.firebaseGSignin()
+        // .then(()=>{
+        //     setIsLoggedIn(true)
+        // })
     }
     const signOut = ()=>{
-        //firebase.firebaseGSignout()
-        setIsLoggedIn(false)
+        firebase.firebaseGSignout()
+        //setIsLoggedIn(false)
     }
     const mainPageSave = ()=>{
         console.log('mainPageSave')

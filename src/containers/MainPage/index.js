@@ -429,11 +429,17 @@ export const MainPage = forwardRef(function (props, ref) {
                 <div className='p-content-wrapper-outter'>
                     <div className='p-content-wrapper'>
                         <div className='p-content-wrapper-controlwrapper'>
-                            <div className='p-content-wrapper-controlwrapper-i' onClick={clickAddTopic}>
-                                <svg style={{'---svg-fill':'grey', 'width': '1.2em', 'height': '1.2em'}}>
-                                    <use href="#svg-add-item"/>
-                                </svg>
-                            </div>
+                            {
+                                isEditing?
+                                <div className='p-content-wrapper-controlwrapper-i' onClick={clickAddTopic}>
+                                    <svg style={{'---svg-fill':'grey', 'width': '1.2em', 'height': '1.2em'}}>
+                                        <use href="#svg-add-item"/>
+                                    </svg>
+                                </div>
+                                :
+                                ""
+                            }
+                            
                         </div>
                         <SubjectCardWrapper data={topicState.data} tags={tagState.data}></SubjectCardWrapper>
                     </div>
