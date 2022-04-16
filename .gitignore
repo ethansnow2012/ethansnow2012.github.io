@@ -10,7 +10,7 @@
 
 # production
 /build
-/public/google4b3858bd095f3dec.html
+/public/google*
 
 # misc
 .DS_Store
