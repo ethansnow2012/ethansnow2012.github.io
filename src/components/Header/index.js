@@ -103,11 +103,11 @@ export function HeaderFloating({fromParentArgs, portalTarget}) {
                     (isLoggedIn&&currentSplitLoc=='left')?
                         isEditing?
                         <div className='btn' onClick={toggleEditMode}>
-                            Edit Mode
+                            View Mode
                         </div>
                         :
                         <div className='btn' onClick={toggleEditMode}>
-                            View Mode
+                            Edit Mode
                         </div>
                     :''
                 }
