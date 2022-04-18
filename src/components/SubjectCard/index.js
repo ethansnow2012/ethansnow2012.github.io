@@ -5,7 +5,7 @@ import { WithContextFactory }from 'hoc/factory/WithContext'
 
 const Styled = styled.div`
     background: black;
-    width: 200px;
+    width: 210px;
     // height: 140px;
     margin: 5px auto;
     padding: 10px 15px;

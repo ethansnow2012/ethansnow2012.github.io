@@ -20,3 +20,10 @@ REACT_APP_NODE_ENV=github_page
 
 ## Seed Data for Firebase
 Using data in localhost, then overwrite the TARGET_COLLECTION variable(then save!) to change the saving distnation the firebase to get the seed data in firebase.
+
+## .env.example
+```
+REACT_APP_TEST_MODE=TRUE
+REACT_APP_NODE_ENV=local
+REACT_APP_TARGET_COLLECTION=test_random
+```
