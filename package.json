@@ -42,6 +42,8 @@
     ]
   },
   "devDependencies": {
+    "@babel/plugin-transform-runtime": "^7.17.0",
+    "@babel/preset-env": "^7.16.11",
     "@chakra-ui/react": "^1.8.7",
     "@emotion/react": "^11.8.2",
     "@emotion/styled": "^11.8.1",
@@ -53,5 +55,10 @@
     "react-helmet": "^6.1.0",
     "react-transition-group": "^4.4.2",
     "styled-components": "^5.3.5"
+  },
+  "jest": {
+    "transform": {
+      "^.+\\.[t|j]sx?$": "babel-jest"
+    }
   }
 }

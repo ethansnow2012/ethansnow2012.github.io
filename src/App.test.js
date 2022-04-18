@@ -54,7 +54,8 @@ describe('describe 1', ()=>{
     })
   })
 
-  test(`Login Side Effect Chain Start
+  test(`Side Effect Chain after Login 
+    Start:
     then: 
       1. tag is editable
       2. content is editable
@@ -67,14 +68,19 @@ describe('describe 1', ()=>{
     
     expect(btnSignIn).toBeFalsy()
     
-    await page().waitForSelector(".btn-viewmode");
-    await page().click(".btn-viewmode");
+    await page().waitForSelector(".btn-editmode");
+    await page().click(".btn-editmode");
 
     await page().waitForSelector(".p-select-wrapper-i2 > * > .active");
     await page().click('.p-select-wrapper-i2 > * > .active');
     await page().waitForSelector(".p-select-wrapper-i2 > * > .active.editable");
 
-    
+    await page().click('.p-content-wrapper-outter .goto-content');
+    await page().waitForTimeout(maxTransitionTime);
+
+    await page().waitForSelector('.topicDescription-inner', {
+      visible: true,
+    })
     
   })
 
