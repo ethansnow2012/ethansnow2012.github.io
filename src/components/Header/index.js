@@ -9,6 +9,7 @@ import { SplitContext } from 'hoc/factory/RootPageHoc'
 import { storeMainContent } from 'service/data'
 
 let TARGET_COLLECTION =  process.env.REACT_APP_TARGET_COLLECTION
+let TEST_MODE =  process.env.REACT_APP_TEST_MODE
 //TARGET_COLLECTION = 'alpha_github_page_data_root'
 
 const StyledFloating = styled.div`
@@ -73,17 +74,32 @@ const Styled = styled.div`
 
 export function HeaderFloating({fromParentArgs, portalTarget}) {
     const {
-        isLoggedIn, isSaving, isEditing, signOut, logIn, 
+        rightContentRef,
+        isLoggedIn,setIsLoggedIn, isSaving, isEditing, signOut, logIn, 
         clickSaveContentPage, currentSplitLoc, toggleEditMode, mainPageSave
     } = fromParentArgs
     return ReactDom.createPortal(
         <StyledFloating>
             <div className='control'> 
                 {
-                    isLoggedIn?
-                    <div className='btn' onClick={signOut}>SignOut</div>
+                    // In test mode expose the click function to expose inner state and function
+                    TEST_MODE=="TRUE"?
+                    <div className='btn btn-test-login' onClick={()=>{
+                        // test: trigger the LoggedIn SideEffect without actual firebase utils
+                        setIsLoggedIn(true)
+                        const [contentPageIsEditing, setContentIsEditing] = rightContentRef.current.innerStates._isEditing
+                        setContentIsEditing(!contentPageIsEditing)
+                        // test: end
+                    }}>AAA</div>
                     :
-                    <div className='btn' onClick={logIn}>LogIn</div>
+                    ''
+                }
+                
+                {
+                    isLoggedIn?
+                    <div className='btn btn-signout' onClick={signOut}>SignOut</div>
+                    :
+                    <div className='btn btn-signin' onClick={logIn}>LogIn</div>
                 }
                 {
                     (isLoggedIn&&currentSplitLoc=='right')?
@@ -102,11 +118,11 @@ export function HeaderFloating({fromParentArgs, portalTarget}) {
                 {
                     (isLoggedIn&&currentSplitLoc=='left')?
                         isEditing?
-                        <div className='btn' onClick={toggleEditMode}>
+                        <div className='btn btn-viewmode' onClick={toggleEditMode}>
                             View Mode
                         </div>
                         :
-                        <div className='btn' onClick={toggleEditMode}>
+                        <div className='btn btn-editmode' onClick={toggleEditMode}>
                             Edit Mode
                         </div>
                     :''
@@ -235,7 +251,19 @@ export const Header = forwardRef(function (props, ref) {//forward state here
         }
         
     }, [isLoggedIn])
-    const fromParentArgs = {isLoggedIn, isSaving, isEditing, toggleEditMode, signOut, logIn, clickSaveContentPage, mainPageSave, currentSplitLoc}
+    const fromParentArgs = {
+        rightContentRef,
+        isLoggedIn, 
+        setIsLoggedIn, 
+        isSaving, 
+        isEditing, 
+        toggleEditMode, 
+        signOut, 
+        logIn, 
+        clickSaveContentPage, 
+        mainPageSave, 
+        currentSplitLoc
+    }
     return (
         <Styled>
             xxxxxdddddxxxxx
