@@ -9,7 +9,9 @@ import { SplitContext } from 'hoc/factory/RootPageHoc'
 import { createEditor, Transforms } from 'slate'
 // Import the Slate components and React plugin.
 import { Slate, Editable, withReact } from 'slate-react'
-
+const StyledInnerIncMenu = styled.div`
+    display: none;
+`
 const Styled = styled.div`
     /* This page is contrasting the main page. */
     padding-top: var(--maincontent-vpadding);
@@ -19,9 +21,31 @@ const Styled = styled.div`
         max-width: var(--maincontent-maxwidth);
         margin:auto;
         min-height: 100vh;
+        position: relative;
     }
     & .inner > * + *{
         margin-top: var(--maincontent-innerspacing);
+    }
+    & .inner-inc{
+        position: absolute;
+        top:5px;
+        right:5px;
+    }
+    & .inner-inc-btn{
+        z-index: 1;
+        position: relative;
+    }
+    & .inner-inc-btn-icon{
+        display: flex;
+        justify-content: end;
+    }
+    // & .inner-inc-menu{
+    //     display: none;
+    // }
+    & .inner-inc-btn:hover ${StyledInnerIncMenu}{
+        display: flex;
+        background: #ffffffe0;
+        padding: 4px;
     }
     & .topichead{
         font-size: 1.5em;
@@ -86,6 +110,35 @@ const editorDataEmpty = [
 
 let TARGET_COLLECTION =  process.env.REACT_APP_TARGET_COLLECTION
 
+
+//inner-inc-menu
+const InnerIncMenu = forwardRef((props, ref)=>{
+    const [data, setData] = useState([])
+    useImperativeHandle(ref, ()=>
+        ({
+            innerStates:{
+                _data: [data, setData],
+            },
+        })
+    )
+    return (
+        <StyledInnerIncMenu className="inner-inc-menu">
+            <div className="inner-inc-menu-i">
+                加入分類
+                <div className="inner-inc-menu-i-optionwrapper">
+                    {
+                        data.map(x=>
+                            <div className="inner-inc-menu-i-optionwrapper">
+                                {x.name}
+                            </div>                                                
+                        )
+                    }
+                </div>
+            </div>
+        </StyledInnerIncMenu>
+    )
+})
+
 export const ContentPage = forwardRef(function(props, ref) {
     const {firebase} = useContext(globalContext)
     const {headRef, leftContentRef} = useContext(SplitContext)
@@ -94,6 +147,7 @@ export const ContentPage = forwardRef(function(props, ref) {
     const [isEditing, setIsEditing] = useState(false)
     //const [toBeSaved, setTobeSaved] = useState(false)
     const rawRef = useRef()
+    const innerIncMenuRef = useRef()
 
     const [editorTitle] = useState(() => withReact(createEditor()))
     const [editorData_title, setEditorData_title] = useState(editorDataEmpty)
@@ -106,12 +160,14 @@ export const ContentPage = forwardRef(function(props, ref) {
 
     useImperativeHandle(ref, ()=>
         ({
-            simpleConsole: ()=>{ console.log('simpleConsole', ref) },
-            //contentPageState: [topicContent, setTopicContent],
+            simpleConsole: ()=>{ console.log('simpleConsole') },
             innerStates:{
                 _topicContent: [topicContent, setTopicContent],
                 _isLoggedIn: [isLoggedIn, setIsLoggedIn],
                 _isEditing: [isEditing, setIsEditing]
+            },
+            innerRefs:{
+                innerIncMenuRef
             },
             rawRef
         })
@@ -282,6 +338,12 @@ export const ContentPage = forwardRef(function(props, ref) {
     return (
         <Styled ref={rawRef} onKeyDown={handleKeyDown} className={(isEditing?' isEditable':'')}>
                 <div className="inner">
+                    <div className="inner-inc">
+                        <div className="inner-inc-btn">
+                            <div className="inner-inc-btn-icon">...</div>
+                            <InnerIncMenu ref={innerIncMenuRef}></InnerIncMenu>
+                        </div>
+                    </div>
                     <div className="topichead">
                         <div className="topichead-title">
                             <Slate editor={editorTitle} value={editorData_title} onChange={slateOnChange('topic')}>

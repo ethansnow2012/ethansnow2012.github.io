@@ -157,7 +157,7 @@ export const Header = forwardRef(function (props, ref) {//forward state here
 
     useImperativeHandle(ref, ()=>
         ({
-            simpleConsole: ()=>{ console.log('simpleConsole', ref) },
+            simpleConsole: ()=>{ console.log('simpleConsole') },
             innerStates:{ // pseudo field key defined/used
                 _isSaving:[isSaving, setIsSaving],
                 _isEditing: [isEditing, setIsEditing]

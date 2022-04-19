@@ -100,12 +100,12 @@ let TARGET_COLLECTION =  process.env.REACT_APP_TARGET_COLLECTION
 //TARGET_COLLECTION = 'alpha_github_page_data_root'
 
 export const MainPage = forwardRef(function (props, ref) {
-    const { headRef }  = useContext(SplitContext)
+    const { headRef, rightContentRef }  = useContext(SplitContext)
     const {firebase} = useContext(globalContext)
     const rawRef = useRef()
     useImperativeHandle(ref, ()=>
         ({
-            simpleConsole: ()=>{ console.log('simpleConsole', ref) },
+            simpleConsole: ()=>{ console.log('simpleConsole') },
             innerStates:{ // pseudo field key defined/used
                 _categoryState: [categoryState, setCategoryState],
                 _tagState: [tagState, setTagState],
@@ -376,6 +376,11 @@ export const MainPage = forwardRef(function (props, ref) {
                 return {...newSelf}   
             })
         }
+        if(rightContentRef.current.innerRefs.innerIncMenuRef.current.innerStates){
+            const [rightContentOptions, setRightContentOptions] = rightContentRef.current.innerRefs.innerIncMenuRef.current.innerStates._data
+            setRightContentOptions(tagState.data)
+        }
+        
     }, [tagState]) //cascading effect: tagState -> topicState
     const saveMainStates = ()=>{
         console.log('main page saving', headRef)
