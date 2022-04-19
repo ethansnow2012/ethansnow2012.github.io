@@ -4,7 +4,7 @@ const rootPath = "http://localhost:3000/"
 const maxTransitionTime = "1500"
 
 jest.useRealTimers();
-jest.setTimeout(10000);
+jest.setTimeout(20000);
 
 function setupPuppeteer() {
   let browser= puppeteer.Browser
@@ -82,6 +82,52 @@ describe('describe 1', ()=>{
       visible: true,
     })
     
+  })
+  test('topic are correctly shown via tags ', async ()=>{
+    await page().goto(rootPath)
+    await page().waitForSelector(".btn-test-login");
+    await page().click('.btn-test-login');
+
+    await page().waitForSelector(".btn-editmode");
+    await page().click(".btn-editmode");
+
+    await page().click(".goto-content");
+    await page().waitForTimeout(maxTransitionTime);
+    await page().type('.topicDescription-inner *[contenteditable="true"]', 'test comment', {delay: 1})
+    await page().click(".goback");
+
+    await page().waitForSelector(".p-content-wrapper-controlwrapper-i");
+    await page().click(".p-content-wrapper-controlwrapper-i");
+
+    // the new card is born now
+    await page().waitForSelector(".p-content-wrapper .topic");
+
+    let newElementTopic = await page().$('.p-content-wrapper .topic')
+    let newElementDescription = await page().$('.p-content-wrapper .description')
+    let newElementTagWrapper = await page().$('.p-content-wrapper .tag-wrapper')
+
+    let topicInnerText  = await page().evaluate(el => el.textContent, newElementTopic)
+    let descriptionInnerText  = await page().evaluate(el => el.textContent, newElementDescription)
+    let descriptionTagWrapper  = await page().evaluate(el => el.textContent, newElementTagWrapper)
+    
+    expect(topicInnerText + descriptionInnerText + descriptionTagWrapper).toBe('')
+
+    await page().click(".btn-viewmode");
+
+    await page().click(".p-select-wrapper-i2 .active:nth-child(6)");
+
+    await page().waitForTimeout(maxTransitionTime);
+
+    newElementTopic = await page().$('.p-content-wrapper .topic')
+    newElementDescription = await page().$('.p-content-wrapper .description')
+    newElementTagWrapper = await page().$('.p-content-wrapper .tag-wrapper')
+
+    topicInnerText  = await page().evaluate(el => el.textContent, newElementTopic)
+    descriptionInnerText  = await page().evaluate(el => el.textContent, newElementDescription)
+    descriptionTagWrapper  = await page().evaluate(el => el.textContent, newElementTagWrapper)
+    
+    expect(topicInnerText + descriptionInnerText + descriptionTagWrapper).not.toBe('')
+
   })
 
 })

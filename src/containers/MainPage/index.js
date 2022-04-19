@@ -191,7 +191,7 @@ export const MainPage = forwardRef(function (props, ref) {
                     return {...newSelf}
                 })
                 setTopicState(()=>{
-                    const newSelf = toggleDisplayViaKeyAndId(Raw_fakeTopics.current, 2 , 'tags', refActiveTags.current.map(x=>x.id))
+                    const newSelf = toggleDisplayViaKeyAndId(Raw_fakeTopics.current, 2 , 'tags', refActiveTags.current.map(x=>x.id), Raw_fakeTags.current.data)
                     return {...newSelf}
                 })
             });
@@ -369,7 +369,7 @@ export const MainPage = forwardRef(function (props, ref) {
         if(refActiveTags.current){
             setTopicState((self)=>{
                 console.log('useEffect2')
-                const newSelf = toggleDisplayViaKeyAndId(self, 2 , 'tags', refActiveTags.current.map(x=>x.id))
+                const newSelf = toggleDisplayViaKeyAndId(self, 2 , 'tags', refActiveTags.current.map(x=>x.id), Raw_fakeTags.current.data)
                 if(arraysEqual(self.data, newSelf.data)){// prevent same value
                     return {...self}
                 }

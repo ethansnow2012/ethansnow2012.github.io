@@ -11,13 +11,14 @@ function injectStyleState (data){
     return data
 }
 
-function toggleDisplayViaKeyAndId (data, layerNum, key, id ){
+function toggleDisplayViaKeyAndId (data, layerNum, key, id , wholeData = false){
     data = JSON.parse(JSON.stringify(data))
     if(Array.isArray(id)){
         const idArray = id
         if(layerNum==2 && data.data){
             data.data.forEach((el)=>{
-                if(el[key].length==0) {
+                if(el[key].length==0&&wholeData.length==id.length) {
+                    el.display=true
                     return;
                 }
                 let matched = (el[key].filter(x=>idArray.indexOf(x)>=0).length)>0  //.indexOf(id)
