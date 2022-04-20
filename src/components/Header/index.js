@@ -266,7 +266,7 @@ export const Header = forwardRef(function (props, ref) {//forward state here
     }
     return (
         <Styled>
-            xxxxxdddddxxxxx
+            Atticstone.V2
             <HeaderFloating fromParentArgs={fromParentArgs}></HeaderFloating>
         </Styled>
     )
