@@ -1,5 +1,5 @@
 import React, { useState, useContext ,useEffect, useRef, forwardRef, useImperativeHandle, useCallback }from 'react'
-import { Header, FilterTagWrapper, SubjectCardWrapper } from 'components'
+import { FilterTagWrapper, SubjectCardWrapper } from 'components'
 import { globalContext } from 'App'
 import { SplitContext } from 'hoc/factory/RootPageHoc'
 import {CSelect} from 'hoc/instance'
@@ -167,6 +167,10 @@ const MainPageFooter = ()=>{
                         </a>
                         <a className="worklink" href="https://ethansnow2012.github.io/recole">
                             <div className="worklink-dot" >-</div> <div >響應式編成實驗</div>
+                            <img src="/link-background.jpg"></img>
+                        </a>
+                        <a className="worklink" href="https://atticstone.com">
+                            <div className="worklink-dot" >-</div> <div >Atticstone.V1</div>
                             <img src="/link-background.jpg"></img>
                         </a>
                         <br/>
