@@ -4,6 +4,7 @@ import { storeMainContent, getOneFakeTopic } from 'service/data'
 import styled from 'styled-components'
 import { globalContext } from 'App'
 import { SplitContext } from 'hoc/factory/RootPageHoc'
+import { ShiningButton } from 'components'
 
 // Import the Slate editor factory.
 import { createEditor, Transforms } from 'slate'
@@ -40,16 +41,19 @@ const Styled = styled.div`
         justify-content: end;
         cursor: pointer;
     }
-    // & .inner-inc-menu{
-    //     display: none;
-    // }
     .inner-inc-menu-i-label{
         padding-left:20px;
         margin-bottom: 4px;
     }
-    .inner-inc-menu-i-label > *{
+    .inner-inc-menu-i-label > span{
         text-decoration: underline;
         text-underline-offset: 3px;
+    }
+    & .inner-inc-menu-i-label +  .inner-inc-menu-i-label{
+        margin-top: 10px;
+    }
+    & .inner-inc-menu-i-optionwrapper{
+        margin-top: 5px;
     }
     & .inner-inc-menu-i-optionwrapper-i{
         cursor: pointer;
@@ -156,25 +160,46 @@ const InnerIncMenu = forwardRef((props, ref)=>{
             return {...self}
         })
     }
-    console.log('InnerIncMenu', props)
+    const deleteClick = ()=>{
+        window.scrollBy({ // fix: scrollIntoView interanl bug(not invole)
+            top: -0.1,
+            left: 0,
+        })
+        props.leftContentRef.current.rawRef.current.scrollIntoView({behavior:"smooth"})
+        
+        setTimeout(()=>{
+            props.setTopicContent((self)=>{
+                return {...self, to_be_deleted:true}
+            })
+        }, 1000)
+    }
     return (
         <StyledInnerIncMenu className="inner-inc-menu">
             <div className="inner-inc-menu-i">
                 <div className="inner-inc-menu-i-label">
                     <span>加入分類</span>
+                    <div className="inner-inc-menu-i-optionwrapper">
+                        {
+                            data.map(x=>
+                                <div className={"inner-inc-menu-i-optionwrapper-i"+((props.topicContent?.tags.indexOf(x.id)>=0)?' active':'')} data-id={x.id} onClick={click}>
+                                    <div className='inner-inc-menu-i-optionwrapper-i-check' >
+                                        { (props.topicContent?.tags.indexOf(x.id)>=0)?'✓':'‎ ' }
+                                    </div>
+                                    { x.name }
+                                </div>                                                
+                            )
+                        }
+                    </div>
                 </div>
-                <div className="inner-inc-menu-i-optionwrapper">
-                    {
-                        data.map(x=>
-                            <div className={"inner-inc-menu-i-optionwrapper-i"+((props.topicContent?.tags.indexOf(x.id)>=0)?' active':'')} data-id={x.id} onClick={click}>
-                                <div className='inner-inc-menu-i-optionwrapper-i-check' >
-                                    { (props.topicContent?.tags.indexOf(x.id)>=0)?'✓':'‎ ' }
-                                </div>
-                                { x.name }
-                            </div>                                                
-                        )
-                    }
+                <div className="inner-inc-menu-i-label">
+                    <span>其他</span>
+                    <div className="inner-inc-menu-i-optionwrapper">
+                        <div className="inner-inc-menu-i-optionwrapper-i active">
+                            <ShiningButton shiningColor={'hsl(0deg 50% 75% / 50%)'} onClick={deleteClick}>刪除</ShiningButton>
+                        </div>    
+                    </div>
                 </div>
+                
             </div>
         </StyledInnerIncMenu>
     )
@@ -279,11 +304,14 @@ export const ContentPage = forwardRef(function(props, ref) {
                 const selfTopicStringRepresent= JSON.stringify(topicContent)
 
                 if(dueTopicStringRepresent == selfTopicStringRepresent){
-                    console.log('ssss A')
                     return self//nop
                 }else{
-                    console.log('ssss B')
                     const replaceIndex = self.data.findIndex(x=>x.id==id)
+                    if(topicContent.to_be_deleted){
+                        self.data.splice(replaceIndex, 1)
+                        return {...self}
+                    }
+                    
                     self.data[replaceIndex] = JSON.parse(JSON.stringify(topicContent))
                     return {...self}
                 }
@@ -401,7 +429,7 @@ export const ContentPage = forwardRef(function(props, ref) {
                             <div className="inner-inc-btn">
                                 <div className="inner-inc-btn-icon">...</div>
                                 
-                                <InnerIncMenu ref={innerIncMenuRef} topicContent={topicContent} setTopicContent={setTopicContent}></InnerIncMenu>
+                                <InnerIncMenu ref={innerIncMenuRef} leftContentRef={leftContentRef} topicContent={topicContent} setTopicContent={setTopicContent}></InnerIncMenu>
                             </div>
                         </div>
                         :""
