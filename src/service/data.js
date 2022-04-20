@@ -18,7 +18,7 @@ export async function getOneFakeTopic(id, fireGlobalContext){// use type define:
         })
     }
 }
-export async function getFakeTopics(fireGlobalContext){
+export async function getTopics(fireGlobalContext){
     if(NODE_ENV=='github_page'){
         return firebaseEndpoints.notAuthed.getStore(fireGlobalContext, TARGET_COLLECTION, 'topics')
     }else{
@@ -29,7 +29,7 @@ export async function getFakeTopics(fireGlobalContext){
         })
     }
 }
-export async function getFakeTags(fireGlobalContext){
+export async function getTags(fireGlobalContext){
     if(NODE_ENV=='github_page'){
         return firebaseEndpoints.notAuthed.getStore(fireGlobalContext, TARGET_COLLECTION, 'tags')
     }else{
@@ -40,7 +40,7 @@ export async function getFakeTags(fireGlobalContext){
         })
     }
 }
-export async function getFakeCategory(fireGlobalContext){
+export async function getCategory(fireGlobalContext){
     if(NODE_ENV=='github_page'){
         return firebaseEndpoints.notAuthed.getStore(fireGlobalContext, TARGET_COLLECTION, 'categories')
     }else{

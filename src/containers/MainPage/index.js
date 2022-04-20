@@ -5,12 +5,11 @@ import { SplitContext } from 'hoc/factory/RootPageHoc'
 import {CSelect} from 'hoc/instance'
 import styled from 'styled-components'
 import { BaseContentSpacing, BaseContentSpacingStyle } from 'containers/Functional'
-import { fakeTopics, fakeTags, fakeCategory } from 'testData/data'
 import {faker} from '@faker-js/faker'
 
 import { injectStyleState, toggleDisplayViaKeyAndId , toggleDisplayViaArrayOfIds } from 'utils/dataProcessor'
 
-import { getFakeTopics, getFakeTags, getFakeCategory, storeMainContent } from 'service/data'
+import { getTopics, getTags, getCategory, storeMainContent } from 'service/data'
 
 const StyledFooter = styled.div`
     display: flex;
@@ -117,15 +116,15 @@ function arraysEqual(a1,a2) {
     return JSON.stringify(a1)==JSON.stringify(a2);
 }
 
-function injectDefaultCategory (fakeCategory){
-    fakeCategory.data.unshift({
+function injectDefaultCategory (category, allTags){
+    category.data.unshift({
         id: faker.datatype.uuid(),
         name: 'All',
         ui_data:true,
-        tags: fakeTags.data.map(x=>x.id),
+        tags: allTags,//tags.data.map(x=>x.id),
         selected:true,
     })
-    return fakeCategory
+    return category
 }
 
 function tagsFilter(tagsObject, activeCategoryObject){
@@ -209,14 +208,14 @@ export const MainPage = forwardRef(function (props, ref) {
     const effectPreventer_2 = useRef(true)
     const effect1_initialDataLoaded = useRef(false)
 
-    const Raw_fakeCategory = useRef(categoryState)
-    const Raw_fakeTags = useRef(tagState)
-    const Raw_fakeTopics = useRef(topicState)
+    const Raw_category = useRef(categoryState)
+    const Raw_tags = useRef(tagState)
+    const Raw_topics = useRef(topicState)
     
     const [defaultSelect, setDefaultSelect] = useState(null);
-    const refActiveCategory = useRef(Raw_fakeCategory.current.data.filter(x=>x.selected)[0])
+    const refActiveCategory = useRef(Raw_category.current.data.filter(x=>x.selected)[0])
     const refActiveTags = useRef(
-                        Raw_fakeTags.current.data
+                        Raw_tags.current.data
                             .filter((x)=>{
                                 return refActiveCategory.current.tags.indexOf(x.id)>=0
                             })[0]?.id
@@ -232,46 +231,47 @@ export const MainPage = forwardRef(function (props, ref) {
         if(isLandDirectly){
             gotoCurrentLocation()
         }
-        Promise.all([getFakeCategory(firebase), getFakeTags(firebase), getFakeTopics(firebase)])
+        Promise.all([getCategory(firebase), getTags(firebase), getTopics(firebase)])
             .then(values => {
                 console.log('values', values)
-                const [fakeCategory, fakeTags, fakeTopics] = values
+                const [category, tags, topics] = values
                 
-                const _fakeCategory = injectDefaultCategory(
-                                        injectStyleState(fakeCategory)
+                let _tags = injectStyleState(tags)
+                const _category = injectDefaultCategory(
+                                        injectStyleState(category),
+                                        _tags.data.map(x=>x.id)
                                     )
-                let _fakeTags = injectStyleState(fakeTags)
-                const _fakeTopics = injectStyleState(fakeTopics)
+                const _topics = injectStyleState(topics)
 
-                //_fakeTags.data[0].active = true //fake at lease one active tag
+                //_tags.data[0].active = true //fake at lease one active tag
                 
                 // relate with refs
-                Raw_fakeCategory.current = _fakeCategory
-                Raw_fakeTags.current = _fakeTags
-                Raw_fakeTopics.current = _fakeTopics
+                Raw_category.current = _category
+                Raw_tags.current = _tags
+                Raw_topics.current = _topics
                 
                 // determine whether is active
-                refActiveCategory.current = Raw_fakeCategory.current.data.filter(x=>x.selected)[0]
-                // const tagsHaveActive = Raw_fakeTags.current.data.filter(x=>x.active).length>0?true:false
-                // refActiveTags.current = Raw_fakeTags.current.data
+                refActiveCategory.current = Raw_category.current.data.filter(x=>x.selected)[0]
+                // const tagsHaveActive = Raw_tags.current.data.filter(x=>x.active).length>0?true:false
+                // refActiveTags.current = Raw_tags.current.data
                 //                         .filter((x)=>{
                 //                             if(tagsHaveActive){
                 //                                 return x.active && refActiveCategory.current.tags.indexOf(x.id)>=0
                 //                             }
                 //                             return refActiveCategory.current.tags.indexOf(x.id)>=0
                 //                         })
-                refActiveTags.current = tagsFilter(Raw_fakeTags.current.data, refActiveCategory.current)
+                refActiveTags.current = tagsFilter(Raw_tags.current.data, refActiveCategory.current)
                                      
                 setDefaultSelect(refActiveCategory.current.id)
                 setCategoryState(()=>{
-                    return {...Raw_fakeCategory.current}
+                    return {...Raw_category.current}
                 })
                 setTagState(()=>{
-                    const newSelf = toggleDisplayViaArrayOfIds(Raw_fakeTags.current, 2, refActiveCategory.current['tags'])
+                    const newSelf = toggleDisplayViaArrayOfIds(Raw_tags.current, 2, refActiveCategory.current['tags'])
                     return {...newSelf}
                 })
                 setTopicState(()=>{
-                    const newSelf = toggleDisplayViaKeyAndId(Raw_fakeTopics.current, 2 , 'tags', refActiveTags.current.map(x=>x.id), Raw_fakeTags.current.data)
+                    const newSelf = toggleDisplayViaKeyAndId(Raw_topics.current, 2 , 'tags', refActiveTags.current.map(x=>x.id), Raw_tags.current.data)
                     return {...newSelf}
                 })
             });
@@ -328,7 +328,7 @@ export const MainPage = forwardRef(function (props, ref) {
 
     const select = (ev)=>{
         const selectedId = ev.currentTarget.value 
-        refActiveCategory.current = Raw_fakeCategory.current.data.filter(x=>x.id==selectedId)[0]
+        refActiveCategory.current = Raw_category.current.data.filter(x=>x.id==selectedId)[0]
         setCategoryState((self)=>{
             let newSelf = {}
             for(let key in self){
@@ -409,7 +409,7 @@ export const MainPage = forwardRef(function (props, ref) {
      *  inner state(ref) - effect1_initialDataLoaded
      */
     useEffect(()=>{
-        let categoryObject = refActiveCategory.current//Raw_fakeCategory.current.data.filter(x=>categoryId==x.id)[0]
+        let categoryObject = refActiveCategory.current//Raw_category.current.data.filter(x=>categoryId==x.id)[0]
         if(categoryObject){ //reactive effect stopper
             setTagState((self)=>{
                 const newSelf = toggleDisplayViaArrayOfIds(self, 2, categoryObject['tags'])
@@ -448,7 +448,7 @@ export const MainPage = forwardRef(function (props, ref) {
 
         if(refActiveTags.current){
             setTopicState((self)=>{
-                const newSelf = toggleDisplayViaKeyAndId(self, 2 , 'tags', refActiveTags.current.map(x=>x.id), Raw_fakeTags.current.data)
+                const newSelf = toggleDisplayViaKeyAndId(self, 2 , 'tags', refActiveTags.current.map(x=>x.id), Raw_tags.current.data)
                 if(arraysEqual(self.data, newSelf.data)){// prevent same value
                     return {...self}
                 }
