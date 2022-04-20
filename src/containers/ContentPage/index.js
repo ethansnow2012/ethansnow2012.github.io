@@ -137,6 +137,13 @@ let TARGET_COLLECTION =  process.env.REACT_APP_TARGET_COLLECTION
 
 //inner-inc-menu
 const InnerIncMenu = forwardRef((props, ref)=>{
+    const {toLeftContent} = useContext(SplitContext)
+    const goBack = ()=>{
+        if(typeof toLeftContent=='function'){
+            toLeftContent()
+            window.history.replaceState(null,'', '/')
+        }
+    }
     const [data, setData] = useState([])
     useImperativeHandle(ref, ()=>
         ({
@@ -161,12 +168,12 @@ const InnerIncMenu = forwardRef((props, ref)=>{
         })
     }
     const deleteClick = ()=>{
-        window.scrollBy({ // fix: scrollIntoView interanl bug(not invole)
-            top: -0.1,
-            left: 0,
-        })
-        props.leftContentRef.current.rawRef.current.scrollIntoView({behavior:"smooth"})
-        
+        // window.scrollBy({ // fix: scrollIntoView interanl bug(not invole)
+        //     top: -0.1,
+        //     left: 0,
+        // })
+        //props.leftContentRef.current.rawRef.current.scrollIntoView({behavior:"smooth"})
+        goBack()
         setTimeout(()=>{
             props.setTopicContent((self)=>{
                 return {...self, to_be_deleted:true}

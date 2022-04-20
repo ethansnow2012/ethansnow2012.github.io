@@ -33,7 +33,7 @@ export function HSpliterLine({children}){
     const clickGoBack = ()=>{
         if(typeof toLeftContent=='function'){
             toLeftContent()
-            window.history.pushState(null,'', '/')
+            window.history.replaceState(null,'', '/')
         }
     }
     console.log('HSpliterLine')

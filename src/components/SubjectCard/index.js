@@ -102,7 +102,7 @@ export function SubjectCard({children, data, tags, toRightContent, rightContentR
     const gotoContent = useCallback(()=>{
         if(typeof toRightContent=='function'){
             toRightContent()
-            window.history.pushState(null,'', `/content/${data.id}`)
+            window.history.replaceState(null,'', `/content/${data.id}`)
             //change content here
             console.log('ffggaa', leftContentRef)
             const [contentPageState, setContentPageState] = rightContentRef.current.innerStates._topicContent
