@@ -12,7 +12,50 @@ import { injectStyleState, toggleDisplayViaKeyAndId , toggleDisplayViaArrayOfIds
 
 import { getFakeTopics, getFakeTags, getFakeCategory, storeMainContent } from 'service/data'
 
+const StyledFooter = styled.div`
+    display: flex;
+    justify-content: center;
+    padding-top: 40px;
+    padding-bottom: 60px;
+    & .inner-title{
 
+    }
+    & .inner{
+        margin-top:0.7em;
+        max-width: 600px
+    }
+    & .inner > * + *{
+        margin-top:0.5em;
+    }
+    & .worklink{
+        position: relative;
+        width: max-content;
+        display: flex;
+        font-size: 1.4em;
+    }
+    & .worklink + .worklink{
+        margin-top:5px;
+    }
+    & .worklink:hover img{
+        right: 100%;
+    }
+    & .worklink-dot{
+        margin-right: 10px;
+    }
+    & .worklink a{
+        z-index: 1;
+    }
+    & .worklink img{
+        transition: all 1s ease;
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        right: 0;
+        mix-blend-mode: lighten;
+        filter: brightness(0.5);
+    }
+`
 
 const Styled = styled.div`
     width:100%;
@@ -98,6 +141,42 @@ function tagsFilter(tagsObject, activeCategoryObject){
 
 let TARGET_COLLECTION =  process.env.REACT_APP_TARGET_COLLECTION
 //TARGET_COLLECTION = 'alpha_github_page_data_root'
+
+const MainPageFooter = ()=>{
+    return (
+        <StyledFooter>
+            <div>
+                <div className='inner-title'>這個網站與關於我:</div>
+                <div className='inner'>
+                    <div>
+                    我是高傑(ethansnow2012@gmail.com)，這個部落格網站的作者，<br/>
+                    之後也許會開放成共編平台。<br/>
+                    </div>
+                    <div>
+                    任何如果想合作或聊聊的人，如果看到這裡，<br/>
+                    能與您相遇是我的榮幸～<br/>
+                    </div>
+                    <div></div>
+                    <div>
+                        <div>
+                        其他我的作品：<br/>
+                        <br/>
+                        </div>
+                        <a className="worklink" href="https://ethansnow2012.github.io/rdrag-rdrop">
+                            <div className="worklink-dot" >-</div> <div >拖拉元件的函式庫</div>
+                            <img src="/link-background.jpg"></img>
+                        </a>
+                        <a className="worklink" href="https://ethansnow2012.github.io/recole">
+                            <div className="worklink-dot" >-</div> <div >響應式編成實驗</div>
+                            <img src="/link-background.jpg"></img>
+                        </a>
+                        <br/>
+                    </div>
+                </div>
+            </div>
+        </StyledFooter>
+    )
+}
 
 export const MainPage = forwardRef(function (props, ref) {
     const { headRef, rightContentRef }  = useContext(SplitContext)
@@ -450,6 +529,7 @@ export const MainPage = forwardRef(function (props, ref) {
                     </div>
                 </div>
             </BaseContentSpacing>
+            <MainPageFooter></MainPageFooter>
         </Styled>
     )
 })
