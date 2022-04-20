@@ -110,7 +110,8 @@ export const MainPage = forwardRef(function (props, ref) {
                 _categoryState: [categoryState, setCategoryState],
                 _tagState: [tagState, setTagState],
                 _topicState: [topicState, setTopicState],
-                _isEditing: [isEditing, setIsEditing]
+                _isEditing: [isEditing, setIsEditing],
+                _toBeSaved: [toBeSaved, setTobeSaved]
             },
             saveMainStates: saveMainStates,
             rawRef
@@ -368,7 +369,6 @@ export const MainPage = forwardRef(function (props, ref) {
 
         if(refActiveTags.current){
             setTopicState((self)=>{
-                console.log('useEffect2')
                 const newSelf = toggleDisplayViaKeyAndId(self, 2 , 'tags', refActiveTags.current.map(x=>x.id), Raw_fakeTags.current.data)
                 if(arraysEqual(self.data, newSelf.data)){// prevent same value
                     return {...self}
@@ -376,7 +376,7 @@ export const MainPage = forwardRef(function (props, ref) {
                 return {...newSelf}   
             })
         }
-        if(rightContentRef.current.innerRefs.innerIncMenuRef.current.innerStates){
+        if(rightContentRef.current.innerRefs.innerIncMenuRef.current?.innerStates){
             const [rightContentOptions, setRightContentOptions] = rightContentRef.current.innerRefs.innerIncMenuRef.current.innerStates._data
             setRightContentOptions(tagState.data)
         }

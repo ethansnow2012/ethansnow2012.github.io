@@ -38,10 +38,25 @@ const Styled = styled.div`
     & .inner-inc-btn-icon{
         display: flex;
         justify-content: end;
+        cursor: pointer;
     }
     // & .inner-inc-menu{
     //     display: none;
     // }
+    .inner-inc-menu-i-label{
+        padding-left:20px;
+    }
+    & .inner-inc-menu-i-optionwrapper-i{
+        cursor: pointer;
+        display:flex;
+        font:0.9em;
+    }
+    & .inner-inc-menu-i-optionwrapper-i-check{
+        width: 20px;
+    }
+    & .inner-inc-menu-i-optionwrapper-i:not(.active){
+        color: #afafaf;
+    }
     & .inner-inc-btn:hover ${StyledInnerIncMenu}{
         display: flex;
         background: #ffffffe0;
@@ -121,15 +136,34 @@ const InnerIncMenu = forwardRef((props, ref)=>{
             },
         })
     )
+    
+    const click = (ev)=>{
+        let id = ev.currentTarget.dataset.id
+        props.setTopicContent((self)=>{
+            let tags = self.tags
+            let index = tags.indexOf(id)
+            if(index==-1){
+                tags.push(id)
+            }else{
+                tags.splice(index, 1);
+            }
+            self.tags = tags
+            return {...self}
+        })
+    }
+    console.log('InnerIncMenu', props)
     return (
         <StyledInnerIncMenu className="inner-inc-menu">
             <div className="inner-inc-menu-i">
-                加入分類
+                <div className="inner-inc-menu-i-label">加入分類</div>
                 <div className="inner-inc-menu-i-optionwrapper">
                     {
                         data.map(x=>
-                            <div className="inner-inc-menu-i-optionwrapper">
-                                {x.name}
+                            <div className={"inner-inc-menu-i-optionwrapper-i"+((props.topicContent?.tags.indexOf(x.id)>=0)?' active':'')} data-id={x.id} onClick={click}>
+                                <div className='inner-inc-menu-i-optionwrapper-i-check' >
+                                    { (props.topicContent?.tags.indexOf(x.id)>=0)?'✓':'‎ ' }
+                                </div>
+                                { x.name }
                             </div>                                                
                         )
                     }
@@ -216,6 +250,7 @@ export const ContentPage = forwardRef(function(props, ref) {
     },[])
 
     useEffect(()=>{
+        console.log('topicContent effect')
         if(topicContent?.topic){
             editorTitle.children = topicContent.topic
             editorTitle.onChange();
@@ -228,6 +263,27 @@ export const ContentPage = forwardRef(function(props, ref) {
             editorContent.children = topicContent.content
             editorContent.onChange();
         }
+        if(leftContentRef.current&&topicContent){
+            const [_topicState, _setTopicState] = leftContentRef.current.innerStates._topicState
+            _setTopicState((self)=>{
+                const id = topicContent.id
+                const dueTopic = self.data.filter(x=>x.id==id)[0]
+                const dueTopicStringRepresent = JSON.stringify(dueTopic)
+                const selfTopicStringRepresent= JSON.stringify(topicContent)
+
+                if(dueTopicStringRepresent == selfTopicStringRepresent){
+                    console.log('ssss A')
+                    return self//nop
+                }else{
+                    console.log('ssss B')
+                    const replaceIndex = self.data.findIndex(x=>x.id==id)
+                    self.data[replaceIndex] = JSON.parse(JSON.stringify(topicContent))
+                    return {...self}
+                }
+            })
+            const [toBeSaved, setTobeSaved] = leftContentRef.current.innerStates._toBeSaved
+            setTobeSaved(true)
+        }
     },[topicContent])
 
     // useEffect(()=>{
@@ -238,14 +294,12 @@ export const ContentPage = forwardRef(function(props, ref) {
         let updated = false
         return ()=>{
             setState((self)=>{
-                state.data.map((el)=>{
-                    if(el.id==contentId){
-                        console.log('change')
-                        el[targetKey] = value
+                if(state[targetKey]){
+                    if(JSON.stringify(state[targetKey])!= JSON.stringify(value)){
+                        state[targetKey] = value
                         updated = true
                     }
-                    return el
-                })
+                }
     
                 if(updated){
                     return {...self}
@@ -258,22 +312,18 @@ export const ContentPage = forwardRef(function(props, ref) {
     }, [])
     
 
-    const slateOnChange = (targetKey)=>{
+    const slateOnChange = useCallback((targetKey)=>{
         const  leftInnerStatesKey = '_topicState'
         return (value)=>{
-            
+            // setTopicContent((self)=>{
+            //     return self
+            // })
+            const updateRootDataByKey = updateRootDataByKeyFactoty(topicContent, setTopicContent, targetKey, value, topicContent.id)
+            updateRootDataByKey()
+            console.log('updateRootDataByKey')
             //update the origin data instead to be reactive
-            if(leftContentRef){
-                const [state, setState] = leftContentRef.current.innerStates[leftInnerStatesKey]
-                
-                const updateRootDataByKey = updateRootDataByKeyFactoty(state, setState, targetKey, value, topicContent.id)
-                const actuallyUpdated = updateRootDataByKey()
-                if(actuallyUpdated){
-                    leftContentRef.current.saveMainStates()
-                }
-            }
         }
-    } 
+    }, [topicContent]) 
     const handleKeyDown = useCallback((event)=>{
         console.log('handleKeyDown')
         let preventDefault = false
@@ -338,12 +388,17 @@ export const ContentPage = forwardRef(function(props, ref) {
     return (
         <Styled ref={rawRef} onKeyDown={handleKeyDown} className={(isEditing?' isEditable':'')}>
                 <div className="inner">
-                    <div className="inner-inc">
-                        <div className="inner-inc-btn">
-                            <div className="inner-inc-btn-icon">...</div>
-                            <InnerIncMenu ref={innerIncMenuRef}></InnerIncMenu>
+                    {
+                        isEditing?
+                        <div className="inner-inc">
+                            <div className="inner-inc-btn">
+                                <div className="inner-inc-btn-icon">...</div>
+                                
+                                <InnerIncMenu ref={innerIncMenuRef} topicContent={topicContent} setTopicContent={setTopicContent}></InnerIncMenu>
+                            </div>
                         </div>
-                    </div>
+                        :""
+                    }
                     <div className="topichead">
                         <div className="topichead-title">
                             <Slate editor={editorTitle} value={editorData_title} onChange={slateOnChange('topic')}>
