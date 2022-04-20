@@ -45,6 +45,11 @@ const Styled = styled.div`
     // }
     .inner-inc-menu-i-label{
         padding-left:20px;
+        margin-bottom: 4px;
+    }
+    .inner-inc-menu-i-label > *{
+        text-decoration: underline;
+        text-underline-offset: 3px;
     }
     & .inner-inc-menu-i-optionwrapper-i{
         cursor: pointer;
@@ -60,7 +65,7 @@ const Styled = styled.div`
     & .inner-inc-btn:hover ${StyledInnerIncMenu}{
         display: flex;
         background: #ffffffe0;
-        padding: 4px;
+        padding: 6px 7px 6px 5px;
     }
     & .topichead{
         font-size: 1.5em;
@@ -155,7 +160,9 @@ const InnerIncMenu = forwardRef((props, ref)=>{
     return (
         <StyledInnerIncMenu className="inner-inc-menu">
             <div className="inner-inc-menu-i">
-                <div className="inner-inc-menu-i-label">加入分類</div>
+                <div className="inner-inc-menu-i-label">
+                    <span>加入分類</span>
+                </div>
                 <div className="inner-inc-menu-i-optionwrapper">
                     {
                         data.map(x=>

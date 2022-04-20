@@ -14,6 +14,9 @@ const Styled = styled.div`
         max-width: 100vw;
         overflow-x: hidden;
     }
+    & .splitwrapper > div{
+        background-color: var(--color-basic-background);
+    }
 `
 export const SplitContext = createContext({});
 
