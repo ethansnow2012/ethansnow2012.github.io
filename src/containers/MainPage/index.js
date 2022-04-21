@@ -174,6 +174,10 @@ const MainPageFooter = ()=>{
                             <img src="/link-background.jpg"></img>
                         </a>
                         <br/>
+                        <a className="worklink" href="https://github.com/ethansnow2012">
+                            <div className="worklink-dot" >-</div> <div >Github</div>
+                            <img src="/link-background.jpg"></img>
+                        </a>
                     </div>
                 </div>
             </div>
