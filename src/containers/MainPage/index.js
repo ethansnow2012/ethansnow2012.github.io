@@ -236,8 +236,10 @@ export const MainPage = forwardRef(function (props, ref) {
     useEffect(()=>{
         console.log('MainPage effect')
         const isLandDirectly = (props.selfPosition==props.pageOptions.priority)
+        let searchParamTag = null
         if(isLandDirectly){
             gotoCurrentLocation()
+            searchParamTag = (new URL(window.location)).searchParams.get('tag')
         }
         Promise.all([getCategory(firebase), getTags(firebase), getTopics(firebase)])
             .then(values => {
@@ -250,6 +252,16 @@ export const MainPage = forwardRef(function (props, ref) {
                                         _tags.data.map(x=>x.id)
                                     )
                 const _topics = injectStyleState(topics)
+
+                if(searchParamTag){ // if searchParam, only active the due tag
+                    _tags.data.forEach((x)=>{
+                        if(searchParamTag==x.id){
+                            x.active = true
+                        }else{
+                            x.active = false
+                        }
+                    })
+                }
 
                 //_tags.data[0].active = true //fake at lease one active tag
                 

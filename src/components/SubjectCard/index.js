@@ -74,8 +74,14 @@ const Styled = styled.div`
         padding-left:5px;
         cursor:pointer;
     }
+    
     & .tag-wrapper-i:hover{
         width: 100%;
+    }
+    & .tag-wrapper[length='1'] .tag-wrapper-i:hover{
+        width: 100%;
+        max-width: max-content;
+        padding-right: 20px;
     }
 `
 

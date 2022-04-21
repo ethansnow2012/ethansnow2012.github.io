@@ -26,7 +26,7 @@ function setupPuppeteer() {
     page: () => page
   }
 }
-describe('describe 1', ()=>{  
+describe('End-to-End test', ()=>{  
   const {page} = setupPuppeteer()
   test('Main Page Load Successfully', async ()=>{
     await page().goto(rootPath)
@@ -129,6 +129,17 @@ describe('describe 1', ()=>{
     expect(topicInnerText + descriptionInnerText + descriptionTagWrapper).not.toBe('')
 
   })
+  test('Page landing behavior', async ()=>{
+    await page().goto(rootPath)
+    await page().waitForSelector(".tag-wrapper-i");
+    await page().click(".tag-wrapper-i");
+    await page().waitForSelector(".p-select-wrapper-i2 > div > .active");
+    console.log('how many?', (page().$$('.p-select-wrapper-i2 > div > .active')) )
+    
+    const activeTagCount = (await page().$$('.p-select-wrapper-i2 > div > .active')).length
+    expect(activeTagCount).toBe(1)
 
+  })
 })
+
 
