@@ -187,7 +187,13 @@ const MainPageFooter = ()=>{
 }
 
 export const MainPage = forwardRef(function (props, ref) {
-    const { author } = useParams();
+    let { author } = useParams();
+    if(!author){// sorry for this: hosting spa on github page afterall
+        const hiddenAuthor = (new URL(window.location)).searchParams.toString().replace('gh-pages-alter%2F', '').replace('=','')
+        if(hiddenAuthor){
+            author = hiddenAuthor
+        }
+    }
     const { headRef, rightContentRef }  = useContext(SplitContext)
     const {firebase} = useContext(globalContext)
     const rawRef = useRef()
@@ -552,7 +558,13 @@ export const MainPage = forwardRef(function (props, ref) {
                     </div>
                 </div>
             </BaseContentSpacing>
-            <MainPageFooter></MainPageFooter>
+            {
+                (author=='A6KyMKQiSIg1CmuVWVEw0Od3NVh1'||author==undefined)?
+                <MainPageFooter></MainPageFooter>
+                :
+                ""
+            }
+            
         </Styled>
     )
 })

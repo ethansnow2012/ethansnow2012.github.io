@@ -2,7 +2,7 @@
 
 //pseudo type dependcy: fireGlobalContext
 
-const authorDefaultFirebaseId = 'A6KyMKQiSIg1CmuVWVEw0Od3NVh1'
+const authorDefaultFirebaseId = 'A6KyMKQiSIg1CmuVWVEw0Od3NVh1'//ethansnow2012
 const _notAuthed = function () {}
 
 _notAuthed.prototype.getStore = (fireGlobalContext, collectionKey, dataKey, options={})=>{// option field: author 
