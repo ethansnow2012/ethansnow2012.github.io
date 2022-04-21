@@ -244,7 +244,7 @@ export const MainPage = forwardRef(function (props, ref) {
             gotoCurrentLocation()
             searchParamTag = (new URL(window.location)).searchParams.get('tag')
         }
-        Promise.all([getCategory(firebase, {author}), getTags(firebase, {author}), getTopics(firebase, )])
+        Promise.all([getCategory(firebase, {author}), getTags(firebase, {author}), getTopics(firebase, {author} )])
             .then(values => {
                 console.log('values', values)
                 const [category, tags, topics] = values
