@@ -5,7 +5,7 @@ import { SplitContext } from 'hoc/factory/RootPageHoc'
 
 const Styled = styled.div`
     width: 3px;
-    background: blue;
+    background: #60609e !important;
     flex-shrink: 0 !important;
     position: relative;
     .goback{
