@@ -86,6 +86,7 @@ const Styled = styled.div`
         max-width:400px;
         margin-left: auto;
         margin-right: auto;
+        background: #e9e9e9;
     }
     & .topicDescription .topicDescription-inner{
         padding: 10px 12px;
@@ -93,7 +94,7 @@ const Styled = styled.div`
     }
     & .topicContent{
         position: relative;
-        background:#cbcbcb;
+        background:#e9e9e9;
         padding:var(--blockpadding) calc(var(--blockpadding) * 2);
         margin-top: calc(var(--maincontent-innerspacing) * 1.8);
         min-height: 40vmin;
@@ -117,7 +118,7 @@ const Styled = styled.div`
         background:white;
     }
     & .p-slate-code{
-        background: #ffffff4a;
+        background: white;
     }
     &.isEditable .topichead-title{
         border-bottom: 1px solid #80808075;

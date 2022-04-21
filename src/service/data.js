@@ -5,6 +5,8 @@ let NODE_ENV = process.env.REACT_APP_NODE_ENV
 let TARGET_COLLECTION =  process.env.REACT_APP_TARGET_COLLECTION
 
 //NODE_ENV = 'github_page' // open this to use real database from firebase
+//TARGET_COLLECTION='test_random'
+//NODE_ENV='local'
 
 export async function getOneFakeTopic(id, fireGlobalContext){// use type define: fireGlobalContext
     if(NODE_ENV=='github_page'){
@@ -18,9 +20,9 @@ export async function getOneFakeTopic(id, fireGlobalContext){// use type define:
         })
     }
 }
-export async function getTopics(fireGlobalContext){
+export async function getTopics(fireGlobalContext, options={}){
     if(NODE_ENV=='github_page'){
-        return firebaseEndpoints.notAuthed.getStore(fireGlobalContext, TARGET_COLLECTION, 'topics')
+        return firebaseEndpoints.notAuthed.getStore(fireGlobalContext, TARGET_COLLECTION, 'topics', options)
     }else{
         return new Promise((resolve, reject)=>{
             setTimeout(()=>{
@@ -29,9 +31,9 @@ export async function getTopics(fireGlobalContext){
         })
     }
 }
-export async function getTags(fireGlobalContext){
+export async function getTags(fireGlobalContext, options={}){
     if(NODE_ENV=='github_page'){
-        return firebaseEndpoints.notAuthed.getStore(fireGlobalContext, TARGET_COLLECTION, 'tags')
+        return firebaseEndpoints.notAuthed.getStore(fireGlobalContext, TARGET_COLLECTION, 'tags', options)
     }else{
         return new Promise((resolve, reject)=>{
             setTimeout(()=>{
@@ -40,9 +42,9 @@ export async function getTags(fireGlobalContext){
         })
     }
 }
-export async function getCategory(fireGlobalContext){
+export async function getCategory(fireGlobalContext, options={}){
     if(NODE_ENV=='github_page'){
-        return firebaseEndpoints.notAuthed.getStore(fireGlobalContext, TARGET_COLLECTION, 'categories')
+        return firebaseEndpoints.notAuthed.getStore(fireGlobalContext, TARGET_COLLECTION, 'categories', options)
     }else{
         return new Promise((resolve, reject)=>{
             setTimeout(()=>{

@@ -32,6 +32,7 @@ function App() {
         <BrowserRouter >
           <Routes>
             <Route path='/' element={<MainPageCombined/>}></Route>
+            <Route path='/:author' element={<MainPageCombined/>}></Route>
             {/* <Route path='/content1' element={<RootPage renderCode={'1'}/>}></Route>
             <Route path='/content2' element={<RootPage renderCode={'2'}/>}></Route> */}
             <Route path='/content/:id' element={<ContentPageCombined/>}></Route>

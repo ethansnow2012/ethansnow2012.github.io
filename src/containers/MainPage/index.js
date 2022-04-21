@@ -1,5 +1,6 @@
 import React, { useState, useContext ,useEffect, useRef, forwardRef, useImperativeHandle, useCallback }from 'react'
 import { FilterTagWrapper, SubjectCardWrapper } from 'components'
+import { useParams } from 'react-router-dom';
 import { globalContext } from 'App'
 import { SplitContext } from 'hoc/factory/RootPageHoc'
 import {CSelect} from 'hoc/instance'
@@ -139,7 +140,7 @@ function tagsFilter(tagsObject, activeCategoryObject){
 }
 
 let TARGET_COLLECTION =  process.env.REACT_APP_TARGET_COLLECTION
-//TARGET_COLLECTION = 'alpha_github_page_data_root'
+//TARGET_COLLECTION = 'test_random'
 
 const MainPageFooter = ()=>{
     return (
@@ -186,6 +187,7 @@ const MainPageFooter = ()=>{
 }
 
 export const MainPage = forwardRef(function (props, ref) {
+    const { author } = useParams();
     const { headRef, rightContentRef }  = useContext(SplitContext)
     const {firebase} = useContext(globalContext)
     const rawRef = useRef()
@@ -238,10 +240,11 @@ export const MainPage = forwardRef(function (props, ref) {
         const isLandDirectly = (props.selfPosition==props.pageOptions.priority)
         let searchParamTag = null
         if(isLandDirectly){
+            console.log('author', author)
             gotoCurrentLocation()
             searchParamTag = (new URL(window.location)).searchParams.get('tag')
         }
-        Promise.all([getCategory(firebase), getTags(firebase), getTopics(firebase)])
+        Promise.all([getCategory(firebase, {author}), getTags(firebase, {author}), getTopics(firebase, )])
             .then(values => {
                 console.log('values', values)
                 const [category, tags, topics] = values

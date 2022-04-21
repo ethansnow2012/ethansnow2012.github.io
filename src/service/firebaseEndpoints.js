@@ -2,10 +2,10 @@
 
 //pseudo type dependcy: fireGlobalContext
 
-const authFirebaseId = 'A6KyMKQiSIg1CmuVWVEw0Od3NVh1'
+const authorDefaultFirebaseId = 'A6KyMKQiSIg1CmuVWVEw0Od3NVh1'
 const _notAuthed = function () {}
 
-_notAuthed.prototype.getStore = (fireGlobalContext, collectionKey, dataKey, options={})=>{
+_notAuthed.prototype.getStore = (fireGlobalContext, collectionKey, dataKey, options={})=>{// option field: author 
     /* type define getStoreOptions
     ** filter<{id}>
     */
@@ -13,7 +13,7 @@ _notAuthed.prototype.getStore = (fireGlobalContext, collectionKey, dataKey, opti
         const firebase = fireGlobalContext
         const userUid = firebase?.self.auth().currentUser?.uid // even not authed access can use some user info
 
-        var docRef = firebase.store.collection(collectionKey).doc(authFirebaseId);
+        var docRef = firebase.store.collection(collectionKey).doc(options.author??authorDefaultFirebaseId);
         docRef.get().then((doc) => {
             if (doc.exists) {
                 console.log("Document data:", doc.data());
