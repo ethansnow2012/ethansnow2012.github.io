@@ -1,6 +1,7 @@
 
 import React, { useContext, useState, useEffect, useImperativeHandle, forwardRef } from 'react'
 import ReactDom from 'react-dom'
+import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import { globalContext } from 'App'
 import { firebaseEndpoints } from 'service/firebaseEndpoints'
@@ -224,12 +225,10 @@ export const Header = forwardRef(function (props, ref) {//forward state here
         firebase.self.auth().onAuthStateChanged(function(user) {
             if (user) {
                 setIsLoggedIn(true)
-                const [contentPageIsEditing, setContentIsEditing] = rightContentRef.current.innerStates._isEditing
-                setContentIsEditing(!contentPageIsEditing)
-                // await firestore
-                //     .collection(memberSchema.form.collectionStr)
-                //     .doc(firebase.auth().currentUser.uid)
-                //     .update(dataFirestore)
+                if(rightContentRef.current){
+                    const [contentPageIsEditing, setContentIsEditing] = rightContentRef.current.innerStates._isEditing
+                    setContentIsEditing(!contentPageIsEditing)
+                }
             } else {
                 setIsLoggedIn(false)
             }
@@ -266,7 +265,7 @@ export const Header = forwardRef(function (props, ref) {//forward state here
     }
     return (
         <Styled>
-            Atticstone.V2
+            <Link to='/'>Atticstone.V2</Link>
             <HeaderFloating fromParentArgs={fromParentArgs}></HeaderFloating>
         </Styled>
     )

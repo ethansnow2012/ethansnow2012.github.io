@@ -95,3 +95,23 @@ export function RootPageHoc(LeftContent, RightContent, pageOptions){
     
     return Component
 }
+
+export function SingleRootPageHoc(Page){
+    const Component = () => {
+        const [currentSplitLoc, setCurrentSplitLoc] = useState('left')//
+        const leftContentRef = useRef(null)
+        const rightContentRef = useRef(null)
+        const headRef = useRef(null)
+        return (
+            <Styled>
+                <RouterMeta/>
+                <SplitContext.Provider value={{ leftContentRef, headRef, rightContentRef, currentSplitLoc}}>{/* pseudo type define: SplitContextValue */}
+                    <HeaderWithContextWithForwardRef ref={headRef}></HeaderWithContextWithForwardRef>
+                    <Page></Page>
+                </SplitContext.Provider>
+            </Styled>
+        )
+    }
+    
+    return Component
+}
