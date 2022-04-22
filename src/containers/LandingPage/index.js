@@ -19,6 +19,7 @@ const StyledFooterButton = styled.div`
 `
 
 const StyledFooterCard = styled.div`
+    cursor: default;
     position: relative;
     background-image:${props=>props.image?`url(${props.image})`:''};
     margin: 11vmin;
@@ -28,10 +29,10 @@ const StyledFooterCard = styled.div`
     padding: 5px 10px;
     border-radius: 5px;
     .footer-card-title{
-        font-size: 1.5em;
+        font-size: 1.7em;
     }
     .footer-card-text{
-        margin-top: 16px;
+        margin-top: 23px;
         padding-left: 22px;
     }
 `
