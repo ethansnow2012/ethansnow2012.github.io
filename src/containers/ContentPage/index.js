@@ -314,6 +314,10 @@ export const ContentPage = forwardRef(function(props, ref) {
                 if(dueTopicStringRepresent == selfTopicStringRepresent){
                     return self//nop
                 }else{
+                    // chaining effect
+                    const [toBeSaved, setTobeSaved] = leftContentRef.current.innerStates._toBeSaved
+                    setTobeSaved(true)
+
                     const replaceIndex = self.data.findIndex(x=>x.id==id)
                     if(topicContent.to_be_deleted){
                         self.data.splice(replaceIndex, 1)
@@ -323,9 +327,7 @@ export const ContentPage = forwardRef(function(props, ref) {
                     self.data[replaceIndex] = JSON.parse(JSON.stringify(topicContent))
                     return {...self}
                 }
-            })
-            const [toBeSaved, setTobeSaved] = leftContentRef.current.innerStates._toBeSaved
-            setTobeSaved(true)
+            })  
         }
     },[topicContent])
 
@@ -431,17 +433,15 @@ export const ContentPage = forwardRef(function(props, ref) {
     return (
         <Styled ref={rawRef} onKeyDown={handleKeyDown} className={(isEditing?' isEditable':'')}>
                 <div className="inner">
-                    {
-                        isEditing?
-                        <div className="inner-inc">
-                            <div className="inner-inc-btn">
-                                <div className="inner-inc-btn-icon">...</div>
-                                
-                                <InnerIncMenu ref={innerIncMenuRef} leftContentRef={leftContentRef} topicContent={topicContent} setTopicContent={setTopicContent}></InnerIncMenu>
-                            </div>
+                    
+                    <div className="inner-inc" style={{display: isEditing?'':'none'}}>
+                        <div className="inner-inc-btn">
+                            <div className="inner-inc-btn-icon">...</div>
+                            
+                            <InnerIncMenu ref={innerIncMenuRef} leftContentRef={leftContentRef} topicContent={topicContent} setTopicContent={setTopicContent}></InnerIncMenu>
                         </div>
-                        :""
-                    }
+                    </div>
+                        
                     <div className="topichead">
                         <div className="topichead-title">
                             <Slate editor={editorTitle} value={editorData_title} onChange={slateOnChange('topic')}>

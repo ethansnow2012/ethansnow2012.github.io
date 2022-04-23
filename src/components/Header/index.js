@@ -227,10 +227,22 @@ export const Header = forwardRef(function (props, ref) {//forward state here
                 setIsLoggedIn(true)
                 if(rightContentRef.current){
                     const [contentPageIsEditing, setContentIsEditing] = rightContentRef.current.innerStates._isEditing
-                    setContentIsEditing(!contentPageIsEditing)
+                    setContentIsEditing(true)
+                    
+                    // make sure tag state is loaded
+                    if(rightContentRef.current.innerRefs.innerIncMenuRef.current?.innerStates){
+                        const {_tagState} = props.leftContentRef.current.innerStates
+                        const [tagState, setTagState] = _tagState
+                        const [rightContentOptions, setRightContentOptions] = rightContentRef.current.innerRefs.innerIncMenuRef.current.innerStates._data
+                        setRightContentOptions(tagState.data)
+                    }
                 }
             } else {
                 setIsLoggedIn(false)
+                if(rightContentRef.current){
+                    const [contentPageIsEditing, setContentIsEditing] = rightContentRef.current.innerStates._isEditing
+                    setContentIsEditing(false)
+                }
             }
           });
     }, [])
