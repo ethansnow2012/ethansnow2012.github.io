@@ -7,6 +7,8 @@ import { LandingPage } from 'containers/LandingPage'
 import { RootPageHoc, SingleRootPageHoc } from 'hoc/factory/RootPageHoc'
 import { createContext } from 'react'
 import { ContentMeta } from 'components'
+import AOS from 'aos';
+import 'aos/dist/aos.css'; // You can also use <link> for styles
 
 
 
@@ -15,7 +17,10 @@ const MainPageCombined = RootPageHoc(MainPage, ContentPage, {priority:'left'})
 const ContentPageCombined = RootPageHoc(MainPage, ContentPage, {priority:'right'})
 const Landing = SingleRootPageHoc(LandingPage)
 function App() {
-  
+  AOS.init({
+    duration: 100,
+    //easing:'cubic-bezier(0, 0.95, 0, 0.99)'
+  })
   return (
     <div className="App">
       <ContentMeta/>

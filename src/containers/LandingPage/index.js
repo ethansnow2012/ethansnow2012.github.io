@@ -165,17 +165,20 @@ const Styled = styled.div`
 `
 const FooterCard = ({children, image , title, text, CTAtxt})=>{
     return (
-        <StyledFooterCard image={image}>
-            <div className='footer-card-title'>
-                {title}
-            </div>
-            <div className='footer-card-text'>
-                {text}
-            </div>
-            <StyledFooterButton>
-                {CTAtxt}
-            </StyledFooterButton>
-        </StyledFooterCard>
+        <div data-aos="subtle-in" data-aos-duration={500}>
+            <StyledFooterCard image={image}>
+                
+                <div className='footer-card-title'>
+                    {title}
+                </div>
+                <div className='footer-card-text'>
+                    {text}
+                </div>
+                <StyledFooterButton>
+                    {CTAtxt}
+                </StyledFooterButton>
+            </StyledFooterCard>
+        </div>
     )
 }
 
@@ -239,7 +242,7 @@ export const LandingPage = ()=> {
                             <SwiperSlide>
                                 <div className="slide-block">
                                     <Link to='/A6KyMKQiSIg1CmuVWVEw0Od3NVh1'>
-                                        <img src='/Atticstone.svg'></img>
+                                        <img data-aos="subtle-scale-in" data-aos-duration={500} src='/Atticstone.svg'></img>
                                     </Link>
                                 </div>
                             </SwiperSlide>

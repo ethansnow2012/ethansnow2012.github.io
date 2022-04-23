@@ -39,6 +39,32 @@
   --chakra-colors-gray-200: red !important;
 }
 
+/*
+  AOS customizd
+*/
+html:not(.no-js) [data-aos=subtle-in] {
+  transform: translate3d(-10px,0,0);
+}
+html:not(.no-js) [data-aos=subtle-in].aos-animate {
+  transform: translate3d(0,0,0);
+}
+html:not(.no-js) [data-aos=subtle-in-v2] {
+  position: relative;
+  left: -10px;
+  transform: unset;
+}
+html:not(.no-js) [data-aos=subtle-in-v2].aos-animate {
+  left: 0px;
+  transform: unset;
+}
+html:not(.no-js) [data-aos=subtle-scale-in] {
+  transform: scale(0.9);
+}
+html:not(.no-js) [data-aos=subtle-scale-in].aos-animate {
+  transform: scale(1);
+}
+
+
 
 
 

@@ -99,9 +99,19 @@ const Styled = styled.div`
         max-width:600px;
         margin-right:auto;
         margin-left:auto;
+        position: relative;
+        animation: keyframes-p-select-wrapper-i2 2s linear;
     }
     .p-select-wrapper-i2 > * > * {
         margin-top: min(8vmin, 23px);
+    }
+    @keyframes keyframes-p-select-wrapper-i2{
+        from{
+            left: 15px;
+        }
+        to{
+            left: 0px;
+        }
     }
     @media(max-width: 800px) {
         & ${BaseContentSpacingStyle} {
@@ -157,7 +167,7 @@ const MainPageFooter = ()=>{
                     能與您相遇是我的榮幸～<br/>
                     </div>
                     <div></div>
-                    <div>
+                    <div data-aos="subtle-in-v2" data-aos-duration={500}>
                         <div>
                         其他我的作品：<br/>
                         <br/>
@@ -534,7 +544,7 @@ export const MainPage = forwardRef(function (props, ref) {
                             }
                         </CSelect>
                     </div>
-                    <div className='p-select-wrapper-i2'>
+                    <div className='p-select-wrapper-i2' style={{display:tagState.data?'':'none'}}>
                         <FilterTagWrapper key={tagState.id} data={tagState.data} tagClickFactory={tagClickFactory} tagEditBlurFactory={tagEditBlurFactory}></FilterTagWrapper>
                     </div>
                     
