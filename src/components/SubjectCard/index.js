@@ -18,6 +18,12 @@ const Styled = styled.div`
     & .topic{
         margin-bottom:7px;
         font-size:1.15em;
+        cursor: pointer;
+    }
+    & .topic:hover{
+        text-decoration: underline;
+        text-underline-offset: 1px;
+        text-decoration-thickness: 1px;
     }
     & .description{
         font-size:0.5em;
@@ -125,7 +131,7 @@ export function SubjectCard({children, data, tags, toRightContent, rightContentR
     }
     return (
         <Styled>
-            <div className='topic'>
+            <div className='topic' onClick={gotoContent}>
                 {parstSlateDataToString(data.topic)}
             </div>
             <div className='description'>
