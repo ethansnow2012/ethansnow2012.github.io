@@ -222,6 +222,28 @@ export const Header = forwardRef(function (props, ref) {//forward state here
         
     }
     useEffect(()=>{
+        const injectBodyClassViaViewport = ()=>{
+            const body = document.querySelector('body')
+            const classList = body.classList
+            // the way to get vw is different in different platform
+            const vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0)            
+            if(vw>992){
+                classList.add('p-size-lg')
+                classList.remove('p-size-md')
+                classList.remove('p-size-xs')
+            }if(vw>768){
+                classList.remove('p-size-lg')
+                classList.add('p-size-md')
+                classList.remove('p-size-xs')
+            }else{
+                classList.remove('p-size-lg')
+                classList.remove('p-size-md')
+                classList.add('p-size-xs')
+            }
+        }
+        injectBodyClassViaViewport()
+        window.addEventListener('resize', injectBodyClassViaViewport);
+        
         firebase.self.auth().onAuthStateChanged(function(user) {
             if (user) {
                 setIsLoggedIn(true)

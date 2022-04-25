@@ -112,11 +112,14 @@ export function SubjectCard({children, data, tags, toRightContent, rightContentR
     }, [])
 
     const gotoContent = useCallback(()=>{
-        if(typeof toRightContent=='function'){
+        const body = document.querySelector('body')
+        if (body.classList.contains('p-size-xs')||body.classList.contains('p-size-md')){
+            window.location.href = `/content/${data.id}`
+        }
+        else if(typeof toRightContent=='function'){
             toRightContent()
             window.history.replaceState(null,'', `/content/${data.id}`)
-            //change content here
-            console.log('ffggaa', leftContentRef)
+            
             const [contentPageState, setContentPageState] = rightContentRef.current.innerStates._topicContent
             const [topicState, setTopicState] = leftContentRef.current.innerStates._topicState
             setContentPageState((self)=>{

@@ -29,9 +29,20 @@ const Styled = styled.div`
 const transitionTime = '0.5'
 
 export function HSpliterLine({children}){
-    const {toLeftContent, currentSplitLoc} = useContext(SplitContext)
+    const {toLeftContent, currentSplitLoc, leftContentRef, rightContentRef} = useContext(SplitContext)
     const clickGoBack = ()=>{
-        if(typeof toLeftContent=='function'){
+        console.log('clickGoBack', leftContentRef, rightContentRef)
+        const body = document.querySelector('body')
+        if (body.classList.contains('p-size-xs')||body.classList.contains('p-size-md')){
+            const referrer = document.referrer
+            if(referrer.match(/(\/\/localhost:300|\/\/ethansnow2012.github.io\/)/)){
+                window.location.href = referrer
+            }
+            else{
+                window.location.href = '/'
+            }
+        }
+        else if(typeof toLeftContent=='function'){
             toLeftContent()
             window.history.replaceState(null,'', '/')
         }
