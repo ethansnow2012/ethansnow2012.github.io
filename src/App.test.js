@@ -4,7 +4,7 @@ const rootPath = "http://localhost:3000/"
 const maxTransitionTime = "1500"
 
 jest.useRealTimers();
-jest.setTimeout(20000);
+jest.setTimeout(27000);
 
 function setupPuppeteer() {
   let browser= puppeteer.Browser
@@ -30,6 +30,8 @@ describe('End-to-End test', ()=>{
   const {page} = setupPuppeteer()
   test('Main Page Load Successfully', async ()=>{
     await page().goto(rootPath)
+    await page().waitForSelector(".swiper-slide-active a");
+    await page().click('.swiper-slide-active a');
     
     await page().waitForSelector(".p-select-wrapper");
     await page().waitForSelector(".p-content-wrapper-outter");
@@ -41,6 +43,8 @@ describe('End-to-End test', ()=>{
   })
   test('Click the content button on main page', async ()=>{
     await page().goto(rootPath)
+    await page().waitForSelector(".swiper-slide-active a");
+    await page().click('.swiper-slide-active a');
 
     await page().waitForSelector(".p-select-wrapper");
     await page().waitForSelector(".p-content-wrapper-outter");
@@ -61,6 +65,9 @@ describe('End-to-End test', ()=>{
       2. content is editable
   `, async ()=>{
     await page().goto(rootPath)
+    await page().waitForSelector(".swiper-slide-active a");
+    await page().click('.swiper-slide-active a');
+
     await page().waitForSelector(".btn-test-login");
     await page().click('.btn-test-login');
     await page().waitForSelector(".btn-signout");
@@ -85,16 +92,27 @@ describe('End-to-End test', ()=>{
   })
   test('topic are correctly shown via tags ', async ()=>{
     await page().goto(rootPath)
+    await page().waitForSelector(".swiper-slide-active a");
+    await page().click('.swiper-slide-active a');
+
     await page().waitForSelector(".btn-test-login");
     await page().click('.btn-test-login');
 
-    await page().waitForSelector(".btn-editmode");
-    await page().click(".btn-editmode");
-
+    await page().waitForTimeout(maxTransitionTime);
     await page().click(".goto-content");
     await page().waitForTimeout(maxTransitionTime);
+
+    // await page().waitForSelector(".btn-editmode");
+    // await page().click(".btn-editmode");
+
+    await page().waitForSelector(".btn-test-login");
+    await page().click('.btn-test-login');
+    await page().waitForSelector('.topicDescription-inner *[contenteditable="true"]');
     await page().type('.topicDescription-inner *[contenteditable="true"]', 'test comment', {delay: 1})
     await page().click(".goback");
+
+    await page().waitForSelector(".btn-editmode");
+    await page().click(".btn-editmode");
 
     await page().waitForSelector(".p-content-wrapper-controlwrapper-i");
     await page().click(".p-content-wrapper-controlwrapper-i");
@@ -131,6 +149,9 @@ describe('End-to-End test', ()=>{
   })
   test('Page landing behavior', async ()=>{
     await page().goto(rootPath)
+    await page().waitForSelector(".swiper-slide-active a");
+    await page().click('.swiper-slide-active a');
+
     await page().waitForSelector(".tag-wrapper-i");
     await page().click(".tag-wrapper-i");
     await page().waitForSelector(".p-select-wrapper-i2 > div > .active");

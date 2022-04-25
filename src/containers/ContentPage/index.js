@@ -1,6 +1,7 @@
 
-import React, {useEffect, useContext,  useState, useImperativeHandle, forwardRef, useRef, useCallback} from 'react'
+import React, {useEffect, useContext, useState, useImperativeHandle, forwardRef, useRef, useCallback} from 'react'
 import { storeMainContent, getOneFakeTopic } from 'service/data'
+import { useParams } from 'react-router-dom';
 import styled from 'styled-components'
 import { globalContext } from 'App'
 import { SplitContext } from 'hoc/factory/RootPageHoc'
@@ -186,18 +187,25 @@ const InnerIncMenu = forwardRef((props, ref)=>{
             <div className="inner-inc-menu-i">
                 <div className="inner-inc-menu-i-label">
                     <span>加入分類</span>
-                    <div className="inner-inc-menu-i-optionwrapper">
-                        {
-                            data.map(x=>
-                                <div className={"inner-inc-menu-i-optionwrapper-i"+((props.topicContent?.tags.indexOf(x.id)>=0)?' active':'')} data-id={x.id} onClick={click}>
-                                    <div className='inner-inc-menu-i-optionwrapper-i-check' >
-                                        { (props.topicContent?.tags.indexOf(x.id)>=0)?'✓':'‎ ' }
-                                    </div>
-                                    { x.name }
-                                </div>                                                
-                            )
-                        }
-                    </div>
+                    {
+                        props.topicContent?.tags?
+                        <div className="inner-inc-menu-i-optionwrapper">
+                            {
+                                data.map(x=>
+                                    <div className={"inner-inc-menu-i-optionwrapper-i"+((props.topicContent?.tags.indexOf(x.id)>=0)?' active':'')} data-id={x.id} onClick={click}>
+                                        <div className='inner-inc-menu-i-optionwrapper-i-check' >
+                                            { (props.topicContent?.tags.indexOf(x.id)>=0)?'✓':'‎ ' }
+                                        </div>
+                                        { x.name }
+                                    </div>                                                
+                                )
+                            }
+                        </div>
+                        :
+                        ''
+
+                    }
+                    
                 </div>
                 <div className="inner-inc-menu-i-label">
                     <span>其他</span>
@@ -214,6 +222,14 @@ const InnerIncMenu = forwardRef((props, ref)=>{
 })
 
 export const ContentPage = forwardRef(function(props, ref) {
+    let { author } = useParams();
+    if(!author){// sorry for this: hosting spa on github page afterall
+        const hiddenAuthor = (new URL(window.location)).searchParams.toString().replace('gh-pages-alter%2F', '').replace('=','')
+        if(hiddenAuthor){
+            author = hiddenAuthor
+        }
+    }
+
     const {firebase} = useContext(globalContext)
     const {headRef, leftContentRef} = useContext(SplitContext)
     const [topicContent, setTopicContent] = useState()
@@ -272,6 +288,8 @@ export const ContentPage = forwardRef(function(props, ref) {
       }, [])
 
     useEffect(()=>{
+        leftContentRef.current.innerRefs.authorRef.current=author
+
         const isLandDirectly = (props.selfPosition==props.pageOptions.priority)
         if(isLandDirectly){
             gotoCurrentLocation()
@@ -279,7 +297,7 @@ export const ContentPage = forwardRef(function(props, ref) {
         const _getOneTopic = async ()=>{
             let dueTopic = null
             if(isLandDirectly){
-                const topicId = (new URL(window.location)).pathname.split('/')[2]
+                const topicId = (new URL(window.location)).pathname.split('/')[3]
                 dueTopic =  await getOneFakeTopic(topicId, firebase)
                 setTopicContent(dueTopic)
             }else{

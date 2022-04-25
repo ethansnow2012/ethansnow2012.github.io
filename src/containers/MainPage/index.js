@@ -207,6 +207,7 @@ export const MainPage = forwardRef(function (props, ref) {
     const { headRef, rightContentRef }  = useContext(SplitContext)
     const {firebase} = useContext(globalContext)
     const rawRef = useRef()
+    const authorRef = useRef()
     useImperativeHandle(ref, ()=>
         ({
             simpleConsole: ()=>{ console.log('simpleConsole') },
@@ -216,6 +217,9 @@ export const MainPage = forwardRef(function (props, ref) {
                 _topicState: [topicState, setTopicState],
                 _isEditing: [isEditing, setIsEditing],
                 _toBeSaved: [toBeSaved, setTobeSaved]
+            },
+            innerRefs:{
+                authorRef
             },
             saveMainStates: saveMainStates,
             rawRef
@@ -255,6 +259,9 @@ export const MainPage = forwardRef(function (props, ref) {
         console.log('MainPage effect')
         const isLandDirectly = (props.selfPosition==props.pageOptions.priority)
         let searchParamTag = null
+        
+        authorRef.current = author
+
         if(isLandDirectly){
             console.log('author', author)
             gotoCurrentLocation()

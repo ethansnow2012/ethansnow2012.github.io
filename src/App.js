@@ -39,7 +39,7 @@ function App() {
           <Routes>
             <Route path='/' element={<Landing/>}></Route>
             <Route path='/:author' element={<MainPageCombined/>}></Route>
-            <Route path='/content/:id' element={<ContentPageCombined/>}></Route>
+            <Route path='/content/:author/:id' element={<ContentPageCombined/>}></Route>
           </Routes>
         </BrowserRouter>
       </globalContext.Provider>

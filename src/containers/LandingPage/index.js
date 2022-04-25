@@ -240,11 +240,11 @@ export const LandingPage = ()=> {
                             }}
                             >
                             <SwiperSlide>
-                                <div className="slide-block">
-                                    <Link to='/A6KyMKQiSIg1CmuVWVEw0Od3NVh1'>
+                                <Link to='/A6KyMKQiSIg1CmuVWVEw0Od3NVh1'>
+                                    <div className="slide-block">
                                         <img data-aos="subtle-scale-in" data-aos-duration={500} src='/Atticstone.svg'></img>
-                                    </Link>
-                                </div>
+                                    </div>
+                                </Link>
                             </SwiperSlide>
                             <SwiperSlide>
                                 <div className="slide-block">

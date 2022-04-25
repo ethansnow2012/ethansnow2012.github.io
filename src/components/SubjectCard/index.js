@@ -2,6 +2,7 @@
 import React, {useCallback, useContext} from 'react'
 import styled from 'styled-components'
 import { WithContextFactory }from 'hoc/factory/WithContext'
+import { useParams } from 'react-router-dom';
 
 const Styled = styled.div`
     background: black;
@@ -93,6 +94,7 @@ const Styled = styled.div`
 
 export function SubjectCard({children, data, tags, toRightContent, rightContentRef, leftContentRef}){
     //console.log('SubjectCard', tags)
+    //let { id } = useParams(); //this do not update dynamically
     const filteredTags = tags.filter( x => data.tags.indexOf(x.id)>=0 )
     const filteredTagsLength = filteredTags.length
 
@@ -112,18 +114,20 @@ export function SubjectCard({children, data, tags, toRightContent, rightContentR
     }, [])
 
     const gotoContent = useCallback(()=>{
+        console.log('gotoContent')
+        const author = leftContentRef.current.innerRefs.authorRef.current
         const body = document.querySelector('body')
         if (body.classList.contains('p-size-xs')||body.classList.contains('p-size-md')){
-            window.location.href = `/content/${data.id}`
+            window.location.href = `/content/${author}/${data.id}`
         }
         else if(typeof toRightContent=='function'){
             toRightContent()
-            window.history.replaceState(null,'', `/content/${data.id}`)
+            window.history.replaceState(null,'', `/content/${author}/${data.id}`)
             
             const [contentPageState, setContentPageState] = rightContentRef.current.innerStates._topicContent
             const [topicState, setTopicState] = leftContentRef.current.innerStates._topicState
             setContentPageState((self)=>{
-                const topicId = (new URL(window.location)).pathname.split('/')[2]
+                const topicId = (new URL(window.location)).pathname.split('/')[3]
                 const dueTopic = topicState.data.filter(x=>x.id==topicId)[0]
                 return {...dueTopic}
             })

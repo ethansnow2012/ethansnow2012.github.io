@@ -231,7 +231,7 @@ export const Header = forwardRef(function (props, ref) {//forward state here
                 classList.add('p-size-lg')
                 classList.remove('p-size-md')
                 classList.remove('p-size-xs')
-            }if(vw>768){
+            }else if(vw>768){
                 classList.remove('p-size-lg')
                 classList.add('p-size-md')
                 classList.remove('p-size-xs')

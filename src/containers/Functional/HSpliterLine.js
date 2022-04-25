@@ -2,6 +2,7 @@ import React, {useContext} from 'react'
 import styled from 'styled-components'
 import { CSSTransition, } from 'react-transition-group'
 import { SplitContext } from 'hoc/factory/RootPageHoc'
+import { useParams } from 'react-router-dom';
 
 const Styled = styled.div`
     width: 3px;
@@ -32,19 +33,10 @@ export function HSpliterLine({children}){
     const {toLeftContent, currentSplitLoc, leftContentRef, rightContentRef} = useContext(SplitContext)
     const clickGoBack = ()=>{
         console.log('clickGoBack', leftContentRef, rightContentRef)
-        const body = document.querySelector('body')
-        if (body.classList.contains('p-size-xs')||body.classList.contains('p-size-md')){
-            const referrer = document.referrer
-            if(referrer.match(/(\/\/localhost:300|\/\/ethansnow2012.github.io\/)/)){
-                window.location.href = referrer
-            }
-            else{
-                window.location.href = '/'
-            }
-        }
-        else if(typeof toLeftContent=='function'){
+        let author = leftContentRef.current.innerRefs.authorRef.current
+        if(typeof toLeftContent=='function'){
             toLeftContent()
-            window.history.replaceState(null,'', '/')
+            window.history.replaceState(null,'', `/${author}`)
         }
     }
     console.log('HSpliterLine')
