@@ -37,6 +37,7 @@
 */
 :root{
   --chakra-colors-gray-200: red !important;
+  --swiper-navigation-color: white;
 }
 
 /*

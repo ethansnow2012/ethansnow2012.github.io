@@ -1,12 +1,13 @@
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
-import { Pagination } from 'swiper'
+import { Navigation, Pagination } from 'swiper'
 import { Swiper, SwiperSlide } from 'swiper/react';
 import Panorama from 'panorama';
 import card_bg1 from 'assets/card-bg1.png';
 import card_bg2 from 'assets/card-bg2.png';
 import 'swiper/css'; // eslint-disable-line
 import 'swiper/css/pagination'; // eslint-disable-line
+import 'swiper/css/navigation';
 
 // Import Swiper styles
 import 'swiper/css';
@@ -16,6 +17,15 @@ const StyledFooterButton = styled.div`
     right: 9px;
     bottom: 15px;
     font-size:0.8em;
+    @media(max-width: 576px){
+        
+        font-size: 1px;
+        left: 12px;
+        bottom: 6px;
+        right: unset;
+        text-decoration: underline;
+        text-underline-offset: 2px;
+    }
 `
 
 const StyledFooterCard = styled.div`
@@ -35,6 +45,17 @@ const StyledFooterCard = styled.div`
         margin-top: 23px;
         padding-left: 22px;
     }
+    @media(max-width: 576px){
+        margin: 5vmin;
+        .footer-card-title{
+            font-size: 1.2em;
+        }
+        .footer-card-text{
+            margin-top: 10px;
+            padding-left: 18px;
+            font-size: 0.5em;
+        }
+    }
 `
 
 const StyledFooter = styled.div`
@@ -51,6 +72,11 @@ const StyledFooter = styled.div`
     }
     .footer-card{
         
+    }
+    @media(max-width: 576px){
+        .footer-inner{
+            flex-direction: column;
+        }
     }
 `
 
@@ -162,6 +188,13 @@ const Styled = styled.div`
     .slide-block:hover{
         box-shadow: 0 4px 30px rgb(237 237 237);
     }
+
+    @media(max-width: 768px){
+        .slide-block {
+            width:42vmin;
+            height:42vmin;
+        }
+    }
 `
 const FooterCard = ({children, image , title, text, CTAtxt})=>{
     return (
@@ -189,7 +222,7 @@ export const LandingPage = ()=> {
                 <div className="p-swiper-wrapper">
                     <div className="p-swiper-wrapper-inner">
                         <Swiper
-                            modules={[Pagination, Panorama]}
+                            modules={[Navigation, Pagination, Panorama]}
                             spaceBetween={50}
                             onSlideChange={() => console.log('slide change')}
                             onSwiper={(swiper) => console.log(swiper)}
@@ -199,6 +232,10 @@ export const LandingPage = ()=> {
                             loopedSlides={10}
                             centeredSlides={true}
                             grabCursor= {true}
+                            navigation= {{
+                                nextEl: '.swiper-button-next',
+                                prevEl: '.swiper-button-prev',
+                            }}
                             pagination= {{
                                 el: '.swiper-pagination',
                                 dynamicBullets: true,
@@ -263,6 +300,14 @@ export const LandingPage = ()=> {
 
                                 </div>
                             </SwiperSlide>
+                            <SwiperSlide>
+                                <div className="slide-block">
+
+                                </div>
+                            </SwiperSlide>
+                            {/* <!-- If we need navigation buttons --> */}
+                            <div class="swiper-button-prev"></div>
+                            <div class="swiper-button-next"></div>
                         </Swiper>
                     </div>
                 </div>

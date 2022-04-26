@@ -32,9 +32,12 @@ const transitionTime = '0.5'
 export function HSpliterLine({children}){
     const {toLeftContent, currentSplitLoc, leftContentRef, rightContentRef} = useContext(SplitContext)
     const clickGoBack = ()=>{
-        console.log('clickGoBack', leftContentRef, rightContentRef)
         let author = leftContentRef.current.innerRefs.authorRef.current
-        if(typeof toLeftContent=='function'){
+        const body = document.querySelector('body')
+        if (body.classList.contains('p-size-xs')||body.classList.contains('p-size-md')){
+            window.location.href = `/${author}`
+        }
+        else if(typeof toLeftContent=='function'){
             toLeftContent()
             window.history.replaceState(null,'', `/${author}`)
         }

@@ -17,6 +17,10 @@ const StyledFooter = styled.div`
     justify-content: center;
     padding-top: 40px;
     padding-bottom: 60px;
+    & .inner-space{
+        padding-right:1em;
+        padding-left:1em;
+    }
     & .inner-title{
 
     }
@@ -155,7 +159,7 @@ let TARGET_COLLECTION =  process.env.REACT_APP_TARGET_COLLECTION
 const MainPageFooter = ()=>{
     return (
         <StyledFooter>
-            <div>
+            <div className='inner-space'>
                 <div className='inner-title'>這個網站與關於我:</div>
                 <div className='inner'>
                     <div>

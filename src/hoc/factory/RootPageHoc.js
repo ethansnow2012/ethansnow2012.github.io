@@ -14,6 +14,12 @@ const Styled = styled.div`
         max-width: 100vw;
         overflow-x: hidden;
     }
+    & .splitwrapper-i .spliter-inner{
+        opacity: 0;
+    }
+    & .splitwrapper-i[data-location='active'] .spliter-inner{
+        opacity: 1;
+    }
     & .splitwrapper > div{
         background-color: var(--color-basic-background);
     }
@@ -78,15 +84,19 @@ export function RootPageHoc(LeftContent, RightContent, pageOptions){
                 <SplitContext.Provider value={{toRightContent, toLeftContent, leftContentRef, headRef, rightContentRef, currentSplitLoc}}>{/* pseudo type define: SplitContextValue */}
                     <HeaderWithContextWithForwardRef ref={headRef}></HeaderWithContextWithForwardRef>
                     <div className="splitwrapper">
-                        <HSpliter >
-                            {/* pairContentRef={rightContentRef}  */}
-                            <LeftContent ref={leftContentRef} pageOptions={pageOptions} selfPosition={'left'}/>
-                        </HSpliter>
+                        <div className="splitwrapper-i" data-location={currentSplitLoc=='left'?'active':''} >
+                            <HSpliter >
+                                {/* pairContentRef={rightContentRef}  */}
+                                <LeftContent ref={leftContentRef} pageOptions={pageOptions} selfPosition={'left'}/>
+                            </HSpliter>
+                        </div>
                         <HSpliterLine ></HSpliterLine>
-                        <HSpliter shrink={60}>
-                            {/* pairContentRef={leftContentRef}  */}
-                            <RightContent ref={rightContentRef} pageOptions={pageOptions} selfPosition={'right'}/>
-                        </HSpliter>
+                        <div className="splitwrapper-i" data-location={currentSplitLoc=='left'?'':'active'}>
+                            <HSpliter shrink={60}>
+                                {/* pairContentRef={leftContentRef}  */}
+                                <RightContent ref={rightContentRef} pageOptions={pageOptions} selfPosition={'right'}/>
+                            </HSpliter>
+                        </div>
                     </div>
                 </SplitContext.Provider>
             </Styled>
