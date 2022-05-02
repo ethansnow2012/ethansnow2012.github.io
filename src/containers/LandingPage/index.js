@@ -11,20 +11,43 @@ import 'swiper/css/navigation';
 
 // Import Swiper styles
 import 'swiper/css';
-import { background } from '@chakra-ui/react';
+import { Icon } from "@chakra-ui/react";
+// import { CopyIcon } from '@chakra-ui/react'
+import { BiCopy } from 'react-icons/bi';
 const StyledFooterButton = styled.div`
     position: absolute;
     right: 9px;
     bottom: 15px;
     font-size:0.8em;
+    & span.copybtn {
+        display: none;
+        align-self: end;
+    }
     @media(max-width: 576px){
-        
-        font-size: 1px;
+        .mailbox{
+            flex-basis: 0;
+        }
+        & span.copybtn {
+            display: flex;
+            align-items: flex-end;
+            font-size: 2em;
+            border-radius: 50%;
+            padding: 5px;
+            transition: background-color 0.8s ease;
+            background-color:transparent;
+        }
+        & span.copybtn:active {//, & span.copybtn:active
+            transition: background-color 0.1s ease;
+            background-color: white;
+        }
+        display: flex;
+        font-size: 11px;
         left: 12px;
         bottom: 6px;
         right: unset;
         text-decoration: underline;
         text-underline-offset: 2px;
+        
     }
 `
 
@@ -47,13 +70,28 @@ const StyledFooterCard = styled.div`
     }
     @media(max-width: 576px){
         margin: 5vmin;
+        width: max(180px, 55vmin);
+        height: max(117px, 30vmin);
         .footer-card-title{
             font-size: 1.2em;
         }
         .footer-card-text{
-            margin-top: 10px;
+            margin-top: 2em;
             padding-left: 18px;
-            font-size: 0.5em;
+            font-size: 0.9em;
+        }
+    }
+    @media(max-width: 475px){
+        .footer-card-text{
+            margin-top: 1.6em;
+        }
+    }
+    @media(max-width: 395px){
+        width: 200px;
+        height: 122px;
+
+        .footer-card-text{
+            margin-top: 0.6em;
         }
     }
 `
@@ -184,11 +222,23 @@ const Styled = styled.div`
         background: black;
         padding: 5px;
         border-radius: 3px;
+        position:relative;
     }
     .slide-block:hover{
         box-shadow: 0 4px 30px rgb(237 237 237);
     }
-
+    .slide-block-empty::before{
+        content: 'Join Us?';
+        color: transparent;
+        transition: color 1s ease;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+    .slide-block-empty:hover::before{
+        color: white;
+    }
     @media(max-width: 768px){
         .slide-block {
             width:42vmin;
@@ -206,9 +256,10 @@ const FooterCard = ({children, image , title, text, CTAtxt})=>{
                 </div>
                 <div className='footer-card-text'>
                     {text}
+                    
                 </div>
                 <StyledFooterButton>
-                    {CTAtxt}
+                <span className="mailbox">{CTAtxt}</span><span className="copybtn"><BiCopy  /></span>
                 </StyledFooterButton>
             </StyledFooterCard>
         </div>
@@ -291,23 +342,23 @@ export const LandingPage = ()=> {
                                 </Link>
                             </SwiperSlide>
                             <SwiperSlide>
-                                <div className="slide-block">
+                                <div className="slide-block slide-block-empty">
                                     
                                 </div>
                             </SwiperSlide>
                             <SwiperSlide>
-                                <div className="slide-block">
+                                <div className="slide-block slide-block-empty">
 
                                 </div>
                             </SwiperSlide>
                             <SwiperSlide>
-                                <div className="slide-block">
+                                <div className="slide-block slide-block-empty">
 
                                 </div>
                             </SwiperSlide>
                             {/* <!-- If we need navigation buttons --> */}
-                            <div class="swiper-button-prev"></div>
-                            <div class="swiper-button-next"></div>
+                            <div className="swiper-button-prev"></div>
+                            <div className="swiper-button-next"></div>
                         </Swiper>
                     </div>
                 </div>
