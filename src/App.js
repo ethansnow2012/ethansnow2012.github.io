@@ -7,6 +7,7 @@ import { LandingPage } from 'containers/LandingPage'
 import { RootPageHoc, SingleRootPageHoc } from 'hoc/factory/RootPageHoc'
 import { createContext } from 'react'
 import { ContentMeta } from 'components'
+import { Toaster } from 'react-hot-toast';
 import AOS from 'aos';
 import 'aos/dist/aos.css'; // You can also use <link> for styles
 
@@ -43,6 +44,7 @@ function App() {
           </Routes>
         </BrowserRouter>
       </globalContext.Provider>
+      <Toaster />
     </div>
   );
 }

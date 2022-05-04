@@ -6,11 +6,26 @@ import styled from 'styled-components'
 import { globalContext } from 'App'
 import { SplitContext } from 'hoc/factory/RootPageHoc'
 import { ShiningButton } from 'components'
+import isUrl from 'is-url'
+import imageExtensions from 'image-extensions'
+import { AiFillDelete } from 'react-icons/ai';
+import { BsFillImageFill } from 'react-icons/bs';
+
+import toast from 'react-hot-toast';
 
 // Import the Slate editor factory.
 import { createEditor, Transforms } from 'slate'
 // Import the Slate components and React plugin.
-import { Slate, Editable, withReact } from 'slate-react'
+import {
+    Slate,
+    Editable,
+    useSlateStatic,
+    useSelected,
+    useFocused,
+    withReact,
+    ReactEditor,
+  } from 'slate-react'
+   
 const StyledInnerIncMenu = styled.div`
     display: none;
 `
@@ -115,8 +130,18 @@ const Styled = styled.div`
         right: 0;
         font-size: 0.5em;
     }
-    & .editToolbar{
+    
+    & .topicContent .editToolbar{
         background:white;
+        margin-left: calc(var(--blockpadding) * -2);
+        margin-right: calc(var(--blockpadding) * -2);
+        margin-top: calc(var(--blockpadding) * -1);
+        padding: calc(var(--blockpadding) * 2);
+    }
+    & .topicContent .editToolbar > *{
+        font-size: 1.3em;
+        width: max-content;
+        cursor:pointer;
     }
     & .p-slate-code{
         background: white;
@@ -245,7 +270,9 @@ export const ContentPage = forwardRef(function(props, ref) {
     const [editorDescription] = useState(() => withReact(createEditor()))
     const [editorData_description, setEditorData_description] = useState(editorDataEmpty)
 
-    const [editorContent] = useState(() => withReact(createEditor()))
+    const [editorContent] = useState(() => 
+        withImages(withReact(createEditor()))
+    )
     const [editorData_content, setEditorData_content] = useState(editorDataEmpty)
 
     useImperativeHandle(ref, ()=>
@@ -282,10 +309,22 @@ export const ContentPage = forwardRef(function(props, ref) {
         switch (props.element.type) {
           case 'code':
             return <CodeElement {...props} />
+          case 'image':
+            return <Image {...props} />
           default:
             return <DefaultElement {...props} />
         }
-      }, [])
+    }, [])
+    const renderElementLoggedIn = useCallback(props => {
+        switch (props.element.type) {
+          case 'code':
+            return <CodeElement {...props} />
+          case 'image':
+            return <Image {...props} isLoggedIn={true}/>
+          default:
+            return <DefaultElement {...props} />
+        }
+    }, [])
 
     useEffect(()=>{
         leftContentRef.current.innerRefs.authorRef.current=author
@@ -489,11 +528,22 @@ export const ContentPage = forwardRef(function(props, ref) {
                             )
                         }
                         <Slate editor={editorContent}  value={editorData_content} onChange={slateOnChange('content')}>
-                            <div className="editToolbar" style={{display: 'none'}}>aaaa(Transforms)</div>{/*hide this for; wait for construction*/}
+                            {
+                                (
+                                    isLoggedIn?
+                                    <div className="editToolbar">
+                                    <Toolbar>
+                                        <ToolbarAddImageButton></ToolbarAddImageButton>
+                                    </Toolbar>
+                                    </div>:
+                                    ""
+                                )
+                                
+                            }
                             
                             <Editable 
                                 readOnly={!isEditing}
-                                renderElement={renderElement}
+                                renderElement={isLoggedIn?renderElementLoggedIn:renderElement}
                                 onKeyDown={editorContentOnKeyDown}
                             />
                         </Slate>
@@ -503,3 +553,233 @@ export const ContentPage = forwardRef(function(props, ref) {
         </Styled>
     )
 })
+
+//==
+
+const withImages = (editor) => {
+    const { insertData, isVoid } = editor
+  
+    editor.isVoid = element => {
+      console.log('isVoid')
+      return element.type === 'image' ? true : isVoid(element)
+    }
+  
+    editor.insertData = data => {
+      console.log('insertData')
+      const text = data.getData('text/plain')
+      const { files } = data
+  
+      if (files && files.length > 0) {
+        for (const file of files) {
+          const reader = new FileReader()
+          const [mime] = file.type.split('/')
+  
+          if (mime === 'image') {
+            reader.addEventListener('load', () => {
+              const url = reader.result
+              insertImage(editor, url)
+            })
+  
+            reader.readAsDataURL(file)
+          }
+        }
+      } else if (isImageUrl(text)) {
+            const doSomething = ()=>{
+                return new Promise((resolve, reject)=>{
+                    setTimeout(()=>{
+                        resolve()
+                        insertImage(editor, text)
+                    }, 3000)
+                })
+            }
+            toast.promise(doSomething(), {
+                loading: 'Uploading Image.',
+                success: 'Image upLoaded.',
+                error: 'Error when fetching',
+            })
+      } else {
+        insertData(data)
+      }
+    }
+  
+    return editor
+}
+
+const insertImage = (editor, url, firebasePath='') => {
+    const text = { text: '' }
+    const image = { type: 'image', url, children: [text] , firebasePath: firebasePath}
+    Transforms.insertNodes(editor, image)
+}
+const isImageUrl = url => {
+    if (!url) return false
+    if (!isUrl(url)) return false
+    const ext = new URL(url).pathname.split('.').pop()
+    return imageExtensions.includes(ext)
+}
+const StyledImage = styled.div`
+    position: relative;
+`
+const Image = ({ attributes, children, element, isLoggedIn }) => {
+    const editor = useSlateStatic()
+    const path = ReactEditor.findPath(editor, element)
+    const {firebase} = useContext(globalContext)
+  
+    const selected = useSelected()
+    const focused = useFocused()
+
+    const click = ()=>{
+        const firebasePath = element.firebasePath
+        if(firebasePath){
+            const storageRef = firebase.self.storage().ref(firebasePath);
+            storageRef.delete().then(()=>{
+                console.log('deleted')
+                Transforms.removeNodes(editor, { at: path })
+            })
+        }else{
+            Transforms.removeNodes(editor, { at: path })
+        }
+        
+    }
+    return (
+      <StyledImage {...attributes}>
+        {children}
+        <div contentEditable={false}>
+          <img src={element.url}/>
+          {
+            (
+                (element.firebasePath&&isLoggedIn)?
+                <ImageRemove
+                    onClick={click}
+                >
+                    <AiFillDelete/>
+                </ImageRemove>:
+                ""
+            )
+          }
+          
+        </div>
+      </StyledImage>
+    )
+}
+
+const StyledImageRemove = styled.div`
+    top: 0;
+    left: 0;
+    width: 20px;
+    height: 20px;
+    position: absolute;
+    cursor:pointer;
+    padding: 5px;
+    box-sizing: content-box;
+    transition: background-color 0.8s ease;
+    background-color:transparent;
+    border-radius:50%;
+    &:hover{
+        transition: background-color 0.1s ease;
+        background-color: white;
+    }
+    & > svg{
+        width: 100%;
+        height: 100%;
+    }
+`
+const StyledToolbar = styled.div`
+
+`
+const StyledToolbarAddImageButton = styled.div`
+
+`
+export const ImageRemove = React.forwardRef(
+    (
+      {
+        className,
+        ...props
+      },
+      ref
+    ) => (
+        <StyledImageRemove
+        {...props}
+        ref={ref}   
+        >
+        </StyledImageRemove>
+    )
+)
+export const Icon = React.forwardRef(
+    (
+      { className, ...props },
+      ref
+    ) => (
+      <span
+        {...props}
+        ref={ref}
+      />
+    )
+)
+
+export const Toolbar = React.forwardRef(
+    (
+      { className, children },
+      ref
+    ) => (
+      <StyledToolbar
+        ref={ref}
+        >
+            {children}
+      </StyledToolbar>
+    )
+)
+
+export const ToolbarAddImageButton = React.forwardRef(
+    (
+        { className, ...props }
+    ) => {
+            const editor = useSlateStatic()
+            const {firebase} = useContext(globalContext)
+            const ref = useRef(null)
+            const upload = (e)=>{
+                var file = e.target.files[0];
+                var uid = firebase.self.auth().getUid()
+                var path = `uploadsV2/${TARGET_COLLECTION}/`
+                        +uid
+                        +'/'+(new Date()).toISOString().slice(0,22)
+                        +"_"+file.name
+                var storageRef = firebase.self.storage().ref(path);
+                var task = storageRef.put(file)
+                var uploadUiFlow = ()=>{
+                    return new Promise((resolve, reject)=>{
+                        task.then((e)=>{
+                            return firebase.self.storage().ref(path).getDownloadURL()
+                        }).then((rtnPath)=>{
+                            insertImage(editor, rtnPath, path)
+                            resolve()
+                        })
+                    })
+                }
+                toast.promise(uploadUiFlow(), {
+                    loading: 'Uploading Image.',
+                    success: 'Image upLoaded.',
+                    error: 'Error when fetching',
+                })
+            }
+            return(
+            <StyledToolbarAddImageButton
+                {...props}
+                ref={ref}
+            >
+                <input type="file" style={{display: 'none'}} onChange={upload}></input>
+                <BsFillImageFill onClick={()=>{
+                    console.log('BsFillImageFill', ref)
+                    ref.current.querySelector('input').click()
+                    // window.showSaveFilePicker();
+                    // const saveFile = async ()=>{
+                    //     const fileHandle = await window.showSaveFilePicker();
+                    //     const fileStream = await fileHandle.createWritable();
+                    //     await fileStream.write(new Blob(["CONTENT"], {type: "image/jpeg"}));
+                    //     await fileStream.close();
+                    // }
+                    // saveFile()
+                }}/>
+            </StyledToolbarAddImageButton>
+        )
+    }
+)
