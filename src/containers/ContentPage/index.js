@@ -271,7 +271,9 @@ export const ContentPage = forwardRef(function(props, ref) {
     const [editorData_description, setEditorData_description] = useState(editorDataEmpty)
 
     const [editorContent] = useState(() => 
-        withImages(withReact(createEditor()))
+        withMyCustomizedPlugin(
+            withImages(withReact(createEditor()))
+        )
     )
     const [editorData_content, setEditorData_content] = useState(editorDataEmpty)
 
@@ -555,6 +557,26 @@ export const ContentPage = forwardRef(function(props, ref) {
 })
 
 //==
+const withMyCustomizedPlugin = (editor) => {
+    console.log('withMyPlugin')
+    const { apply } = editor
+    
+    editor.apply = (op) => {
+        console.log('apply:', op)
+        
+        // behavior define: prevent code block to change line
+        if(op.type=='split_node' && op.properties?.type== "code"){
+            const lastOp = editor.operations[editor.operations.length-1]
+            Transforms.insertText(editor, `\n`, {
+                at: { path: lastOp.path, offset: lastOp.position??0},
+              })
+        }
+        else{
+            apply(op)
+        }
+    }
+    return editor
+}
 
 const withImages = (editor) => {
     const { insertData, isVoid } = editor
