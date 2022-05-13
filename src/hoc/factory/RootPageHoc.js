@@ -71,6 +71,20 @@ export function RootPageHoc(LeftContent, RightContent, pageOptions){
                 rawRef.current.scrollIntoView({behavior:"smooth", inline: 'start', block: 'start' })    
             }, 
         [])
+
+        useEffect(()=>{
+            
+            const resizeHandler =  window.addEventListener('resize', (event) => {
+                if(currentSplitLoc.current == 'left'){
+                    toLeftContent()
+                }else{
+                    toRightContent()
+                }
+            });
+            return function removeHandler() {
+                window.removeEventListener('resize', resizeHandler)
+            }
+        }, [])
         
         useEffect(()=>{
             if(initialized.current){
