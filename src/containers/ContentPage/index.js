@@ -10,6 +10,9 @@ import isUrl from 'is-url'
 import imageExtensions from 'image-extensions'
 import { AiFillDelete } from 'react-icons/ai';
 import { BsFillImageFill } from 'react-icons/bs';
+import { RiCodeBoxFill } from 'react-icons/ri';
+
+import { EditorOps } from './EditorOps'
 
 import toast from 'react-hot-toast';
 
@@ -480,7 +483,6 @@ export const ContentPage = forwardRef(function(props, ref) {
     }, [])
 
     const editorContentOnKeyDown = (event) => {
-        console.log('editorContentOnKeyDown')
         // get the select block
         let selected
         let selection = editorContent.selection
@@ -494,11 +496,7 @@ export const ContentPage = forwardRef(function(props, ref) {
             case '`':
                 if(event.ctrlKey){
                     event.preventDefault()
-                    Transforms.insertNodes(
-                        editorContent,
-                        { type: 'code', children: [{ text: `xxxx` }] },
-                        { at: [editorContent.children.length] }
-                    )
+                    EditorOps.addCodeBlock(editorContent)
                 }
                 event.key = 0
                 break;
@@ -566,7 +564,8 @@ export const ContentPage = forwardRef(function(props, ref) {
                                     isLoggedIn?
                                     <div className="editToolbar">
                                     <Toolbar>
-                                        <ToolbarAddImageButton></ToolbarAddImageButton>
+                                        <ToolbarAddImageButton/>
+                                        <ToolbarAddCodeBlockButton/>
                                     </Toolbar>
                                     </div>:
                                     ""
@@ -658,11 +657,8 @@ const withImages = (editor) => {
     return editor
 }
 
-const insertImage = (editor, url, firebasePath='') => {
-    const text = { text: '' }
-    const image = { type: 'image', url, children: [text] , firebasePath: firebasePath}
-    Transforms.insertNodes(editor, image)
-}
+const insertImage = EditorOps.insertImage()
+
 const isImageUrl = url => {
     if (!url) return false
     if (!isUrl(url)) return false
@@ -737,7 +733,15 @@ const StyledImageRemove = styled.div`
     }
 `
 const StyledToolbar = styled.div`
-
+    display: flex;
+    & > *{
+        margin-right: 16px;
+    }
+`
+const StyledToolbarAddCodeBlockButton = styled.div`
+    & > svg{
+        transform: scale(1.17);
+    }
 `
 const StyledToolbarAddImageButton = styled.div`
 
@@ -782,6 +786,21 @@ export const Toolbar = React.forwardRef(
     )
 )
 
+export const ToolbarAddCodeBlockButton = React.forwardRef(
+    (
+
+    ) => {
+        const editor = useSlateStatic()
+        return(
+            <StyledToolbarAddCodeBlockButton >
+                <RiCodeBoxFill onClick={()=>{
+                    EditorOps.addCodeBlock(editor)
+                }}/>
+            </StyledToolbarAddCodeBlockButton>
+        )
+    }
+)
+
 export const ToolbarAddImageButton = React.forwardRef(
     (
         { className, ...props }
@@ -821,16 +840,7 @@ export const ToolbarAddImageButton = React.forwardRef(
             >
                 <input type="file" style={{display: 'none'}} onChange={upload}></input>
                 <BsFillImageFill onClick={()=>{
-                    console.log('BsFillImageFill', ref)
                     ref.current.querySelector('input').click()
-                    // window.showSaveFilePicker();
-                    // const saveFile = async ()=>{
-                    //     const fileHandle = await window.showSaveFilePicker();
-                    //     const fileStream = await fileHandle.createWritable();
-                    //     await fileStream.write(new Blob(["CONTENT"], {type: "image/jpeg"}));
-                    //     await fileStream.close();
-                    // }
-                    // saveFile()
                 }}/>
             </StyledToolbarAddImageButton>
         )
