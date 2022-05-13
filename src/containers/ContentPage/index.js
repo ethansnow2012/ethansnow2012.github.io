@@ -138,6 +138,15 @@ const Styled = styled.div`
         margin-top: calc(var(--blockpadding) * -1);
         padding: calc(var(--blockpadding) * 2);
     }
+    & .topicContent .editToolbar.float{
+        position: absolute;
+        bottom: 0;
+        width: 100%;
+        left: calc(var(--blockpadding) * 2);
+        top: var(---y);
+        height: max-content;
+        z-index: 1;
+    }
     & .topicContent .editToolbar > *{
         font-size: 1.3em;
         width: max-content;
@@ -346,6 +355,28 @@ export const ContentPage = forwardRef(function(props, ref) {
             }
         }
         _getOneTopic()
+
+        const documentScrollHandler = document.addEventListener('scroll', function(e) {
+            
+            const refScope = ref.current.rawRef.current
+            const topicContent =  refScope.querySelector('.topicContent')
+            const toolbar = refScope.querySelector('.editToolbar')
+            if(toolbar&&topicContent){
+                const contentBoundingRect = topicContent.getBoundingClientRect()
+                if(contentBoundingRect.y<0){
+                    toolbar.classList.add('float')
+                    toolbar.style.setProperty("---y", `${contentBoundingRect.y * -1}px`);
+                }else{
+                    toolbar.classList.remove('float')
+                    toolbar.style.setProperty("---y", `0`);
+                }
+                
+            }
+            
+        })
+        return function removeHandler() {
+            document.removeEventListener('scroll', documentScrollHandler)
+        }
     },[])
 
     useEffect(()=>{
