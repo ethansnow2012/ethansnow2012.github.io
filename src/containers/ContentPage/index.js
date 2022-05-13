@@ -657,7 +657,7 @@ const withImages = (editor) => {
     return editor
 }
 
-const insertImage = EditorOps.insertImage()
+const insertImage = EditorOps.insertImage
 
 const isImageUrl = url => {
     if (!url) return false

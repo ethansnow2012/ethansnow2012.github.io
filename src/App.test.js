@@ -111,6 +111,9 @@ describe('End-to-End test', ()=>{
     await page().type('.topicDescription-inner *[contenteditable="true"]', 'test comment', {delay: 1})
     await page().click(".goback");
 
+    await page().waitForSelector(".btn-test-login");
+    await page().click(".btn-test-login");
+
     await page().waitForSelector(".btn-editmode");
     await page().click(".btn-editmode");
 
