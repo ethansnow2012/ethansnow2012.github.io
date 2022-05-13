@@ -792,7 +792,7 @@ export const ToolbarAddCodeBlockButton = React.forwardRef(
     ) => {
         const editor = useSlateStatic()
         return(
-            <StyledToolbarAddCodeBlockButton >
+            <StyledToolbarAddCodeBlockButton className="p-add-code-block-button">
                 <RiCodeBoxFill onClick={()=>{
                     EditorOps.addCodeBlock(editor)
                 }}/>

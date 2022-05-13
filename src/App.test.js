@@ -2,9 +2,10 @@ import puppeteer from 'puppeteer'
 
 const rootPath = "http://localhost:3000/"
 const maxTransitionTime = "1500"
+const testTimeout = 27000
 
 jest.useRealTimers();
-jest.setTimeout(27000);
+jest.setTimeout(testTimeout);
 
 function setupPuppeteer() {
   let browser= puppeteer.Browser
@@ -89,6 +90,43 @@ describe('End-to-End test', ()=>{
       visible: true,
     })
     
+  })
+  test('add/remove codeblock bar by toolbar', async ()=>{
+    await page().goto(rootPath)
+    await page().waitForSelector(".swiper-slide-active a");
+    await page().click('.swiper-slide-active a');
+
+    await page().waitForTimeout(maxTransitionTime);
+    await page().click(".goto-content");
+    await page().waitForTimeout(maxTransitionTime);
+
+    await page().waitForSelector(".btn-test-login");
+    await page().click(".btn-test-login");
+
+    await page().waitForSelector(`.editToolbar .p-add-code-block-button svg`);
+    await page().click(`.editToolbar .p-add-code-block-button svg`);
+    
+    await page().waitForTimeout(maxTransitionTime);
+    
+    await page().waitForSelector(`.topicContent .p-slate-code`);
+    await page().type(`.topicContent *[contenteditable="true"]`, '', {delay: 1})//.p-slate-code span[data-slate-string="true"]
+    await page().keyboard.press('ArrowDown');
+    await page().keyboard.press('ArrowDown');
+    await page().keyboard.press('ArrowDown');
+    await page().keyboard.press('ArrowDown');
+    await page().keyboard.press('ArrowDown');
+    await page().keyboard.press('Backspace');
+    await page().keyboard.press('Backspace');
+    await page().keyboard.press('Backspace');
+    await page().keyboard.press('Backspace');
+    await page().keyboard.press('Backspace');
+    
+    await page().waitForTimeout(300);
+
+    const codeBlock = await page().$(`.topicContent .p-slate-code`)
+
+    expect(codeBlock).toBe(null)
+
   })
   test('topic are correctly shown via tags ', async ()=>{
     await page().goto(rootPath)
