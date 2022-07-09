@@ -85,27 +85,14 @@ const abi = [
     }
 ]
 
-// function useContract(contract) {
-//     const connector = usePriorityConnector();
-//     const provider = usePriorityProvider();
-
-//     contract = contract.connect(provider);
-
-//     //if (getConnectorName(connector) !== "Network") {
-//       const signer = provider?.getSigner?.();
-//       if (signer !== undefined) contract = contract.connect(signer);
-//     //}
-
-//     return contract;
-//   }
 const fetcher = (library) => (...args) => {
     const [method, ...params] = args
     console.log(method, params)
     return library[method](...params)
 }
-//const myContract = new Contract(address, abi);
+
 export const Web3TestPageInner = () => {
-    //const [refetchCount, setRefetchCount] = useState(1)
+    
     const [count, setCount] = useState('')
     const { address, isConnected } = useAccount()
     const { connect } = useConnect({
@@ -120,7 +107,7 @@ export const Web3TestPageInner = () => {
         signerOrProvider: signer,
     })
 
-    const [contractData, setContractData] = useState()//contract.get()
+    const [contractData, setContractData] = useState()
 
 
     const connectClick = async () => {
@@ -143,21 +130,15 @@ export const Web3TestPageInner = () => {
 
         try {
             contract.inc()
-                // .then((x) => {
-                //     setRefetchCount((self) => { return self + 1 })
-                // })
         } catch (e) {
             console.error(e)
         }
     }
     useEffect(() => {
         if (address && isConnected && signer) {
-            console.log('contractData', contract)
             const getData = async () => {
                 const data = await contract.get()
                 setCount(parseInt(data._hex))
-
-                console.log('ddd', data)
             }
             getData()
         }

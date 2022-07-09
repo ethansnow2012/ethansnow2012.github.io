@@ -13,6 +13,7 @@ export function RouterMeta(props) {
             const newPath = href.split('/?gh-pages-alter')[1]
             if(newPath){
                 navigate(newPath.replace('&','?'), {replace: true})
+                console.log('navigate to: ', newPath.replace('&','?'), {replace: true})
             }
         }
     }, [])

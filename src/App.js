@@ -40,8 +40,8 @@ function App() {
         <BrowserRouter >
           <Routes>
             <Route path='/' element={<Landing/>}></Route>
-            <Route path='/web3test' element={<Web3TestPage/>}></Route>
             <Route path='/:author' element={<MainPageCombined/>}></Route>
+            <Route path='/web3test' element={<Web3TestPage/>}></Route>
             <Route path='/content/:author/:id' element={<ContentPageCombined/>}></Route>
           </Routes>
         </BrowserRouter>
