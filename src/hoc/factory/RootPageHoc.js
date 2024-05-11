@@ -72,19 +72,19 @@ export function RootPageHoc(LeftContent, RightContent, pageOptions){
             }, 
         [])
 
-        useEffect(()=>{
+        // useEffect(()=>{
             
-            const resizeHandler =  window.addEventListener('resize', (event) => {
-                if(currentSplitLoc.current == 'left'){
-                    toLeftContent()
-                }else{
-                    toRightContent()
-                }
-            });
-            return function removeHandler() {
-                window.removeEventListener('resize', resizeHandler)
-            }
-        }, [])
+        //     const resizeHandler =  window.addEventListener('resize', (event) => {
+        //         if(currentSplitLoc.current == 'left'){
+        //             toLeftContent()
+        //         }else{
+        //             toRightContent()
+        //         }
+        //     });
+        //     return function removeHandler() {
+        //         window.removeEventListener('resize', resizeHandler)
+        //     }
+        // }, [])
         
         useEffect(()=>{
             if(initialized.current){
