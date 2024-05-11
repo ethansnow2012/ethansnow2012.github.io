@@ -280,6 +280,7 @@ export const LandingPage = ()=> {
                             effect={'panorama'}
                             slidesPerView={1} 
                             loop={true}
+                            threshold={20} 
                             loopedSlides={10}
                             centeredSlides={true}
                             grabCursor= {true}
