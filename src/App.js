@@ -3,7 +3,8 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { MainPage } from 'containers/MainPage'
 import { ContentPage } from 'containers/ContentPage'
 import { LandingPage } from 'containers/LandingPage'
-import { Web3TestPage } from 'containers/Web3TestPage'
+// import { Web3TestPage } from 'containers/Web3TestPage'
+import { D3RinneganPage } from 'containers/D3RinneganPage'
 // import { RootPage } from 'containers/Functional/RootPage'
 import { RootPageHoc, SingleRootPageHoc } from 'hoc/factory/RootPageHoc'
 import { createContext } from 'react'
@@ -41,8 +42,9 @@ function App() {
           <Routes>
             <Route path='/' element={<Landing/>}></Route>
             <Route path='/:author' element={<MainPageCombined/>}></Route>
-            <Route path='/web3test' element={<Web3TestPage/>}></Route>
+            {/* <Route path='/web3test' element={<Web3TestPage/>}></Route> */}
             <Route path='/content/:author/:id' element={<ContentPageCombined/>}></Route>
+            <Route path='/rinnegan' element={<D3RinneganPage/>}></Route>
           </Routes>
         </BrowserRouter>
       </globalContext.Provider>
