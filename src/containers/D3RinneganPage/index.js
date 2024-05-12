@@ -149,7 +149,7 @@ export const D3RinneganPage = ()=> {
                 
             </svg>
             <button class="btn1">寫輪眼</button>
-            <button class="btn2">輪迴眼</button>
+            <button class="btn2">萬花筒寫輪眼</button>
                 `}}
             />
         </Styled>

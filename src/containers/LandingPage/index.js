@@ -14,6 +14,9 @@ import 'swiper/css';
 import { Icon } from "@chakra-ui/react";
 // import { CopyIcon } from '@chakra-ui/react'
 import { BiCopy } from 'react-icons/bi';
+
+import { AboutMe } from 'components'
+
 const StyledFooterButton = styled.div`
     position: absolute;
     right: 9px;
@@ -117,9 +120,12 @@ const StyledFooter = styled.div`
         }
     }
 `
+const StyledAboutWrapper = styled.div`
+    background: linear-gradient(90deg, rgba(255, 255, 255, 1) 0%, rgb(157 167 176) 13%, rgba(255, 255, 255, 1) 100%);
+`
 
 const Styled = styled.div`
-    background:var(--color-basic-background);
+    background: radial-gradient(circle, rgba(255, 255, 255, 1) 0%, rgba(101, 125, 147, 1) 50%, rgba(255, 255, 255, 1) 100%);
     height: 100vh;
     width:100%;
     position:relative;
@@ -378,6 +384,9 @@ export const LandingPage = ()=> {
                     </div>
                 </div>
             </Styled>
+            <StyledAboutWrapper>
+                <AboutMe/>  
+            </StyledAboutWrapper>
             <StyledFooter>
                 <div className="footer-inner">
                     <FooterCard image={card_bg1} title={'想一起寫部落格？'} text={'立即獲得在上面的版位！'} CTAtxt={'寫信到: ethansnow2012@gmail.com'}></FooterCard>

@@ -1,6 +1,7 @@
 
 import {FilterTagWrapper} from './FilterTagWrapper'
 import {ShiningButton} from './Button'
+import {AboutMe} from './AboutMe'
 import {Header, HeaderWithContext, HeaderWithContextWithForwardRef} from './Header'
 import {ContentMeta} from './ContentMeta'
 import {SubjectCardWrapper} from './SubjectCardWrapper'
@@ -14,5 +15,6 @@ export {
     HeaderWithContextWithForwardRef,
     ContentMeta,
     SubjectCardWrapper,
-    ShiningButton
+    ShiningButton,
+    AboutMe
 }
