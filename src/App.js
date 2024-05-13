@@ -3,7 +3,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { MainPage } from 'containers/MainPage'
 import { ContentPage } from 'containers/ContentPage'
 import { LandingPage } from 'containers/LandingPage'
-// import { Web3TestPage } from 'containers/Web3TestPage'
+import { D3GraphFileNodeViewer } from 'containers/D3GraphFileNodeViewer'
 import { D3RinneganPage } from 'containers/D3RinneganPage'
 // import { RootPage } from 'containers/Functional/RootPage'
 import { RootPageHoc, SingleRootPageHoc } from 'hoc/factory/RootPageHoc'
@@ -45,6 +45,7 @@ function App() {
             {/* <Route path='/web3test' element={<Web3TestPage/>}></Route> */}
             <Route path='/content/:author/:id' element={<ContentPageCombined/>}></Route>
             <Route path='/rinnegan' element={<D3RinneganPage/>}></Route>
+            <Route path='/d3_graph_file_node_viewer' element={<D3GraphFileNodeViewer/>}></Route>
           </Routes>
         </BrowserRouter>
       </globalContext.Provider>

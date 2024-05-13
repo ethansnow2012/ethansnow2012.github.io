@@ -82,6 +82,10 @@ export function AboutMe({children, shiningColor, onClick}){
                             <div className="worklink-dot" >-</div> <div >萬花筒寫輪眼</div>
                             <img src="/link-background.jpg"></img>
                         </a>
+                        <a className="worklink" href="https://ethansnow2012.github.io/d3_graph_file_node_viewer">
+                            <div className="worklink-dot" >-</div> <div >d3 檔案瀏覽方式（不好懂）</div>
+                            <img src="/link-background.jpg"></img>
+                        </a>
                         <br/>
                         <a className="worklink" href="https://github.com/ethansnow2012">
                             <div className="worklink-dot" >-</div> <div >Github</div>
