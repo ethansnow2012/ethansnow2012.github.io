@@ -1,5 +1,5 @@
 import React, { useState, useContext ,useEffect, useRef, forwardRef, useImperativeHandle, useCallback }from 'react'
-import { FilterTagWrapper, SubjectCardWrapper } from 'components'
+import { FilterTagWrapper, SubjectCardWrapper, AboutMe, RainScene } from 'components'
 import { useParams } from 'react-router-dom';
 import { globalContext } from 'App'
 import { SplitContext } from 'hoc/factory/RootPageHoc'
@@ -12,59 +12,13 @@ import { injectStyleState, toggleDisplayViaKeyAndId , toggleDisplayViaArrayOfIds
 
 import { getTopics, getTags, getCategory, storeMainContent } from 'service/data'
 
-const StyledFooter = styled.div`
-    display: flex;
-    justify-content: center;
-    padding-top: 40px;
-    padding-bottom: 60px;
-    & .inner-space{
-        padding-right:1em;
-        padding-left:1em;
-    }
-    & .inner-title{
 
-    }
-    & .inner{
-        margin-top:0.7em;
-        max-width: 600px
-    }
-    & .inner > * + *{
-        margin-top:0.5em;
-    }
-    & .worklink{
-        position: relative;
-        width: max-content;
-        display: flex;
-        font-size: 1.4em;
-    }
-    & .worklink + .worklink{
-        margin-top:5px;
-    }
-    & .worklink:hover img{
-        right: 100%;
-    }
-    & .worklink-dot{
-        margin-right: 10px;
-    }
-    & .worklink a{
-        z-index: 1;
-    }
-    & .worklink img{
-        transition: all 1s ease;
-        width: 100%;
-        height: 100%;
-        position: absolute;
-        top: 0;
-        right: 0;
-        mix-blend-mode: lighten;
-        filter: brightness(0.5);
-    }
-`
 
 const Styled = styled.div`
     width:100%;
     min-height: 100vh;
     background: var(--color-basic-background);
+    
     
     & ${BaseContentSpacingStyle} {
         padding-top: var(--maincontent-vpadding);
@@ -75,6 +29,15 @@ const Styled = styled.div`
         //max-width:350px;
         margin-left:auto;
         margin-right:auto;
+    }
+    .p-select-wrapper-archived {
+        text-align: center;
+        color: #f03636;
+        font-size: 1.8em;
+        background: white;
+        opacity: 0.9;
+        border-radius: 10px;
+        padding: 11px 5px;
     }
     & .p-select-wrapper > * + * {
         margin-top: var(--maincontent-innerspacing);
@@ -156,49 +119,7 @@ function tagsFilter(tagsObject, activeCategoryObject){
 let TARGET_COLLECTION =  process.env.REACT_APP_TARGET_COLLECTION
 //TARGET_COLLECTION = 'test_random'
 
-const MainPageFooter = ()=>{
-    return (
-        <StyledFooter>
-            <div className='inner-space'>
-                <div className='inner-title'>這個網站與關於我:</div>
-                <div className='inner'>
-                    <div>
-                    我是高傑(ethansnow2012@gmail.com)，這個部落格網站的作者，<br/>
-                    之後也許會開放成共編平台。<br/>
-                    </div>
-                    <div>
-                    任何如果想合作或聊聊的人，如果看到這裡，<br/>
-                    能與您相遇是我的榮幸～<br/>
-                    </div>
-                    <div></div>
-                    <div data-aos="subtle-in-v2" data-aos-duration={500}>
-                        <div>
-                        其他我的作品：<br/>
-                        <br/>
-                        </div>
-                        <a className="worklink" href="https://ethansnow2012.github.io/rdrag-rdrop">
-                            <div className="worklink-dot" >-</div> <div >拖拉元件的函式庫</div>
-                            <img src="/link-background.jpg"></img>
-                        </a>
-                        <a className="worklink" href="https://ethansnow2012.github.io/recole">
-                            <div className="worklink-dot" >-</div> <div >響應式編成實驗</div>
-                            <img src="/link-background.jpg"></img>
-                        </a>
-                        <a className="worklink" href="https://atticstone.com">
-                            <div className="worklink-dot" >-</div> <div >Atticstone.V1</div>
-                            <img src="/link-background.jpg"></img>
-                        </a>
-                        <br/>
-                        <a className="worklink" href="https://github.com/ethansnow2012">
-                            <div className="worklink-dot" >-</div> <div >Github</div>
-                            <img src="/link-background.jpg"></img>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </StyledFooter>
-    )
-}
+
 
 export const MainPage = forwardRef(function (props, ref) {
     let { author } = useParams();
@@ -542,6 +463,10 @@ export const MainPage = forwardRef(function (props, ref) {
         <Styled ref={rawRef}>            
             <BaseContentSpacing>
                 <div className='p-select-wrapper'>
+                    <div className='p-select-wrapper-archived'>
+                        <p>我沒時間經營內容ＱＱ，也許有一天會來寫作吧</p>
+                        <p>不過這個ＵＩ架構可以玩玩看</p>
+                    </div>
                     <div className='p-select-wrapper-i1'>
                         <CSelect defaultValue={defaultSelect} onChange={select} key={defaultSelect} >
                             {
@@ -581,7 +506,7 @@ export const MainPage = forwardRef(function (props, ref) {
             </BaseContentSpacing>
             {
                 (author=='A6KyMKQiSIg1CmuVWVEw0Od3NVh1'||author==undefined)?
-                <MainPageFooter></MainPageFooter>
+                <AboutMe></AboutMe>
                 :
                 ""
             }
