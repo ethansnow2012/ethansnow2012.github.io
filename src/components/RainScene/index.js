@@ -200,7 +200,7 @@ export const RainScene = ({ portal }) => {
 
     // Cleanup on unmount
     return () => {
-      mountRef.current.removeChild(renderer.domElement);
+      mountRef.current?.removeChild(renderer.domElement);
       renderer.dispose();
     };
   }, [
