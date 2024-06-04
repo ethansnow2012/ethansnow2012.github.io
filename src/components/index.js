@@ -5,6 +5,7 @@ import {AboutMe} from './AboutMe'
 import {Header, HeaderWithContext, HeaderWithContextWithForwardRef} from './Header'
 import {ContentMeta} from './ContentMeta'
 import {SubjectCardWrapper} from './SubjectCardWrapper'
+import {RainScene} from './RainScene'
 
 
 
@@ -16,5 +17,6 @@ export {
     ContentMeta,
     SubjectCardWrapper,
     ShiningButton,
-    AboutMe
+    AboutMe,
+    RainScene
 }

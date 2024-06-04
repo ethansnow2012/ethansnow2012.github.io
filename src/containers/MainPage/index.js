@@ -1,5 +1,5 @@
 import React, { useState, useContext ,useEffect, useRef, forwardRef, useImperativeHandle, useCallback }from 'react'
-import { FilterTagWrapper, SubjectCardWrapper, AboutMe } from 'components'
+import { FilterTagWrapper, SubjectCardWrapper, AboutMe, RainScene } from 'components'
 import { useParams } from 'react-router-dom';
 import { globalContext } from 'App'
 import { SplitContext } from 'hoc/factory/RootPageHoc'
@@ -18,6 +18,7 @@ const Styled = styled.div`
     width:100%;
     min-height: 100vh;
     background: var(--color-basic-background);
+    
     
     & ${BaseContentSpacingStyle} {
         padding-top: var(--maincontent-vpadding);
